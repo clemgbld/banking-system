@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Account {
 
@@ -30,5 +31,10 @@ public class Account {
 
     public String getIban() {
         return iban;
+    }
+
+
+    public List<Object> getTransactions() {
+        return null;
     }
 }
