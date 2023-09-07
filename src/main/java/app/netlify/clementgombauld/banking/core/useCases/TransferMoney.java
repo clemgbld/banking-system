@@ -12,9 +12,11 @@ public class TransferMoney {
         this.accountRepository = accountRepository;
     }
 
-    public void handle(String senderAccountIban, String senderAccountBIC, BigDecimal transactionAmount) {
+    public void handle(String senderAccountIban, BigDecimal transactionAmount,String receiverAccountIban) {
         Account senderAccount = accountRepository.findByIban(senderAccountIban);
+        Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
         senderAccount.withdraw(transactionAmount);
-        accountRepository.update(senderAccount);
+        receiverAccount.credit(transactionAmount);
+        accountRepository.update(senderAccount,receiverAccount);
     }
 }

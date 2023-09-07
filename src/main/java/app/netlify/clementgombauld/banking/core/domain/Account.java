@@ -23,6 +23,7 @@ public class Account {
         return balance;
     }
 
+    public void credit(BigDecimal transactionAmount) {this.balance = balance.add(transactionAmount);}
     public void withdraw(BigDecimal transactionAmount) {
         this.balance = balance.subtract(transactionAmount);
     }
