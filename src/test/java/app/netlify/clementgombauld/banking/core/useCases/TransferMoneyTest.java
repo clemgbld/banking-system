@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +28,15 @@ class TransferMoneyTest {
         String senderAccountId = "1";
         String receiverAccountId="2";
         String senderTransactionId = "13543A";
-        String receiverTransactionId = "2354235";
+        String receiverTransactionId= "143E53245";
+
 
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
-        dataSource.put(senderAccountIban,new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105)));
-        dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100)));
+
+        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105), new ArrayList<>(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105)))));
+        dataSource.put(senderAccountIban,existingSenderAccount);
+        dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),null));
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
         Instant currentInstant = dateProvider.now();
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
@@ -45,7 +49,8 @@ class TransferMoneyTest {
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
       assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
       assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
-      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(new Transaction(senderTransactionId,currentInstant,new BigDecimal(-5)));
+      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105)),new Transaction(senderTransactionId,currentInstant,new BigDecimal(-5))));
+      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction(receiverTransactionId,currentInstant,new BigDecimal(5))));
     }
 
 }

@@ -1,7 +1,11 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 
 public class Account {
 
@@ -13,28 +17,45 @@ public class Account {
 
     private BigDecimal balance;
 
-    public Account(String id,String iban, String bic, BigDecimal balance) {
+    private List<Transaction> transactions;
+
+    public Account(String id,String iban, String bic, BigDecimal balance,List<Transaction> transactions) {
         this.id = id;
         this.iban = iban;
         this.bic = bic;
         this.balance = balance;
+        this.transactions = Optional.ofNullable(transactions)
+                .orElse(new ArrayList<>());
     }
+
+
 
     public BigDecimal getBalance() {
         return balance;
     }
 
-    public void credit(BigDecimal transactionAmount) {this.balance = balance.add(transactionAmount);}
-    public void withdraw(BigDecimal transactionAmount) {
-        this.balance = balance.subtract(transactionAmount);
+    public void credit(String transactionId, Instant creationDate,BigDecimal transactionAmount) {
+       makeTransaction(transactionId,creationDate,transactionAmount);
     }
+    public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount) {
+        makeTransaction(transactionId,creationDate,transactionAmount.negate());
+    }
+
+
 
     public String getIban() {
         return iban;
     }
 
 
-    public List<Object> getTransactions() {
-        return null;
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
+
+    private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount){
+        balance = balance.add(transactionAmount);
+        transactions.add(new Transaction(transactionId,creationDate,transactionAmount));
+    }
+
+
 }

@@ -6,6 +6,7 @@ import app.netlify.clementgombauld.banking.core.domain.DateProvider;
 import app.netlify.clementgombauld.banking.core.domain.IdGenerator;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 public class TransferMoney {
     private final AccountRepository accountRepository;
@@ -21,10 +22,13 @@ public class TransferMoney {
     }
 
     public void handle(String senderAccountIban, BigDecimal transactionAmount,String receiverAccountIban) {
+        Instant creationDate = dateProvider.now();
         Account senderAccount = accountRepository.findByIban(senderAccountIban);
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
-        senderAccount.withdraw(transactionAmount);
-        receiverAccount.credit(transactionAmount);
+        String senderTransactionId = idGenerator.generate();
+        String receiverTransactionId = idGenerator.generate();
+        senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount);
+        receiverAccount.credit(receiverTransactionId,creationDate,transactionAmount);
         accountRepository.update(senderAccount,receiverAccount);
     }
 }
