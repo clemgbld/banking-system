@@ -34,7 +34,7 @@ class TransferMoneyTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105), new ArrayList<>(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105)))));
+        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105), new ArrayList<>(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban))));
         dataSource.put(senderAccountIban,existingSenderAccount);
         dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),null));
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
@@ -49,8 +49,8 @@ class TransferMoneyTest {
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
       assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
       assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
-      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105)),new Transaction(senderTransactionId,currentInstant,new BigDecimal(-5))));
-      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction(receiverTransactionId,currentInstant,new BigDecimal(5))));
+      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban),new Transaction(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban)));
+      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban)));
     }
 
 }
