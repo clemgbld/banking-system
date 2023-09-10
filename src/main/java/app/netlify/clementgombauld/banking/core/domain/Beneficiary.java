@@ -30,4 +30,8 @@ public class Beneficiary {
     public String getLastName() {
         return lastName;
     }
+
+    boolean hasIban(String iban){
+       return this.iban.equals(iban);
+    }
 }

@@ -47,10 +47,16 @@ public class Account {
        makeTransaction(transactionId,creationDate,transactionAmount,senderIban,firstName,lastName);
     }
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverIban) {
-        Beneficiary beneficiary = beneficiaries.stream().filter(b -> receiverIban.equals(b.getIban())).findFirst().orElseThrow(RuntimeException::new);
+        Beneficiary beneficiary = findBeneficiary(receiverIban);
         makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getFirstName(),beneficiary.getLastName());
     }
 
+    private Beneficiary findBeneficiary(String receiverIban) {
+        return beneficiaries.stream()
+                .filter(b -> b.hasIban(receiverIban))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
+    }
 
 
     public String getIban() {
