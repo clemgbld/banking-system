@@ -28,7 +28,7 @@ public class TransferMoney {
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccount.getIban());
-        receiverAccount.credit(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban());
+        receiverAccount.credit(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban(),senderAccount.getFirstName(),senderAccount.getLastName());
         accountRepository.update(senderAccount,receiverAccount);
     }
 }

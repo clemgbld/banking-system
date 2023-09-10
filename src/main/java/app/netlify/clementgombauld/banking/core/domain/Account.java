@@ -17,15 +17,24 @@ public class Account {
 
     private BigDecimal balance;
 
-    private List<Transaction> transactions;
+    private String firstName;
 
-    public Account(String id,String iban, String bic, BigDecimal balance,List<Transaction> transactions) {
+    private String lastName;
+
+    private final List<Transaction> transactions;
+
+    private final List<Beneficiary> beneficiaries;
+
+    public Account(String id, String iban, String bic, BigDecimal balance, String firstName, String lastName, List<Transaction> transactions, List<Beneficiary> beneficiaries) {
         this.id = id;
         this.iban = iban;
         this.bic = bic;
         this.balance = balance;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.transactions = Optional.ofNullable(transactions)
                 .orElse(new ArrayList<>());
+        this.beneficiaries = beneficiaries;
     }
 
 
@@ -34,11 +43,12 @@ public class Account {
         return balance;
     }
 
-    public void credit(String transactionId, Instant creationDate,BigDecimal transactionAmount,String senderIban) {
-       makeTransaction(transactionId,creationDate,transactionAmount,senderIban);
+    public void credit(String transactionId, Instant creationDate,BigDecimal transactionAmount,String senderIban,String firstName,String lastName) {
+       makeTransaction(transactionId,creationDate,transactionAmount,senderIban,firstName,lastName);
     }
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverIban) {
-        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban);
+        Beneficiary beneficiary = beneficiaries.stream().filter(b -> receiverIban.equals(b.getIban())).findFirst().orElseThrow(RuntimeException::new);
+        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getFirstName(),beneficiary.getLastName());
     }
 
 
@@ -52,10 +62,17 @@ public class Account {
         return transactions;
     }
 
-    private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban){
+    private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban,String firstName,String lastName){
         balance = balance.add(transactionAmount);
-        transactions.add(new Transaction(transactionId,creationDate,transactionAmount,iban));
+        transactions.add(new Transaction(transactionId,creationDate,transactionAmount,iban,firstName,lastName));
     }
 
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
 }
