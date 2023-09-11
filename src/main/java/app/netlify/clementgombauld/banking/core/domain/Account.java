@@ -17,7 +17,7 @@ public class Account {
 
     private final String bic;
 
-    private BigDecimal balance;
+    private Balance balance;
 
     private final String firstName;
 
@@ -31,7 +31,7 @@ public class Account {
         this.id = id;
         this.iban = iban;
         this.bic = bic;
-        this.balance = balance;
+        this.balance = new Balance(balance);
         this.firstName = firstName;
         this.lastName = lastName;
         this.transactions = Optional.ofNullable(transactions)
@@ -42,13 +42,14 @@ public class Account {
 
 
     public BigDecimal getBalance() {
-        return balance;
+        return balance.value();
     }
 
     public void credit(String transactionId, Instant creationDate,BigDecimal transactionAmount,String senderIban,String firstName,String lastName) {
        makeTransaction(transactionId,creationDate,transactionAmount,senderIban,firstName,lastName);
     }
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverIban) {
+        balance.checkBalanceSufficiency(transactionAmount);
         Beneficiary beneficiary = findBeneficiary(receiverIban);
         makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getFirstName(),beneficiary.getLastName());
     }
