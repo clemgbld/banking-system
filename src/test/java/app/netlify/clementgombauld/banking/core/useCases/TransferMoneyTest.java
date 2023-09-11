@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryDateProvider;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class TransferMoneyTest {
@@ -39,7 +41,7 @@ class TransferMoneyTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName,receiverAccountLastName)));
+        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName,receiverAccountLastName)));
         dataSource.put(senderAccountIban,existingSenderAccount);
         dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),receiverAccountFirstName,receiverAccountLastName,null, List.of()));
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
@@ -54,8 +56,8 @@ class TransferMoneyTest {
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
       assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
       assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
-      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName),new Transaction(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName)));
-      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountFirstName,senderAccountLastName)));
+      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName)));
+      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountFirstName,senderAccountLastName)));
     }
 
     @Test
@@ -78,23 +80,16 @@ class TransferMoneyTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName,receiverAccountLastName)));
+        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,List.of(), List.of());
         dataSource.put(senderAccountIban,existingSenderAccount);
         dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),receiverAccountFirstName,receiverAccountLastName,null, List.of()));
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
-        Instant currentInstant = dateProvider.now();
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
         IdGenerator idGenerator = new InMemoryIdGenerator(List.of(senderTransactionId,receiverTransactionId));
         TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator);
 
-        transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban);
-
-        Account senderAccount = accountRepository.findByIban(senderAccountIban);
-        Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
-        assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
-        assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
-        assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName),new Transaction(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName)));
-        assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new Transaction(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountFirstName,senderAccountLastName)));
+        assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(UnknownBeneficiaryException.class)
+                .hasMessage("Cannot find any account with the iban: " + receiverAccountIban + " in your beneficiaries list.");
     }
 
 }

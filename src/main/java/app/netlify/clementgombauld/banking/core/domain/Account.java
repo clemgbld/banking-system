@@ -1,5 +1,7 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -21,18 +23,18 @@ public class Account {
 
     private String lastName;
 
-    private final List<Transaction> transactions;
+    private final List<MoneyTransferred> moneyTransferreds;
 
     private final List<Beneficiary> beneficiaries;
 
-    public Account(String id, String iban, String bic, BigDecimal balance, String firstName, String lastName, List<Transaction> transactions, List<Beneficiary> beneficiaries) {
+    public Account(String id, String iban, String bic, BigDecimal balance, String firstName, String lastName, List<MoneyTransferred> moneyTransferreds, List<Beneficiary> beneficiaries) {
         this.id = id;
         this.iban = iban;
         this.bic = bic;
         this.balance = balance;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.transactions = Optional.ofNullable(transactions)
+        this.moneyTransferreds = Optional.ofNullable(moneyTransferreds)
                 .orElse(new ArrayList<>());
         this.beneficiaries = beneficiaries;
     }
@@ -55,7 +57,7 @@ public class Account {
         return beneficiaries.stream()
                 .filter(b -> b.hasIban(receiverIban))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(()-> new UnknownBeneficiaryException(receiverIban));
     }
 
 
@@ -64,13 +66,13 @@ public class Account {
     }
 
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public List<MoneyTransferred> getTransactions() {
+        return moneyTransferreds;
     }
 
     private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban,String firstName,String lastName){
         balance = balance.add(transactionAmount);
-        transactions.add(new Transaction(transactionId,creationDate,transactionAmount,iban,firstName,lastName));
+        moneyTransferreds.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,firstName,lastName));
     }
 
 
