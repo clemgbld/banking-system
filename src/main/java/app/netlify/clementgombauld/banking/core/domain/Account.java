@@ -19,22 +19,22 @@ public class Account {
 
     private BigDecimal balance;
 
-    private String firstName;
+    private final String firstName;
 
-    private String lastName;
+    private final String lastName;
 
-    private final List<MoneyTransferred> moneyTransferreds;
+    private final List<MoneyTransferred> transactions;
 
     private final List<Beneficiary> beneficiaries;
 
-    public Account(String id, String iban, String bic, BigDecimal balance, String firstName, String lastName, List<MoneyTransferred> moneyTransferreds, List<Beneficiary> beneficiaries) {
+    public Account(String id, String iban, String bic, BigDecimal balance, String firstName, String lastName, List<MoneyTransferred> transactions, List<Beneficiary> beneficiaries) {
         this.id = id;
         this.iban = iban;
         this.bic = bic;
         this.balance = balance;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.moneyTransferreds = Optional.ofNullable(moneyTransferreds)
+        this.transactions = Optional.ofNullable(transactions)
                 .orElse(new ArrayList<>());
         this.beneficiaries = beneficiaries;
     }
@@ -67,12 +67,12 @@ public class Account {
 
 
     public List<MoneyTransferred> getTransactions() {
-        return moneyTransferreds;
+        return transactions;
     }
 
     private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban,String firstName,String lastName){
         balance = balance.add(transactionAmount);
-        moneyTransferreds.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,firstName,lastName));
+        transactions.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,firstName,lastName));
     }
 
 
