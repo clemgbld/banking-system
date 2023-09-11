@@ -53,11 +53,11 @@ public class Account {
         makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getFirstName(),beneficiary.getLastName());
     }
 
-    private Beneficiary findBeneficiary(String receiverIban) {
+    private Beneficiary findBeneficiary(String beneficiaryIban) {
         return beneficiaries.stream()
-                .filter(b -> b.hasIban(receiverIban))
+                .filter(b -> b.hasIban(beneficiaryIban))
                 .findFirst()
-                .orElseThrow(()-> new UnknownBeneficiaryException(receiverIban));
+                .orElseThrow(()-> new UnknownBeneficiaryException(beneficiaryIban));
     }
 
 
