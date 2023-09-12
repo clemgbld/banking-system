@@ -8,6 +8,7 @@ import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccount
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.function.Supplier;
 
 public class TransferMoney {
     private final AccountRepository accountRepository;
@@ -25,17 +26,19 @@ public class TransferMoney {
     public void handle(String senderAccountIban, BigDecimal transactionAmount,String receiverAccountIban) {
         Instant creationDate = dateProvider.now();
         Account senderAccount = accountRepository.findByIban(senderAccountIban)
-                .orElseThrow(()-> {
-                    throw new UnknownAccountException(senderAccountIban);
-                });
+                .orElseThrow(throwUnknownAccountException(senderAccountIban));
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
-                .orElseThrow(()-> {
-                    throw new UnknownAccountException(receiverAccountIban);
-                });
+                .orElseThrow(throwUnknownAccountException(receiverAccountIban));
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccount.getIban());
         receiverAccount.credit(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban(),senderAccount.getFirstName(),senderAccount.getLastName());
         accountRepository.update(senderAccount,receiverAccount);
+    }
+
+    private Supplier<UnknownAccountException> throwUnknownAccountException(String iban){
+        return ()-> {
+          throw new UnknownAccountException(iban);
+        };
     }
 }
