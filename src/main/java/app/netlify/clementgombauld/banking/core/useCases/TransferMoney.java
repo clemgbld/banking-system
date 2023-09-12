@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 import app.netlify.clementgombauld.banking.core.domain.DateProvider;
 import app.netlify.clementgombauld.banking.core.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -24,6 +25,9 @@ public class TransferMoney {
     public void handle(String senderAccountIban, BigDecimal transactionAmount,String receiverAccountIban) {
         Instant creationDate = dateProvider.now();
         Account senderAccount = accountRepository.findByIban(senderAccountIban);
+        if(senderAccount == null){
+            throw new UnknownAccountException(senderAccountIban);
+        }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();

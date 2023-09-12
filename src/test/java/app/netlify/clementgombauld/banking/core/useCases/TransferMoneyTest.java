@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InsufficientBalanceException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryDateProvider;
@@ -121,5 +122,25 @@ class TransferMoneyTest {
 
        assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(InsufficientBalanceException.class);
    }
+
+   @Test
+    void shouldThrowAnExceptionWhenTheSenderAccountDoesNotExists(){
+       String senderAccountIban = "FR1420041010050500013M02606";
+       String receiverAccountIban = "FR3429051014050500014M02606";
+       String senderTransactionId = "13543A";
+       String receiverTransactionId= "143E53245";
+
+       BigDecimal transactionAmount = new BigDecimal(5);
+       Map<String,Account> dataSource = new HashMap<>();
+
+       DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
+       AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+       IdGenerator idGenerator = new InMemoryIdGenerator(List.of(senderTransactionId,receiverTransactionId));
+       TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator);
+
+       assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(UnknownAccountException.class)
+               .hasMessage("There is no account with the iban: " + senderAccountIban);
+   }
+
 
 }
