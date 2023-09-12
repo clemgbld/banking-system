@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.core.domain;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InsufficientBalanceException;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public record Balance(BigDecimal value) {
 
@@ -23,5 +24,15 @@ public record Balance(BigDecimal value) {
         return value.subtract(amount).compareTo(new BigDecimal(ZERO_BALANCE)) < COMPARATOR;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Balance balance)) return false;
+        return value.equals(balance.value);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
 }
