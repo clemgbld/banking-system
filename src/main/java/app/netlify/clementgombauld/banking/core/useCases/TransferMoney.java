@@ -29,6 +29,9 @@ public class TransferMoney {
             throw new UnknownAccountException(senderAccountIban);
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
+        if(receiverAccount == null){
+            throw new UnknownAccountException(receiverAccountIban);
+        }
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccount.getIban());

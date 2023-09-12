@@ -142,5 +142,34 @@ class TransferMoneyTest {
                .hasMessage("There is no account with the iban: " + senderAccountIban);
    }
 
+    @Test
+    void shouldThrowAnExceptionWhenTheReceiverAccountDoesNotExists(){
+        String senderAccountIban = "FR1420041010050500013M02606";
+        String receiverAccountIban = "FR3429051014050500014M02606";
+        String senderAccountBIC = "AGRIFFRII89";
+        String receiverAccountBIC = "AGRIFFRII89";
+        String senderAccountId = "1";
+        String senderTransactionId = "13543A";
+        String receiverTransactionId= "143E53245";
+        String senderAccountFirstName = "Paul";
+        String senderAccountLastName = "Duboit";
+        String receiverAccountFirstName = "John";
+        String receiverAccountLastName = "Smith";
+
+        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName,receiverAccountLastName)));
+
+        BigDecimal transactionAmount = new BigDecimal(5);
+        Map<String,Account> dataSource = new HashMap<>();
+        dataSource.put(senderAccountIban,existingSenderAccount);
+
+        DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
+        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(senderTransactionId,receiverTransactionId));
+        TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator);
+
+        assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(UnknownAccountException.class)
+                .hasMessage("There is no account with the iban: " + receiverAccountIban);
+    }
+
 
 }
