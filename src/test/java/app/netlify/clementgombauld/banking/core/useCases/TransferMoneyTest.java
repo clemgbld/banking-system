@@ -54,8 +54,8 @@ class TransferMoneyTest {
 
         transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban);
 
-        Account senderAccount = accountRepository.findByIban(senderAccountIban);
-        Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
+        Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
+        Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
       assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
       assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
       assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName)));

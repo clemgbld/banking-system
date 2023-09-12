@@ -1,7 +1,9 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
+import java.util.Optional;
+
 public interface AccountRepository {
-    Account findByIban(String iban);
+    Optional<Account> findByIban(String iban);
 
     void update(Account ...account);
 }

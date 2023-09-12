@@ -24,14 +24,14 @@ public class TransferMoney {
 
     public void handle(String senderAccountIban, BigDecimal transactionAmount,String receiverAccountIban) {
         Instant creationDate = dateProvider.now();
-        Account senderAccount = accountRepository.findByIban(senderAccountIban);
-        if(senderAccount == null){
-            throw new UnknownAccountException(senderAccountIban);
-        }
-        Account receiverAccount = accountRepository.findByIban(receiverAccountIban);
-        if(receiverAccount == null){
-            throw new UnknownAccountException(receiverAccountIban);
-        }
+        Account senderAccount = accountRepository.findByIban(senderAccountIban)
+                .orElseThrow(()-> {
+                    throw new UnknownAccountException(senderAccountIban);
+                });
+        Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
+                .orElseThrow(()-> {
+                    throw new UnknownAccountException(receiverAccountIban);
+                });
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccount.getIban());

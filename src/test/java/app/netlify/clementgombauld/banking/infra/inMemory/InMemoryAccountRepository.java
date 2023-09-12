@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 public class InMemoryAccountRepository implements AccountRepository {
     private final Map<String,Account> dataSource ;
@@ -14,8 +15,8 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     @Override
-    public Account findByIban(String iban) {
-        return dataSource.get(iban);
+    public Optional<Account> findByIban(String iban) {
+        return Optional.ofNullable(dataSource.get(iban));
     }
 
     @Override
