@@ -45,7 +45,7 @@ public class Account {
         return balance.value();
     }
 
-    public void credit(String transactionId, Instant creationDate,BigDecimal transactionAmount,String senderIban,String firstName,String lastName) {
+    public void deposit(String transactionId, Instant creationDate, BigDecimal transactionAmount, String senderIban, String firstName, String lastName) {
        makeTransaction(transactionId,creationDate,transactionAmount,senderIban,firstName,lastName);
     }
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverIban) {
