@@ -90,9 +90,6 @@ public class Account {
         return String.format("%s %s",firstName,lastName);
     }
 
-
-
-
     public String getFirstName() {
         return firstName;
     }

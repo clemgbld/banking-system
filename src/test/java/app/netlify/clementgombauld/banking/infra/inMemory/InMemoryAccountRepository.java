@@ -23,4 +23,9 @@ public class InMemoryAccountRepository implements AccountRepository {
     public void update(Account ...accounts) {
         Arrays.stream(accounts).forEach(account -> dataSource.put(account.getIban(),account));
     }
+
+    @Override
+    public void update(Account account) {
+        dataSource.put(account.getIban(),account);
+    }
 }
