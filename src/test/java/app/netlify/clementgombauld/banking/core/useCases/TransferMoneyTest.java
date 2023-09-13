@@ -43,7 +43,7 @@ class TransferMoneyTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName,receiverAccountLastName)));
+        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
         dataSource.put(senderAccountIban,existingSenderAccount);
         dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),receiverAccountFirstName,receiverAccountLastName,null, List.of()));
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
@@ -58,8 +58,8 @@ class TransferMoneyTest {
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
       assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
       assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
-      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName)));
-      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountFirstName,senderAccountLastName)));
+      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName)));
+      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountFirstName + " " +senderAccountLastName)));
     }
 
     @Test
@@ -112,7 +112,7 @@ class TransferMoneyTest {
        BigDecimal transactionAmount = new BigDecimal(1000);
        Map<String,Account> dataSource = new HashMap<>();
 
-       Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName,receiverAccountLastName)));
+       Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName+ " " +receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
        dataSource.put(senderAccountIban,existingSenderAccount);
        dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),receiverAccountFirstName,receiverAccountLastName,null, List.of()));
        DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
@@ -156,7 +156,7 @@ class TransferMoneyTest {
         String receiverAccountFirstName = "John";
         String receiverAccountLastName = "Smith";
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName,receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName,receiverAccountLastName)));
+        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " +receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
 
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();

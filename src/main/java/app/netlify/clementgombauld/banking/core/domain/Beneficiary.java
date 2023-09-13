@@ -7,29 +7,23 @@ public class Beneficiary {
 
     private final String bic;
 
-    private final String firstName;
+    private final String name;
 
-    private final String lastName;
-
-    public Beneficiary(String id, String iban, String bic, String firstName, String lastName) {
+    public Beneficiary(String id, String iban, String bic,String name) {
         this.id = id;
         this.iban = iban;
         this.bic = bic;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
     }
 
     public String getIban() {
         return iban;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName(){
+        return name;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
 
     boolean hasIban(String iban){
        return this.iban.equals(iban);

@@ -46,12 +46,12 @@ public class Account {
     }
 
     public void deposit(String transactionId, Instant creationDate, BigDecimal transactionAmount, String senderIban, String firstName, String lastName) {
-       makeTransaction(transactionId,creationDate,transactionAmount,senderIban,firstName,lastName);
+       makeTransaction(transactionId,creationDate,transactionAmount,senderIban,buildFullName(firstName,lastName));
     }
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverIban) {
         balance.checkBalanceSufficiency(transactionAmount);
         Beneficiary beneficiary = findBeneficiary(receiverIban);
-        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getFirstName(),beneficiary.getLastName());
+        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getName());
     }
 
     private Beneficiary findBeneficiary(String beneficiaryIban) {
@@ -71,9 +71,13 @@ public class Account {
         return transactions;
     }
 
-    private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban,String firstName,String lastName){
+    private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban,String name){
         balance = balance.add(transactionAmount);
-        transactions.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,firstName,lastName));
+        transactions.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,name));
+    }
+
+    private String buildFullName(String firstName,String lastName){
+        return String.format("%s %s",firstName,lastName);
     }
 
 
