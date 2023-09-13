@@ -54,6 +54,12 @@ public class Account {
         makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getName());
     }
 
+    public boolean isInDifferentBank(String receiverAccountIban) {
+        Beneficiary beneficiary = findBeneficiary(receiverAccountIban);
+        return beneficiary.isInDifferentBank(bic);
+
+    }
+
     private Beneficiary findBeneficiary(String beneficiaryIban) {
         return beneficiaries.stream()
                 .filter(b -> b.hasIban(beneficiaryIban))
@@ -76,9 +82,15 @@ public class Account {
         transactions.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,name));
     }
 
+    public String getFullName(){
+        return buildFullName(firstName,lastName);
+    }
+
     private String buildFullName(String firstName,String lastName){
         return String.format("%s %s",firstName,lastName);
     }
+
+
 
 
     public String getFirstName() {
@@ -88,4 +100,6 @@ public class Account {
     public String getLastName() {
         return lastName;
     }
+
+
 }

@@ -28,4 +28,8 @@ public class Beneficiary {
     boolean hasIban(String iban){
        return this.iban.equals(iban);
     }
+
+    public boolean isInDifferentBank(String bic) {
+        return !this.bic.equals(bic);
+    }
 }
