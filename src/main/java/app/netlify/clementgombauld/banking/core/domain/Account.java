@@ -39,6 +39,75 @@ public class Account {
         this.beneficiaries = beneficiaries;
     }
 
+    private Account(Builder builder) {
+        this.id = builder.id;
+        this.iban = builder.iban;
+        this.bic = builder.bic;
+        this.balance = new Balance(builder.balance);
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.transactions = Optional.ofNullable(builder.transactions).orElse(new ArrayList<>());
+        this.beneficiaries = builder.beneficiaries;
+    }
+
+
+    public static class Builder {
+        private String id;
+        private  String iban;
+        private  String bic;
+        private BigDecimal balance;
+        private String firstName;
+        private String lastName;
+        private List<MoneyTransferred> transactions;
+        private List<Beneficiary> beneficiaries;
+
+
+
+        public Builder withId(String id){
+            this.id = id;
+            return this;
+        }
+
+        public Builder withIban(String iban){
+            this.iban = iban;
+            return this;
+        }
+
+        public Builder withBic(String bic){
+            this.bic = bic;
+            return this;
+        }
+
+        public Builder withBalance(BigDecimal money){
+            this.balance = money;
+            return this;
+        }
+
+        public Builder withFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder withLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder withTransactions(List<MoneyTransferred> transactions) {
+            this.transactions = transactions;
+            return this;
+        }
+
+        public Builder withBeneficiaries(List<Beneficiary> beneficiaries) {
+            this.beneficiaries = beneficiaries;
+            return this;
+        }
+
+        public Account build() {
+            return new Account(this);
+        }
+    }
+
 
 
     public BigDecimal getBalance() {
