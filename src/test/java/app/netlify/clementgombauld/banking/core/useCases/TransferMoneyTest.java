@@ -44,9 +44,28 @@ class TransferMoneyTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
+        Account existingSenderAccount = new Account.Builder()
+                .withId(senderAccountId)
+                .withIban(senderAccountIban)
+                .withBic(senderAccountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(senderAccountFirstName)
+                .withLastName(senderAccountLastName)
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+                .build();
+
         dataSource.put(senderAccountIban,existingSenderAccount);
-        dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),receiverAccountFirstName,receiverAccountLastName,null, List.of()));
+        dataSource.put(receiverAccountIban,new Account.Builder()
+                .withId(receiverAccountId)
+                .withIban(receiverAccountIban)
+                .withBic(receiverAccountBIC)
+                .withBalance(new BigDecimal(100))
+                .withFirstName(receiverAccountFirstName)
+                .withLastName(receiverAccountLastName)
+                .withTransactions(null)
+                .withBeneficiaries(List.of())
+                .build());
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
         Instant currentInstant = dateProvider.now();
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
@@ -83,7 +102,17 @@ class TransferMoneyTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
+        Account existingSenderAccount = new Account.Builder()
+                .withId(senderAccountId)
+                .withIban(senderAccountIban)
+                .withBic(senderAccountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(senderAccountFirstName)
+                .withLastName(senderAccountLastName)
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+                .build();
+
         dataSource.put(senderAccountIban,existingSenderAccount);
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
         Instant currentInstant = dateProvider.now();
@@ -122,9 +151,29 @@ class TransferMoneyTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,List.of(), List.of());
+          Account existingSenderAccount = new Account.Builder()
+                .withId(senderAccountId)
+                .withIban(senderAccountIban)
+                .withBic(senderAccountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(senderAccountFirstName)
+                .withLastName(senderAccountLastName)
+                .withTransactions(List.of())
+                .withBeneficiaries(List.of())
+                .build();
         dataSource.put(senderAccountIban,existingSenderAccount);
-        dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),receiverAccountFirstName,receiverAccountLastName,null, List.of()));
+
+        dataSource.put(receiverAccountIban,new Account.Builder()
+                .withId(receiverAccountId)
+                .withIban(receiverAccountIban)
+                .withBic(receiverAccountBIC)
+                .withBalance(new BigDecimal(100))
+                .withFirstName(receiverAccountFirstName)
+                .withLastName(receiverAccountLastName)
+                .withTransactions(null)
+                .withBeneficiaries(List.of())
+                .build());
+
         DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
         IdGenerator idGenerator = new InMemoryIdGenerator(List.of(senderTransactionId,receiverTransactionId));
@@ -153,9 +202,27 @@ class TransferMoneyTest {
        BigDecimal transactionAmount = new BigDecimal(1000);
        Map<String,Account> dataSource = new HashMap<>();
 
-       Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName+ " " +receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
+       Account existingSenderAccount = new Account.Builder()
+               .withId(senderAccountId)
+               .withIban(senderAccountIban)
+               .withBic(senderAccountBIC)
+               .withBalance(new BigDecimal(105))
+               .withFirstName(senderAccountFirstName)
+               .withLastName(senderAccountLastName)
+               .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+               .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+               .build();
        dataSource.put(senderAccountIban,existingSenderAccount);
-       dataSource.put(receiverAccountIban,new Account(receiverAccountId,receiverAccountIban,receiverAccountBIC,new BigDecimal(100),receiverAccountFirstName,receiverAccountLastName,null, List.of()));
+       dataSource.put(receiverAccountIban,new Account.Builder()
+               .withId(receiverAccountId)
+               .withIban(receiverAccountIban)
+               .withBic(receiverAccountBIC)
+               .withBalance(new BigDecimal(100))
+               .withFirstName(receiverAccountFirstName)
+               .withLastName(receiverAccountLastName)
+               .withTransactions(null)
+               .withBeneficiaries(List.of())
+               .build());
        DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(senderTransactionId,receiverTransactionId));
@@ -199,7 +266,16 @@ class TransferMoneyTest {
         String receiverAccountFirstName = "John";
         String receiverAccountLastName = "Smith";
 
-        Account existingSenderAccount = new Account(senderAccountId,senderAccountIban,senderAccountBIC,new BigDecimal(105) , senderAccountFirstName, senderAccountLastName,new ArrayList<>(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " +receiverAccountLastName))), List.of(new Beneficiary("AE434",receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
+        Account existingSenderAccount = new Account.Builder()
+                .withId(senderAccountId)
+                .withIban(senderAccountIban)
+                .withBic(senderAccountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(senderAccountFirstName)
+                .withLastName(senderAccountLastName)
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+                .build();
 
         BigDecimal transactionAmount = new BigDecimal(5);
         Map<String,Account> dataSource = new HashMap<>();

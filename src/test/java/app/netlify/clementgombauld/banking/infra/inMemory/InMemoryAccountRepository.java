@@ -15,8 +15,19 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     @Override
-    public Optional<Account> findByIban(String iban) {
-        return Optional.ofNullable(dataSource.get(iban));
+    public Optional<Account> findByIban(String iban){
+       Account nullableAccount =  dataSource.getOrDefault(iban,null);
+       if(nullableAccount == null) return Optional.empty();
+       return Optional.of(new Account.Builder()
+               .withId(nullableAccount.getId())
+               .withIban(nullableAccount.getIban())
+               .withBic(nullableAccount.getBic())
+               .withBalance(nullableAccount.getBalance())
+               .withFirstName(nullableAccount.getFirstName())
+               .withLastName(nullableAccount.getLastName())
+               .withTransactions(nullableAccount.getTransactions())
+               .withBeneficiaries(nullableAccount.getBeneficiaries())
+               .build());
     }
 
     @Override

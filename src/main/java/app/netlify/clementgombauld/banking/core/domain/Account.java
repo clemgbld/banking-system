@@ -27,17 +27,6 @@ public class Account {
 
     private final List<Beneficiary> beneficiaries;
 
-    public Account(String id, String iban, String bic, BigDecimal balance, String firstName, String lastName, List<MoneyTransferred> transactions, List<Beneficiary> beneficiaries) {
-        this.id = id;
-        this.iban = iban;
-        this.bic = bic;
-        this.balance = new Balance(balance);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.transactions = Optional.ofNullable(transactions)
-                .orElse(new ArrayList<>());
-        this.beneficiaries = beneficiaries;
-    }
 
     private Account(Builder builder) {
         this.id = builder.id;
@@ -49,7 +38,6 @@ public class Account {
         this.transactions = Optional.ofNullable(builder.transactions).orElse(new ArrayList<>());
         this.beneficiaries = builder.beneficiaries;
     }
-
 
 
 
@@ -65,7 +53,7 @@ public class Account {
 
 
 
-        public Builder withId(String id){
+        public  Builder withId(String id){
             this.id = id;
             return this;
         }
@@ -153,6 +141,15 @@ public class Account {
         transactions.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,name));
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getBic() {
+        return bic;
+    }
+
+
     public String getFullName(){
         return buildFullName(firstName,lastName);
     }
@@ -170,7 +167,7 @@ public class Account {
     }
 
     public List<Beneficiary> getBeneficiaries() {
-        return List.of();
+        return beneficiaries;
     }
 
 
