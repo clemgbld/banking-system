@@ -51,6 +51,8 @@ public class Account {
     }
 
 
+
+
     public static class Builder {
         private String id;
         private  String iban;
@@ -165,6 +167,10 @@ public class Account {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public List<Beneficiary> getBeneficiaries() {
+        return List.of();
     }
 
 
