@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIdException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.Test;
@@ -95,6 +96,28 @@ class AddBeneficiaryTest {
       assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
               .isInstanceOf(DuplicatedBeneficiaryException.class)
               .hasMessage("The beneficiary with the iban : " + beneficiaryIban + " is already a beneficiary of the account " + accountId);
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheAccountIsUnknown(){
+        String accountId = "1";
+        String beneficiaryId = "1234";
+        String beneficiaryIban = "FR7630004000700000157389538";
+        String beneficiaryBic = "BNPAFRPP123";
+        String beneficiaryName ="Bob Dylan";
+
+        Map<String,Account> dataSource = new HashMap<>();
+
+
+        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+
+        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(beneficiaryId));
+
+        AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
+
+        assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
+                .isInstanceOf(UnknownAccountWithIdException.class)
+                .hasMessage("There is no account with the id: " + accountId);
     }
 
 
