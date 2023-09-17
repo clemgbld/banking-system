@@ -123,7 +123,7 @@ class TransferMoneyTest {
         TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator,extraBankTransactionsGateway);
 
 
-        transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban);
+         transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban);
 
         Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
         assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));

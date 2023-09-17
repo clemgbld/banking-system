@@ -39,6 +39,10 @@ public class Account {
         this.beneficiaries = builder.beneficiaries;
     }
 
+    public void addBeneficiary(String beneficiaryId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
+       Beneficiary newBeneficiary = new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName);
+       beneficiaries.add(newBeneficiary);
+    }
 
 
     public static class Builder {

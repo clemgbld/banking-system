@@ -1,11 +1,13 @@
 package app.netlify.clementgombauld.banking.core.useCases;
 
-import app.netlify.clementgombauld.banking.core.domain.Account;
-import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
-import app.netlify.clementgombauld.banking.core.domain.Beneficiary;
+import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
+import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AddBeneficiaryTest {
 
-    //@Test
+    @Test
     void shouldAddBeneficiaryToTheGivenAccount(){
+        String accountIban = "FR1420041010050500013M02606";
+        String accountBIC = "AGRIFFRII89";
+        String accountId = "1";
+        String accountFirstName = "Paul";
+        String accountLastName = "Duboit";
         String beneficiaryId = "1234";
         String beneficiaryIban = "FR7630004000700000157389538";
         String beneficiaryBic = "BNPAFRPP123";
@@ -25,10 +32,29 @@ class AddBeneficiaryTest {
 
         Map<String,Account> dataSource = new HashMap<>();
 
+        Account existingSenderAccount = new Account.Builder()
+                .withId(accountId)
+                .withIban(accountIban)
+                .withBic(accountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(accountFirstName)
+                .withLastName(accountLastName)
+                .withBeneficiaries(new ArrayList<>())
+                .build();
+
+        dataSource.put(accountId,existingSenderAccount);
+
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
-        String accountId = "3433";
-       // dataSource.put(accountId,A)
-        Account account = accountRepository.findByIban("FR7630004000700000237389538").orElseThrow(RuntimeException::new);
+
+        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(beneficiaryId));
+
+        AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
+
+        addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName);
+
+
+
+        Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
 
       assertThat(account.getBeneficiaries()).usingRecursiveComparison().isEqualTo(List.of(new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName)));
     }
