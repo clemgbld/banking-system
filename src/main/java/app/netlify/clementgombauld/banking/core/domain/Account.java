@@ -1,5 +1,6 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
+import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 
 import java.math.BigDecimal;
@@ -122,6 +123,9 @@ public class Account {
 
     public void addBeneficiary(String beneficiaryId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
         Beneficiary beneficiary = new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName);
+        beneficiaries.stream().filter(b -> b.hasIban(beneficiary.getIban())).findFirst().ifPresent((b)-> {
+            throw new DuplicatedBeneficiaryException(beneficiaryIban,id);
+        });
         beneficiaries.add(beneficiary);
     }
 
