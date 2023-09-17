@@ -2,7 +2,7 @@ package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InsufficientBalanceException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryDateProvider;
@@ -248,7 +248,7 @@ class TransferMoneyTest {
        ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(List.of());
        TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator, extraBankTransactionsGateway);
 
-       assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(UnknownAccountException.class)
+       assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(UnknownAccountWithIbanException.class)
                .hasMessage("There is no account with the iban: " + senderAccountIban);
    }
 
@@ -287,7 +287,7 @@ class TransferMoneyTest {
         ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(List.of());
         TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator, extraBankTransactionsGateway);
 
-        assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(UnknownAccountException.class)
+        assertThatThrownBy(()-> transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban)).isInstanceOf(UnknownAccountWithIbanException.class)
                 .hasMessage("There is no account with the iban: " + receiverAccountIban);
     }
 

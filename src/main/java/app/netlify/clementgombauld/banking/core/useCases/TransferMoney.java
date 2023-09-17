@@ -1,7 +1,7 @@
 package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -42,9 +42,9 @@ public class TransferMoney {
         accountRepository.update(senderAccount,receiverAccount);
     }
 
-    private Supplier<UnknownAccountException> throwUnknownAccountException(String iban){
+    private Supplier<UnknownAccountWithIbanException> throwUnknownAccountException(String iban){
         return ()-> {
-          throw new UnknownAccountException(iban);
+          throw new UnknownAccountWithIbanException(iban);
         };
     }
 }

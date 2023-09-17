@@ -40,9 +40,6 @@ public class Account {
         this.beneficiaries = builder.beneficiaries;
     }
 
-
-
-
     public static class Builder {
         private String id;
         private  String iban;
@@ -109,31 +106,32 @@ public class Account {
     public void deposit(String transactionId, Instant creationDate, BigDecimal transactionAmount, String senderIban, String firstName, String lastName) {
        makeTransaction(transactionId,creationDate,transactionAmount,senderIban,buildFullName(firstName,lastName));
     }
-    public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverIban) {
+    public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverAccountIban) {
         balance.checkBalanceSufficiency(transactionAmount);
-        Beneficiary beneficiary = findBeneficiary(receiverIban);
-        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverIban,beneficiary.getName());
+        Beneficiary beneficiary = findBeneficiaryByIban(receiverAccountIban).
+                orElseThrow(()-> new UnknownBeneficiaryException(receiverAccountIban));
+        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverAccountIban,beneficiary.getName());
     }
 
     public boolean isInDifferentBank(String receiverAccountIban) {
-        Beneficiary beneficiary = findBeneficiary(receiverAccountIban);
+        Beneficiary beneficiary = findBeneficiaryByIban(receiverAccountIban)
+                .orElseThrow(()-> new UnknownBeneficiaryException(receiverAccountIban));
         return beneficiary.isInDifferentBank(bic);
 
     }
 
     public void addBeneficiary(String beneficiaryId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
         Beneficiary beneficiary = new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName);
-        beneficiaries.stream().filter(b -> b.hasIban(beneficiary.getIban())).findFirst().ifPresent((b)-> {
+        findBeneficiaryByIban(beneficiaryIban).ifPresent((b)-> {
             throw new DuplicatedBeneficiaryException(beneficiaryIban,id);
         });
         beneficiaries.add(beneficiary);
     }
 
-    private Beneficiary findBeneficiary(String beneficiaryIban) {
+    private Optional<Beneficiary> findBeneficiaryByIban(String beneficiaryIban) {
         return beneficiaries.stream()
                 .filter(b -> b.hasIban(beneficiaryIban))
-                .findFirst()
-                .orElseThrow(()-> new UnknownBeneficiaryException(beneficiaryIban));
+                .findFirst();
     }
 
 
