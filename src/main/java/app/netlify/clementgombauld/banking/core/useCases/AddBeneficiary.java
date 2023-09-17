@@ -13,9 +13,11 @@ public class AddBeneficiary {
         this.idGenerator = idGenerator;
     }
 
-    public void handle(String accountId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
+    public String handle(String accountId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
         Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
-        account.addBeneficiary(idGenerator.generate(),beneficiaryIban,beneficiaryBic,beneficiaryName);
+        String beneficiaryId = idGenerator.generate();
+        account.addBeneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName);
         accountRepository.update(account);
+        return beneficiaryId;
     }
 }

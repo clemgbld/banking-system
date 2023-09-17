@@ -50,13 +50,12 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
 
-        addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName);
-
-
+       String expectedId = addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName);
 
         Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
 
       assertThat(account.getBeneficiaries()).usingRecursiveComparison().isEqualTo(List.of(new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName)));
+      assertThat(expectedId).isEqualTo(beneficiaryId);
     }
 
 
