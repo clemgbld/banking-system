@@ -27,7 +27,7 @@ class TransferMoneyTest {
     @Test
     void shouldPerformAMoneyTransferBetweenTwoAccountsInTheSameBank(){
         String senderAccountIban = "FR1420041010050500013M02606";
-        String receiverAccountIban = "FR3429051014050500014M02606";
+        String receiverAccountIban = "FR5030004000700000157389538";
         String senderAccountBIC = "AGRIFFRII89";
         String receiverAccountBIC = "AGRIFFRII89";
         String senderAccountId = "1";
@@ -86,7 +86,7 @@ class TransferMoneyTest {
     @Test
     void shouldPerformAMoneyTransferBetweenTwoAccountsThatAreNotInTheSameBank(){
         String senderAccountIban = "FR1420041010050500013M02606";
-        String receiverAccountIban = "FR3429051014050500014M02606";
+        String receiverAccountIban = "FR5030004000700000157389538";
         String senderAccountBIC = "AGRIFFRII89";
         String receiverAccountBIC = "AGRIFBCII89";
         String senderAccountId = "1";
@@ -187,7 +187,7 @@ class TransferMoneyTest {
    @Test
     void shouldThrowAnExceptionWhenTheSenderAccountBalanceIsInsufficient(){
        String senderAccountIban = "FR1420041010050500013M02606";
-       String receiverAccountIban = "FR3429051014050500014M02606";
+       String receiverAccountIban = "FR5030004000700000157389538";
        String senderAccountBIC = "AGRIFFRII89";
        String receiverAccountBIC = "AGRIFFRII89";
        String senderAccountId = "1";
@@ -255,7 +255,7 @@ class TransferMoneyTest {
     @Test
     void shouldThrowAnExceptionWhenTheReceiverAccountDoesNotExists(){
         String senderAccountIban = "FR1420041010050500013M02606";
-        String receiverAccountIban = "FR3429051014050500014M02606";
+        String receiverAccountIban = "FR5030004000700000157389538";
         String senderAccountBIC = "AGRIFFRII89";
         String receiverAccountBIC = "AGRIFFRII89";
         String senderAccountId = "1";
