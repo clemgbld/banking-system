@@ -15,7 +15,7 @@ public record Iban(String value) {
             var iban = org.iban4j.Iban.valueOf(value);
             return iban.toString();
         }catch (Exception e){
-            throw new InvalidIbanException();
+            throw new InvalidIbanException(value);
         }
     }
 

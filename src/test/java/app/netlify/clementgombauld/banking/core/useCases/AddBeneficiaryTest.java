@@ -157,8 +157,8 @@ class AddBeneficiaryTest {
        AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
 
        assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
-               .isInstanceOf(InvalidIbanException.class);
-
+               .isInstanceOf(InvalidIbanException.class)
+               .hasMessage("iban: " + beneficiaryIban + " is invalid.");
     }
 
 
