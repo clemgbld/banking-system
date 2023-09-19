@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIdException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
@@ -26,7 +27,7 @@ class AddBeneficiaryTest {
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
         String beneficiaryId = "1234";
-        String beneficiaryIban = "FR7630004000700000157389538";
+        String beneficiaryIban = "FR5030004000700000157389538";
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName ="Bob Dylan";
 
@@ -66,7 +67,7 @@ class AddBeneficiaryTest {
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
         String beneficiaryId = "1234";
-        String beneficiaryIban = "FR7630004000700000157389538";
+        String beneficiaryIban = "FR5030004000700000157389538";
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName ="Bob Dylan";
 
@@ -102,7 +103,7 @@ class AddBeneficiaryTest {
     void shouldThrowAnExceptionWhenTheAccountIsUnknown(){
         String accountId = "1";
         String beneficiaryId = "1234";
-        String beneficiaryIban = "FR7630004000700000157389538";
+        String beneficiaryIban = "FR5030004000700000157389538";
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName ="Bob Dylan";
 
@@ -118,6 +119,46 @@ class AddBeneficiaryTest {
         assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
                 .isInstanceOf(UnknownAccountWithIdException.class)
                 .hasMessage("There is no account with the id: " + accountId);
+    }
+
+    @Test
+    void shouldThrowAnInvalidIbanExceptionWhenTheBeneficiaryIbanIsNotValid(){
+        String accountIban = "FR1420041010050500013M02606";
+        String accountBIC = "AGRIFFRII89";
+        String accountId = "1";
+        String accountFirstName = "Paul";
+        String accountLastName = "Duboit";
+        String beneficiaryId = "1234";
+        String beneficiaryIban = "FR6300000070000";
+        String beneficiaryBic = "BNPAFRPP123";
+        String beneficiaryName ="Bob Dylan";
+
+        Map<String,Account> dataSource = new HashMap<>();
+
+        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId,"FR5030004000700000157389538",beneficiaryBic,beneficiaryName);
+        List<Beneficiary> existingBeneficiaries = new ArrayList<>();
+        existingBeneficiaries.add(existingBeneficiary);
+        Account existingSenderAccount = new Account.Builder()
+                .withId(accountId)
+                .withIban(accountIban)
+                .withBic(accountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(accountFirstName)
+                .withLastName(accountLastName)
+                .withBeneficiaries(existingBeneficiaries)
+                .build();
+
+        dataSource.put(accountId,existingSenderAccount);
+
+        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+
+        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(beneficiaryId));
+
+       AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
+
+       assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
+               .isInstanceOf(InvalidIbanException.class);
+
     }
 
 

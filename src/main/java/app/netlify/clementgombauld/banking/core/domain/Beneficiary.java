@@ -1,9 +1,12 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
+import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
+import org.iban4j.Iban;
+
 public class Beneficiary {
     private final String id;
 
-    private final String iban;
+    private final Iban iban;
 
     private final String bic;
 
@@ -11,13 +14,18 @@ public class Beneficiary {
 
     public Beneficiary(String id, String iban, String bic,String name) {
         this.id = id;
-        this.iban = iban;
+        try {
+            this.iban = Iban.valueOf(iban);
+        }catch (Exception e){
+            throw new InvalidIbanException();
+        }
+
         this.bic = bic;
         this.name = name;
     }
 
     public String getIban() {
-        return iban;
+        return iban.toString();
     }
 
     public String getName(){
@@ -26,7 +34,7 @@ public class Beneficiary {
 
 
     boolean hasIban(String iban){
-       return this.iban.equals(iban);
+       return getIban().equals(iban);
     }
 
     public boolean isInDifferentBank(String bic) {
