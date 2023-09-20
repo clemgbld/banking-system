@@ -110,14 +110,12 @@ public class Account {
     }
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverAccountIban) {
         balance.checkBalanceSufficiency(transactionAmount);
-        Beneficiary beneficiary = findBeneficiaryByIban(receiverAccountIban).
-                orElseThrow(()-> new UnknownBeneficiaryException(receiverAccountIban));
+        Beneficiary beneficiary = findBeneficiaryByIbanOrThrow(receiverAccountIban);
         makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverAccountIban,beneficiary.getName());
     }
 
     public boolean isInDifferentBank(String receiverAccountIban) {
-        Beneficiary beneficiary = findBeneficiaryByIban(receiverAccountIban)
-                .orElseThrow(()-> new UnknownBeneficiaryException(receiverAccountIban));
+        Beneficiary beneficiary = findBeneficiaryByIbanOrThrow(receiverAccountIban);
         return beneficiary.isInDifferentBank(bic);
 
     }
@@ -130,10 +128,16 @@ public class Account {
         beneficiaries.add(beneficiary);
     }
 
-    public void deleteBeneficiaryByIban(String beneficiaryIban) {
+    public void deleteBeneficiary(String beneficiaryIban) {
+        findBeneficiaryByIbanOrThrow(beneficiaryIban);
         this.beneficiaries = beneficiaries.stream()
                 .filter(b-> !b.hasIban(beneficiaryIban))
                 .toList();
+    }
+
+    private Beneficiary findBeneficiaryByIbanOrThrow(String beneficiaryIban) {
+      return findBeneficiaryByIban(beneficiaryIban).
+                orElseThrow(()-> new UnknownBeneficiaryException(beneficiaryIban));
     }
 
     private Optional<Beneficiary> findBeneficiaryByIban(String beneficiaryIban) {

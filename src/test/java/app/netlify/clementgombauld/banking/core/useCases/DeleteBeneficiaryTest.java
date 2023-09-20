@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 import app.netlify.clementgombauld.banking.core.domain.Beneficiary;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import org.junit.jupiter.api.Test;
 
@@ -80,6 +81,37 @@ class DeleteBeneficiaryTest {
         assertThatThrownBy(()-> deleteBeneficiary.handle(accountIban,beneficiaryIban))
                 .isInstanceOf(UnknownAccountWithIbanException.class)
                 .hasMessage("There is no account with the iban: " + accountIban);
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheBeneficiaryToDeleteDoesNotExist(){
+        String accountIban = "FR1420041010050500013M02606";
+        String accountBIC = "AGRIFFRII89";
+        String accountId = "1";
+        String accountFirstName = "Paul";
+        String accountLastName = "Duboit";
+        String beneficiaryIban = "FR5030004000700000157389538";
+
+        Map<String,Account> dataSource = new HashMap<>();
+
+        Account existingAccount = new Account.Builder()
+                .withId(accountId)
+                .withIban(accountIban)
+                .withBic(accountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(accountFirstName)
+                .withLastName(accountLastName)
+                .withBeneficiaries(new ArrayList<>())
+                .build();
+
+        dataSource.put(accountIban,existingAccount);
+
+        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+
+        DeleteBeneficiary deleteBeneficiary = new DeleteBeneficiary(accountRepository);
+
+        assertThatThrownBy(()-> deleteBeneficiary.handle(accountIban,beneficiaryIban)).isInstanceOf(UnknownBeneficiaryException.class)
+                .hasMessage("Cannot find any account with the iban: " + beneficiaryIban + " in your beneficiaries list.");
     }
 
 }

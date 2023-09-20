@@ -16,7 +16,7 @@ public class DeleteBeneficiary {
                 .orElseThrow(()-> {
                     throw new UnknownAccountWithIbanException(accountIban);
                 });
-        account.deleteBeneficiaryByIban(beneficiaryIban);
+        account.deleteBeneficiary(beneficiaryIban);
         accountRepository.update(account);
     }
 }
