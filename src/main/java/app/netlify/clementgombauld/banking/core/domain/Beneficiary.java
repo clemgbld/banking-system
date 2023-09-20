@@ -1,8 +1,6 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
 
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
-import org.iban4j.Bic;
 
 public class Beneficiary {
 
@@ -14,11 +12,7 @@ public class Beneficiary {
 
     public Beneficiary(String id, String iban, String bic,String name) {
         this.iban = new Iban(iban);
-        try {
-            this.bic = Bic.valueOf(bic);
-        }catch (Exception e){
-            throw new InvalidBicException();
-        }
+        this.bic = new Bic(bic);
 
         this.name = name;
     }
@@ -37,6 +31,6 @@ public class Beneficiary {
     }
 
     public boolean isInDifferentBank(String bic) {
-        return !this.bic.toString().equals(bic);
+        return !this.bic.equals(new Bic(bic));
     }
 }

@@ -28,8 +28,8 @@ class TransferMoneyTest {
     void shouldPerformAMoneyTransferBetweenTwoAccountsInTheSameBank(){
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
-        String senderAccountBIC = "AGRIFFRII89";
-        String receiverAccountBIC = "AGRIFFRII89";
+        String senderAccountBIC = "AGRIFRPP989";
+        String receiverAccountBIC = "AGRIFRPP989";
         String senderAccountId = "1";
         String receiverAccountId="2";
         String senderTransactionId = "13543A";
@@ -87,8 +87,8 @@ class TransferMoneyTest {
     void shouldPerformAMoneyTransferBetweenTwoAccountsThatAreNotInTheSameBank(){
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
-        String senderAccountBIC = "AGRIFFRII89";
-        String receiverAccountBIC = "AGRIFBCII89";
+        String senderAccountBIC = "AGRIFRPP989";
+        String receiverAccountBIC = "BNPAFRPP123";
         String senderAccountId = "1";
         String senderTransactionId = "13543A";
         String receiverTransactionId= "143E53245";
@@ -135,8 +135,8 @@ class TransferMoneyTest {
     void shouldThrowAnExceptionWhenTheReceiverAccountIsNotIsNotInTheBeneficiariesListOfTheSenderAccount(){
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR3429051014050500014M02606";
-        String senderAccountBIC = "AGRIFFRII89";
-        String receiverAccountBIC = "AGRIFFRII89";
+        String senderAccountBIC = "AGRIFRPP989";
+        String receiverAccountBIC = "AGRIFRPP989";
         String senderAccountId = "1";
         String receiverAccountId="2";
         String senderTransactionId = "13543A";
@@ -188,8 +188,8 @@ class TransferMoneyTest {
     void shouldThrowAnExceptionWhenTheSenderAccountBalanceIsInsufficient(){
        String senderAccountIban = "FR1420041010050500013M02606";
        String receiverAccountIban = "FR5030004000700000157389538";
-       String senderAccountBIC = "AGRIFFRII89";
-       String receiverAccountBIC = "AGRIFFRII89";
+       String senderAccountBIC = "AGRIFRPP989";
+       String receiverAccountBIC = "AGRIFRPP989";
        String senderAccountId = "1";
        String receiverAccountId="2";
        String senderTransactionId = "13543A";
@@ -256,8 +256,8 @@ class TransferMoneyTest {
     void shouldThrowAnExceptionWhenTheReceiverAccountDoesNotExists(){
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
-        String senderAccountBIC = "AGRIFFRII89";
-        String receiverAccountBIC = "AGRIFFRII89";
+        String senderAccountBIC = "AGRIFRPP989";
+        String receiverAccountBIC = "AGRIFRPP989";
         String senderAccountId = "1";
         String senderTransactionId = "13543A";
         String receiverTransactionId= "143E53245";
