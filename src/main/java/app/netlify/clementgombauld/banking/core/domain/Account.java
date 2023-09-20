@@ -26,7 +26,7 @@ public class Account {
 
     private final List<MoneyTransferred> transactions;
 
-    private final List<Beneficiary> beneficiaries;
+    private  List<Beneficiary> beneficiaries;
 
 
     private Account(Builder builder) {
@@ -39,6 +39,8 @@ public class Account {
         this.transactions = Optional.ofNullable(builder.transactions).orElse(new ArrayList<>());
         this.beneficiaries = builder.beneficiaries;
     }
+
+
 
     public static class Builder {
         private String id;
@@ -126,6 +128,12 @@ public class Account {
             throw new DuplicatedBeneficiaryException(beneficiaryIban,id);
         });
         beneficiaries.add(beneficiary);
+    }
+
+    public void deleteBeneficiaryByIban(String beneficiaryIban) {
+        this.beneficiaries = beneficiaries.stream()
+                .filter(b-> !b.hasIban(beneficiaryIban))
+                .toList();
     }
 
     private Optional<Beneficiary> findBeneficiaryByIban(String beneficiaryIban) {
