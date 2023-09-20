@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.core.useCases;
 import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 import app.netlify.clementgombauld.banking.core.domain.Beneficiary;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import org.junit.jupiter.api.Test;
 
@@ -61,6 +62,24 @@ class DeleteBeneficiaryTest {
         Account account = accountRepository.findByIban(accountIban).orElseThrow(RuntimeException::new);
 
         assertThat(account.getBeneficiaries()).usingRecursiveComparison().isEqualTo(List.of(firstBeneficiary));
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheAccountIsUnknown(){
+        String accountIban = "FR1420041010050500013M02606";
+        String beneficiaryIban = "FR5030004000700000157389538";
+
+
+        Map<String,Account> dataSource = new HashMap<>();
+
+
+        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+
+        DeleteBeneficiary deleteBeneficiary = new DeleteBeneficiary(accountRepository);
+
+        assertThatThrownBy(()-> deleteBeneficiary.handle(accountIban,beneficiaryIban))
+                .isInstanceOf(UnknownAccountWithIbanException.class)
+                .hasMessage("There is no account with the iban: " + accountIban);
     }
 
 }
