@@ -4,7 +4,6 @@ import java.util.Optional;
 
 public interface AccountRepository {
     Optional<Account> findByIban(String iban);
-    Optional<Account> findById(String id);
 
     void update(Account ...account);
 

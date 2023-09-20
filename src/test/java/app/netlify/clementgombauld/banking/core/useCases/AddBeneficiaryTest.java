@@ -1,10 +1,7 @@
 package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIdException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.Test;
@@ -44,7 +41,7 @@ class AddBeneficiaryTest {
                 .withBeneficiaries(new ArrayList<>())
                 .build();
 
-        dataSource.put(accountId,existingSenderAccount);
+        dataSource.put(accountIban,existingSenderAccount);
 
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
 
@@ -52,9 +49,9 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
 
-       String expectedId = addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName);
+       String expectedId = addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName);
 
-        Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
+        Account account = accountRepository.findByIban(accountIban).orElseThrow(RuntimeException::new);
 
       assertThat(account.getBeneficiaries()).usingRecursiveComparison().isEqualTo(List.of(new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName)));
       assertThat(expectedId).isEqualTo(beneficiaryId);
@@ -87,7 +84,7 @@ class AddBeneficiaryTest {
                 .withBeneficiaries(existingBeneficiaries)
                 .build();
 
-        dataSource.put(accountId,existingSenderAccount);
+        dataSource.put(accountIban,existingSenderAccount);
 
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
 
@@ -95,14 +92,14 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
 
-      assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
+      assertThatThrownBy(()-> addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName))
               .isInstanceOf(DuplicatedBeneficiaryException.class)
               .hasMessage("The beneficiary with the iban : " + beneficiaryIban + " is already a beneficiary of the account " + accountId);
     }
 
     @Test
     void shouldThrowAnExceptionWhenTheAccountIsUnknown(){
-        String accountId = "1";
+        String accountIban = "FR1420041010050500013M02606";
         String beneficiaryId = "1234";
         String beneficiaryIban = "FR5030004000700000157389538";
         String beneficiaryBic = "BNPAFRPP123";
@@ -117,9 +114,9 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
 
-        assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
-                .isInstanceOf(UnknownAccountWithIdException.class)
-                .hasMessage("There is no account with the id: " + accountId);
+        assertThatThrownBy(()-> addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName))
+                .isInstanceOf(UnknownAccountWithIbanException.class)
+                .hasMessage("There is no account with the iban: " + accountIban);
     }
 
     @Test
@@ -149,7 +146,7 @@ class AddBeneficiaryTest {
                 .withBeneficiaries(existingBeneficiaries)
                 .build();
 
-        dataSource.put(accountId,existingSenderAccount);
+        dataSource.put(accountIban,existingSenderAccount);
 
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
 
@@ -157,7 +154,7 @@ class AddBeneficiaryTest {
 
        AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
 
-       assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
+       assertThatThrownBy(()-> addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName))
                .isInstanceOf(InvalidIbanException.class)
                .hasMessage("iban: " + beneficiaryIban + " is invalid.");
     }
@@ -186,7 +183,7 @@ class AddBeneficiaryTest {
                 .withBeneficiaries(new ArrayList<>())
                 .build();
 
-        dataSource.put(accountId,existingSenderAccount);
+        dataSource.put(accountIban,existingSenderAccount);
 
         AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
 
@@ -194,7 +191,7 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
 
-        assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
+        assertThatThrownBy(()-> addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + beneficiaryBic + " is invalid.");
     }

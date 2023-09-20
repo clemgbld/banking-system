@@ -30,31 +30,14 @@ public class InMemoryAccountRepository implements AccountRepository {
                .build());
     }
 
-    @Override
-    public Optional<Account> findById(String id) {
-        Account nullableAccount =  dataSource.getOrDefault(id,null);
-        if(nullableAccount == null) return Optional.empty();
-        return Optional.of(new Account.Builder()
-                .withId(nullableAccount.getId())
-                .withIban(nullableAccount.getIban())
-                .withBic(nullableAccount.getBic())
-                .withBalance(nullableAccount.getBalance())
-                .withFirstName(nullableAccount.getFirstName())
-                .withLastName(nullableAccount.getLastName())
-                .withTransactions(nullableAccount.getTransactions())
-                .withBeneficiaries(nullableAccount.getBeneficiaries())
-                .build());
-    }
 
     @Override
     public void update(Account ...accounts) {
         Arrays.stream(accounts).forEach(account -> dataSource.put(account.getIban(),account));
-        Arrays.stream(accounts).forEach(account -> dataSource.put(account.getId(),account));
     }
 
     @Override
     public void update(Account account) {
         dataSource.put(account.getIban(),account);
-        dataSource.put(account.getId(),account);
     }
 }

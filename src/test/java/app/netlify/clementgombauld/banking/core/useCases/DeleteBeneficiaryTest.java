@@ -59,7 +59,7 @@ class DeleteBeneficiaryTest {
 
         deleteBeneficiary.handle(accountIban,secondBeneficiaryIban);
 
-        Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
+        Account account = accountRepository.findByIban(accountIban).orElseThrow(RuntimeException::new);
 
         assertThat(account.getBeneficiaries()).usingRecursiveComparison().isEqualTo(List.of(firstBeneficiary));
     }
