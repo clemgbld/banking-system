@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.useCases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIdException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
@@ -159,6 +160,42 @@ class AddBeneficiaryTest {
        assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
                .isInstanceOf(InvalidIbanException.class)
                .hasMessage("iban: " + beneficiaryIban + " is invalid.");
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheBeneficiaryBicIsNotValid(){
+        String accountIban = "FR1420041010050500013M02606";
+        String accountBIC = "AGRIFFRII89";
+        String accountId = "1";
+        String accountFirstName = "Paul";
+        String accountLastName = "Duboit";
+        String beneficiaryId = "1234";
+        String beneficiaryIban = "FR5030004000700000157389538";
+        String beneficiaryBic = "BNPA";
+        String beneficiaryName ="Bob Dylan";
+
+        Map<String,Account> dataSource = new HashMap<>();
+
+        Account existingSenderAccount = new Account.Builder()
+                .withId(accountId)
+                .withIban(accountIban)
+                .withBic(accountBIC)
+                .withBalance(new BigDecimal(105))
+                .withFirstName(accountFirstName)
+                .withLastName(accountLastName)
+                .withBeneficiaries(new ArrayList<>())
+                .build();
+
+        dataSource.put(accountId,existingSenderAccount);
+
+        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+
+        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(beneficiaryId));
+
+        AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
+
+        assertThatThrownBy(()-> addBeneficiary.handle(accountId,beneficiaryIban,beneficiaryBic,beneficiaryName))
+                .isInstanceOf(InvalidBicException.class);
     }
 
 
