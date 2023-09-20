@@ -19,7 +19,6 @@ class DeleteBeneficiaryTest {
 
     @Test
     void shouldDeleteTheExpectedBeneficiary(){
-
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
         String accountId = "1";

@@ -15,6 +15,5 @@ public class DeleteBeneficiary {
                 .orElseThrow(RuntimeException::new);
         account.deleteBeneficiaryByIban(beneficiaryIban);
         accountRepository.update(account);
-
     }
 }
