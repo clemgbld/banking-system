@@ -14,7 +14,7 @@ public record Bic(String value) {
             var bic = org.iban4j.Bic.valueOf(value);
             return bic.toString();
         }catch (Exception exception){
-            throw new InvalidBicException();
+            throw new InvalidBicException(value);
         }
     }
 
