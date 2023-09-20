@@ -27,7 +27,7 @@ public class Beneficiary {
 
 
     boolean hasIban(String iban){
-       return this.iban.isSameIban(iban);
+       return this.iban.equals(new Iban(iban));
     }
 
     public boolean isInDifferentBank(String bic) {

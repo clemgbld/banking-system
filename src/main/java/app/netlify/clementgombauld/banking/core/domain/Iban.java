@@ -19,9 +19,6 @@ public record Iban(String value) {
         }
     }
 
-    boolean isSameIban(String iban){
-        return value.equals(iban);
-    }
 
     @Override
     public boolean equals(Object o) {
