@@ -32,13 +32,13 @@ public class TransferMoney {
         senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccountIban);
         if(senderAccount.isInDifferentBank(receiverAccountIban)){
              accountRepository.update(senderAccount);
-             extraBankTransactionsGateway.transfer(new MoneyTransferred(receiverTransactionId,creationDate,transactionAmount,senderAccountIban,senderAccount.getFullName()));
+             extraBankTransactionsGateway.transfer(new MoneyTransferred(receiverTransactionId,creationDate,transactionAmount,senderAccountIban, senderAccount.getBic(),senderAccount.getFullName()));
              return;
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
                 .orElseThrow(throwUnknownAccountException(receiverAccountIban));
 
-        receiverAccount.deposit(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban(),senderAccount.getFirstName(),senderAccount.getLastName());
+        receiverAccount.deposit(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban(),senderAccount.getBic(),senderAccount.getFirstName(),senderAccount.getLastName());
         accountRepository.update(senderAccount,receiverAccount);
     }
 

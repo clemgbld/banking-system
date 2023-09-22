@@ -51,7 +51,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(105))
                 .withFirstName(senderAccountFirstName)
                 .withLastName(senderAccountLastName)
-                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban,receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .build();
 
@@ -79,8 +79,8 @@ class TransferMoneyTest {
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
       assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
       assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
-      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName)));
-      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountFirstName + " " +senderAccountLastName)));
+      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
+      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountBIC,senderAccountFirstName + " " +senderAccountLastName)));
     }
 
     @Test
@@ -109,7 +109,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(105))
                 .withFirstName(senderAccountFirstName)
                 .withLastName(senderAccountLastName)
-                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban,receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .build();
 
@@ -127,8 +127,8 @@ class TransferMoneyTest {
 
         Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
         assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
-        assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountFirstName + " " + receiverAccountLastName)));
-        assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountFirstName + " " + senderAccountLastName)));
+        assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
+        assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountBIC,senderAccountFirstName + " " + senderAccountLastName)));
     }
 
     @Test
@@ -209,7 +209,7 @@ class TransferMoneyTest {
                .withBalance(new BigDecimal(105))
                .withFirstName(senderAccountFirstName)
                .withLastName(senderAccountLastName)
-               .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+               .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban,receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                .build();
        dataSource.put(senderAccountIban,existingSenderAccount);
@@ -273,7 +273,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(105))
                 .withFirstName(senderAccountFirstName)
                 .withLastName(senderAccountLastName)
-                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban,receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .build();
 

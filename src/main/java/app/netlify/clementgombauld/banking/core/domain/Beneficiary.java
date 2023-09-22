@@ -25,6 +25,10 @@ public class Beneficiary {
         return name;
     }
 
+    public String getBic() {
+        return bic.value();
+    }
+
 
     boolean hasIban(String iban){
        return this.iban.equals(new Iban(iban));
@@ -33,4 +37,6 @@ public class Beneficiary {
     public boolean isInDifferentBank(String bic) {
         return !this.bic.equals(new Bic(bic));
     }
+
+
 }

@@ -105,13 +105,13 @@ public class Account {
         return balance.value();
     }
 
-    public void deposit(String transactionId, Instant creationDate, BigDecimal transactionAmount, String senderIban, String firstName, String lastName) {
-       makeTransaction(transactionId,creationDate,transactionAmount,senderIban,buildFullName(firstName,lastName));
+    public void deposit(String transactionId, Instant creationDate, BigDecimal transactionAmount, String senderIban,String senderAccountBic, String firstName, String lastName) {
+       makeTransaction(transactionId,creationDate,transactionAmount,senderIban,senderAccountBic,buildFullName(firstName,lastName));
     }
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount,String receiverAccountIban) {
         balance.checkBalanceSufficiency(transactionAmount);
         Beneficiary beneficiary = findBeneficiaryByIbanOrThrow(receiverAccountIban);
-        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverAccountIban,beneficiary.getName());
+        makeTransaction(transactionId,creationDate,transactionAmount.negate(), receiverAccountIban,beneficiary.getBic(),beneficiary.getName());
     }
 
     public boolean isInDifferentBank(String receiverAccountIban) {
@@ -156,9 +156,9 @@ public class Account {
         return transactions;
     }
 
-    private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban,String name){
+    private void makeTransaction(String transactionId, Instant creationDate,BigDecimal transactionAmount,String iban,String bic,String name){
         balance = balance.add(transactionAmount);
-        transactions.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,name));
+        transactions.add(new MoneyTransferred(transactionId,creationDate,transactionAmount,iban,bic,name));
     }
 
     public String getId() {
