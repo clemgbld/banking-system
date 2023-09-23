@@ -18,23 +18,27 @@ public class TransferMoney {
 
     private final ExtraBankTransactionsGateway extraBankTransactionsGateway;
 
-    public TransferMoney(AccountRepository accountRepository, DateProvider dateProvider, IdGenerator idGenerator, ExtraBankTransactionsGateway extraBankTransactionsGateway) {
+    private final AuthenticationGateway authenticationGateway;
+
+    public TransferMoney(AccountRepository accountRepository, DateProvider dateProvider, IdGenerator idGenerator, ExtraBankTransactionsGateway extraBankTransactionsGateway,AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
         this.dateProvider = dateProvider;
         this.idGenerator = idGenerator;
         this.extraBankTransactionsGateway = extraBankTransactionsGateway;
+        this.authenticationGateway = authenticationGateway;
     }
 
-    public void handle(String senderAccountIban, BigDecimal transactionAmount,String receiverAccountIban) {
+    public void handle(BigDecimal transactionAmount,String receiverAccountIban) {
         Instant creationDate = dateProvider.now();
-        Account senderAccount = accountRepository.findByIban(senderAccountIban)
-                .orElseThrow(throwUnknownAccountException(senderAccountIban));
+        Customer currentCustomer = authenticationGateway.currentCustomer()
+                .orElseThrow(RuntimeException::new);
+        Account senderAccount = currentCustomer.getAccount();
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccountIban);
         if(senderAccount.isInDifferentBank(receiverAccountIban)){
              accountRepository.update(senderAccount);
-             extraBankTransactionsGateway.transfer(new MoneyTransferred(receiverTransactionId,creationDate,transactionAmount,senderAccountIban, senderAccount.getBic(),senderAccount.getFullName()));
+             extraBankTransactionsGateway.transfer(new MoneyTransferred(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban(), senderAccount.getBic(),senderAccount.getFullName()));
              return;
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
