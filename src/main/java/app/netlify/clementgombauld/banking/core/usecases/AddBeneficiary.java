@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 
 
 
@@ -19,7 +20,7 @@ public class AddBeneficiary {
 
     public String handle( String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
         Customer currentCustomer = authenticationGateway.currentCustomer()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(NoCurrentCustomerException::new);
         Account account = currentCustomer.getAccount();
         String beneficiaryId = idGenerator.generate();
         account.addBeneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName);

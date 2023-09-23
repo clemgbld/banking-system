@@ -1,10 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
@@ -155,6 +152,18 @@ class AddBeneficiaryTest {
        assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
                .isInstanceOf(InvalidIbanException.class)
                .hasMessage("iban: " + beneficiaryIban + " is invalid.");
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer(){
+        String beneficiaryId = "1234";
+        String beneficiaryIban = "FR6300000070000";
+        String beneficiaryBic = "BNPAFRPP123";
+        String beneficiaryName ="Bob Dylan";
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
+        assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
+                .isInstanceOf(NoCurrentCustomerException.class)
+                .hasMessage("No current customer authenticated.");
     }
 
 
