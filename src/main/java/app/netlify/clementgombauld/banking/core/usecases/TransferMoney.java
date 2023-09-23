@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 
 
@@ -20,7 +21,7 @@ public class TransferMoney {
 
     private final AuthenticationGateway authenticationGateway;
 
-    public TransferMoney(AccountRepository accountRepository, DateProvider dateProvider, IdGenerator idGenerator, ExtraBankTransactionsGateway extraBankTransactionsGateway,AuthenticationGateway authenticationGateway) {
+    public TransferMoney(AccountRepository accountRepository, DateProvider dateProvider, IdGenerator idGenerator, ExtraBankTransactionsGateway extraBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
         this.dateProvider = dateProvider;
         this.idGenerator = idGenerator;
@@ -28,30 +29,30 @@ public class TransferMoney {
         this.authenticationGateway = authenticationGateway;
     }
 
-    public void handle(BigDecimal transactionAmount,String receiverAccountIban,String receiverAccountBic) {
+    public void handle(BigDecimal transactionAmount, String receiverAccountIban, String receiverAccountBic) {
         Instant creationDate = dateProvider.now();
         Customer currentCustomer = authenticationGateway.currentCustomer()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(NoCurrentCustomerException::new);
         Account senderAccount = currentCustomer.getAccount();
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
-        senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccountIban);
-        if(senderAccount.isInDifferentBank(receiverAccountIban)){
-             accountRepository.update(senderAccount);
+        senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIban);
+        if (senderAccount.isInDifferentBank(receiverAccountIban)) {
+            accountRepository.update(senderAccount);
             MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), senderAccount.getBic(), senderAccount.getFullName());
-            extraBankTransactionsGateway.transfer(transaction,receiverAccountIban,receiverAccountBic);
-             return;
+            extraBankTransactionsGateway.transfer(transaction, receiverAccountIban, receiverAccountBic);
+            return;
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
                 .orElseThrow(throwUnknownAccountException(receiverAccountIban));
 
-        receiverAccount.deposit(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban(),senderAccount.getBic(),senderAccount.getFirstName(),senderAccount.getLastName());
-        accountRepository.update(senderAccount,receiverAccount);
+        receiverAccount.deposit(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), senderAccount.getBic(), senderAccount.getFirstName(), senderAccount.getLastName());
+        accountRepository.update(senderAccount, receiverAccount);
     }
 
-    private Supplier<UnknownAccountWithIbanException> throwUnknownAccountException(String iban){
-        return ()-> {
-          throw new UnknownAccountWithIbanException(iban);
+    private Supplier<UnknownAccountWithIbanException> throwUnknownAccountException(String iban) {
+        return () -> {
+            throw new UnknownAccountWithIbanException(iban);
         };
     }
 }
