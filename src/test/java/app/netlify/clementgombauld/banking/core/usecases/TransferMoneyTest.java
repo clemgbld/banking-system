@@ -25,9 +25,15 @@ class TransferMoneyTest {
 
     private AuthenticationGateway authenticationGateway;
 
+    private AccountRepository accountRepository;
+
+    private DateProvider dateProvider;
+
     @BeforeEach
     void setUp(){
         this.authenticationGateway = new InMemoryAuthenticationGateway();
+        this.accountRepository = new InMemoryAccountRepository();
+        this.dateProvider = new InMemoryDateProvider(1631000000000L);
     }
 
     @Test
@@ -47,9 +53,6 @@ class TransferMoneyTest {
         String receiverAccountLastName = "Smith";
         BigDecimal transactionAmount = new BigDecimal(5);
 
-        Map<String,Account> dataSource = new HashMap<>();
-
-
         Customer currentCustomer = new Customer(customerId,senderAccountFirstName,senderAccountLastName);
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
@@ -64,13 +67,7 @@ class TransferMoneyTest {
                 .build();
         currentCustomer.addAccount(existingSenderAccount);
 
-
-
-        dataSource.put(senderAccountIban,existingSenderAccount);
-
-        DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
         Instant currentInstant = dateProvider.now();
-        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
         accountRepository.update(new Account.Builder()
                 .withId(receiverAccountId)
                 .withIban(receiverAccountIban)
@@ -81,10 +78,11 @@ class TransferMoneyTest {
                 .withTransactions(null)
                 .withBeneficiaries(List.of())
                 .build());
-        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(senderTransactionId,receiverTransactionId));
-        ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(List.of());
+
         authenticationGateway.authenticate(currentCustomer);
-        TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator, extraBankTransactionsGateway,authenticationGateway);
+
+
+        TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId,receiverTransactionId),List.of());
 
         transferMoney.handle(transactionAmount,receiverAccountIban);
 
@@ -317,5 +315,9 @@ class TransferMoneyTest {
 
      */
 
-
+  private TransferMoney buildTransferMoney(List<String> ids,List<MoneyTransferred> capturedTransactions){
+      IdGenerator idGenerator = new InMemoryIdGenerator(ids);
+      ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(capturedTransactions);
+      return  new TransferMoney(accountRepository,dateProvider,idGenerator, extraBankTransactionsGateway,authenticationGateway);
+  }
 }
