@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.core.domain.exceptions;
+package app.netlify.clementgombauld.banking.account.core.domain.exceptions;
 
 public class DuplicatedBeneficiaryException extends RuntimeException{
     public DuplicatedBeneficiaryException(String beneficiaryIban, String accountId) {

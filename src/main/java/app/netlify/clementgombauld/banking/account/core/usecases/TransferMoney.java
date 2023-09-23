@@ -1,7 +1,8 @@
-package app.netlify.clementgombauld.banking.core.usecases;
+package app.netlify.clementgombauld.banking.account.core.usecases;
 
+import app.netlify.clementgombauld.banking.account.core.domain.*;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.UnknownAccountWithIbanException;
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 
 import java.math.BigDecimal;
 import java.time.Instant;

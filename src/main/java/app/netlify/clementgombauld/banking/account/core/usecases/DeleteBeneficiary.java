@@ -1,11 +1,11 @@
-package app.netlify.clementgombauld.banking.core.usecases;
+package app.netlify.clementgombauld.banking.account.core.usecases;
 
 
-import app.netlify.clementgombauld.banking.core.domain.Account;
-import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
-import app.netlify.clementgombauld.banking.core.domain.AuthenticationGateway;
-import app.netlify.clementgombauld.banking.core.domain.Customer;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.account.core.domain.Account;
+import app.netlify.clementgombauld.banking.account.core.domain.AccountRepository;
+import app.netlify.clementgombauld.banking.account.core.domain.AuthenticationGateway;
+import app.netlify.clementgombauld.banking.account.core.domain.Customer;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.NoCurrentCustomerException;
 
 
 public class DeleteBeneficiary {

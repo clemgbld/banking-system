@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.core.domain;
+package app.netlify.clementgombauld.banking.account.core.domain;
 
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
-package app.netlify.clementgombauld.banking.core.domain;
+package app.netlify.clementgombauld.banking.account.core.domain;
 
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InsufficientBalanceException;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.InsufficientBalanceException;
 
 import java.math.BigDecimal;
 import java.util.Objects;

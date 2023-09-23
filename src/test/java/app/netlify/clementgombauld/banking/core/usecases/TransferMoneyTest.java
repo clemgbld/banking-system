@@ -1,9 +1,10 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
-import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InsufficientBalanceException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
+import app.netlify.clementgombauld.banking.account.core.domain.*;
+import app.netlify.clementgombauld.banking.account.core.usecases.TransferMoney;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.InsufficientBalanceException;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.UnknownBeneficiaryException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryDateProvider;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryExtraBankTransactionsGateway;

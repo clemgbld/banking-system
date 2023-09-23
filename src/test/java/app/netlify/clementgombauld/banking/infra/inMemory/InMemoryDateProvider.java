@@ -1,6 +1,6 @@
 package app.netlify.clementgombauld.banking.infra.inMemory;
 
-import app.netlify.clementgombauld.banking.core.domain.DateProvider;
+import app.netlify.clementgombauld.banking.account.core.domain.DateProvider;
 
 import java.time.Instant;
 

@@ -1,8 +1,9 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
-import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
+import app.netlify.clementgombauld.banking.account.core.domain.*;
+import app.netlify.clementgombauld.banking.account.core.usecases.DeleteBeneficiary;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.UnknownBeneficiaryException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
 import org.junit.jupiter.api.BeforeEach;

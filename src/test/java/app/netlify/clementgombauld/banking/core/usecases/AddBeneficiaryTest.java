@@ -1,7 +1,14 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
-import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
+import app.netlify.clementgombauld.banking.account.core.domain.Account;
+import app.netlify.clementgombauld.banking.account.core.domain.AccountRepository;
+import app.netlify.clementgombauld.banking.account.core.domain.Beneficiary;
+import app.netlify.clementgombauld.banking.account.core.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.InvalidBicException;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.InvalidIbanException;
+import app.netlify.clementgombauld.banking.account.core.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.account.core.usecases.AddBeneficiary;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.Test;
@@ -29,7 +36,7 @@ class AddBeneficiaryTest {
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName ="Bob Dylan";
 
-        Map<String,Account> dataSource = new HashMap<>();
+        Map<String, Account> dataSource = new HashMap<>();
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
