@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.core.useCases;
+package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;

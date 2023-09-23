@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.core.useCases;
+package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
@@ -84,8 +84,10 @@ class DeleteBeneficiaryTest {
                 .hasMessage("No current customer authenticated.");
     }
 
+    @Test
+    void shouldThrowAnExceptionWhenTheCurrentCustomerDoesNotHaveAnAccount(){
 
-
+    }
 
 
     @Test
