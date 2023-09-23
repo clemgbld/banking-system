@@ -117,34 +117,10 @@ class AddBeneficiaryTest {
 
 
 
-    /*
-    @Test
-    void shouldThrowAnExceptionWhenTheAccountIsUnknown(){
-        String accountIban = "FR1420041010050500013M02606";
-        String beneficiaryId = "1234";
-        String beneficiaryIban = "FR5030004000700000157389538";
-        String beneficiaryBic = "BNPAFRPP123";
-        String beneficiaryName ="Bob Dylan";
 
-        Map<String,Account> dataSource = new HashMap<>();
-
-
-        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
-
-        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(beneficiaryId));
-
-        AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
-
-        assertThatThrownBy(()-> addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName))
-                .isInstanceOf(UnknownAccountWithIbanException.class)
-                .hasMessage("There is no account with the iban: " + accountIban);
-    }
-
-     */
-
-    /*
     @Test
     void shouldThrowAnInvalidIbanExceptionWhenTheBeneficiaryIbanIsNotValid(){
+        String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
         String accountId = "1";
@@ -155,12 +131,11 @@ class AddBeneficiaryTest {
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName ="Bob Dylan";
 
-        Map<String,Account> dataSource = new HashMap<>();
-
         Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId,"FR5030004000700000157389538",beneficiaryBic,beneficiaryName);
         List<Beneficiary> existingBeneficiaries = new ArrayList<>();
         existingBeneficiaries.add(existingBeneficiary);
-        Account existingSenderAccount = new Account.Builder()
+        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
+        Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
                 .withBic(accountBIC)
@@ -168,22 +143,21 @@ class AddBeneficiaryTest {
                 .withFirstName(accountFirstName)
                 .withLastName(accountLastName)
                 .withBeneficiaries(existingBeneficiaries)
+                .withCustomer(currentCustomer)
                 .build();
+        currentCustomer.addAccount(existingAccount);
 
-        dataSource.put(accountIban,existingSenderAccount);
+        authenticationGateway.authenticate(currentCustomer);
 
-        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
 
-        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(beneficiaryId));
+       AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
 
-       AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
-
-       assertThatThrownBy(()-> addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName))
+       assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
                .isInstanceOf(InvalidIbanException.class)
                .hasMessage("iban: " + beneficiaryIban + " is invalid.");
     }
 
-     */
+
 
     /*
     @Test
