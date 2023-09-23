@@ -8,12 +8,17 @@ import java.util.List;
 public class InMemoryExtraBankTransactionsGateway implements ExtraBankTransactionsGateway {
     private final List<MoneyTransferred> extraBankTransactions;
 
-    public InMemoryExtraBankTransactionsGateway(List<MoneyTransferred> extraBankTransactions) {
+    private final List<String> accountInfos;
+
+    public InMemoryExtraBankTransactionsGateway(List<MoneyTransferred> extraBankTransactions, List<String> accountInfos) {
         this.extraBankTransactions = extraBankTransactions;
+        this.accountInfos = accountInfos;
     }
 
     @Override
-    public void transfer(MoneyTransferred transaction) {
+    public void transfer(MoneyTransferred transaction,String iban,String bic) {
         extraBankTransactions.add(transaction);
+        accountInfos.add(iban);
+        accountInfos.add(bic);
     }
 }

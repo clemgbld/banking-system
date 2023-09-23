@@ -28,7 +28,7 @@ public class TransferMoney {
         this.authenticationGateway = authenticationGateway;
     }
 
-    public void handle(BigDecimal transactionAmount,String receiverAccountIban) {
+    public void handle(BigDecimal transactionAmount,String receiverAccountIban,String receiverAccountBic) {
         Instant creationDate = dateProvider.now();
         Customer currentCustomer = authenticationGateway.currentCustomer()
                 .orElseThrow(RuntimeException::new);
@@ -38,7 +38,8 @@ public class TransferMoney {
         senderAccount.withdraw(senderTransactionId,creationDate,transactionAmount,receiverAccountIban);
         if(senderAccount.isInDifferentBank(receiverAccountIban)){
              accountRepository.update(senderAccount);
-             extraBankTransactionsGateway.transfer(new MoneyTransferred(receiverTransactionId,creationDate,transactionAmount,senderAccount.getIban(), senderAccount.getBic(),senderAccount.getFullName()));
+            MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), senderAccount.getBic(), senderAccount.getFullName());
+            extraBankTransactionsGateway.transfer(transaction,receiverAccountIban,receiverAccountBic);
              return;
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)

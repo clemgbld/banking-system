@@ -82,9 +82,9 @@ class TransferMoneyTest {
         authenticationGateway.authenticate(currentCustomer);
 
 
-        TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId,receiverTransactionId),List.of());
+        TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId,receiverTransactionId),List.of(),List.of());
 
-        transferMoney.handle(transactionAmount,receiverAccountIban);
+        transferMoney.handle(transactionAmount,receiverAccountIban,receiverAccountBIC);
 
         Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
@@ -111,12 +111,12 @@ class TransferMoneyTest {
               .withTransactions(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountBIC,senderAccountFirstName + " " +senderAccountLastName)))
               .withBeneficiaries(List.of())
               .build());
-
     }
 
-    /*
+
     @Test
     void shouldPerformAMoneyTransferBetweenTwoAccountsThatAreNotInTheSameBank(){
+        String customerId = "1345";
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
         String senderAccountBIC = "AGRIFRPP989";
@@ -132,7 +132,8 @@ class TransferMoneyTest {
 
 
         BigDecimal transactionAmount = new BigDecimal(5);
-        Map<String,Account> dataSource = new HashMap<>();
+
+       Customer currentCustomer =  new Customer(customerId,senderAccountFirstName,senderAccountLastName);
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
@@ -143,27 +144,44 @@ class TransferMoneyTest {
                 .withLastName(senderAccountLastName)
                 .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban,receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+                .withCustomer(currentCustomer)
                 .build();
 
-        dataSource.put(senderAccountIban,existingSenderAccount);
-        DateProvider dateProvider = new InMemoryDateProvider(1631000000000L);
+        currentCustomer.addAccount(existingSenderAccount);
+
+        authenticationGateway.authenticate(currentCustomer);
+
         Instant currentInstant = dateProvider.now();
-        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+
         List<MoneyTransferred> extraBankTransactions = new ArrayList<>();
-        ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(extraBankTransactions);
-        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(senderTransactionId,receiverTransactionId));
-        TransferMoney transferMoney = new TransferMoney(accountRepository,dateProvider,idGenerator,extraBankTransactionsGateway);
 
+        List<String> extraBankAccountInfos = new ArrayList<>();
 
-         transferMoney.handle(senderAccountIban,transactionAmount,receiverAccountIban);
+        TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId,receiverTransactionId),extraBankTransactions,extraBankAccountInfos);
+
+         transferMoney.handle(transactionAmount,receiverAccountIban,receiverAccountBIC);
 
         Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
-        assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
-        assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
+
+        assertThat(senderAccount)
+                .usingRecursiveComparison()
+                .isEqualTo(new Account.Builder()
+                        .withId(senderAccountId)
+                        .withIban(senderAccountIban)
+                        .withBic(senderAccountBIC)
+                        .withBalance(new BigDecimal(100))
+                        .withFirstName(senderAccountFirstName)
+                        .withLastName(senderAccountLastName)
+                        .withTransactions(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)))
+                        .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+                        .withCustomer(currentCustomer)
+                        .build());
+
         assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountBIC,senderAccountFirstName + " " + senderAccountLastName)));
+        assertThat(extraBankAccountInfos).usingRecursiveComparison().isEqualTo(List.of(receiverAccountIban,receiverAccountBIC));
     }
 
-     */
+
 /*
     @Test
     void shouldThrowAnExceptionWhenTheReceiverAccountIsNotIsNotInTheBeneficiariesListOfTheSenderAccount(){
@@ -335,9 +353,9 @@ class TransferMoneyTest {
 
      */
 
-  private TransferMoney buildTransferMoney(List<String> ids,List<MoneyTransferred> capturedTransactions){
+  private TransferMoney buildTransferMoney(List<String> ids,List<MoneyTransferred> capturedTransactions,List<String> capturedAccountInfos){
       IdGenerator idGenerator = new InMemoryIdGenerator(ids);
-      ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(capturedTransactions);
+      ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(capturedTransactions,capturedAccountInfos);
       return  new TransferMoney(accountRepository,dateProvider,idGenerator, extraBankTransactionsGateway,authenticationGateway);
   }
 }
