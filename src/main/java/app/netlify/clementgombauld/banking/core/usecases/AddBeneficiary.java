@@ -1,7 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
+
 
 
 public class AddBeneficiary {

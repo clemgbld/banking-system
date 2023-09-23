@@ -159,9 +159,10 @@ class AddBeneficiaryTest {
 
 
 
-    /*
+
     @Test
     void shouldThrowAnExceptionWhenTheBeneficiaryBicIsNotValid(){
+        String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
         String accountId = "1";
@@ -172,7 +173,7 @@ class AddBeneficiaryTest {
         String beneficiaryBic = "BNPA";
         String beneficiaryName ="Bob Dylan";
 
-        Map<String,Account> dataSource = new HashMap<>();
+        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
@@ -182,24 +183,20 @@ class AddBeneficiaryTest {
                 .withFirstName(accountFirstName)
                 .withLastName(accountLastName)
                 .withBeneficiaries(new ArrayList<>())
+                .withCustomer(currentCustomer)
                 .build();
 
-        dataSource.put(accountIban,existingSenderAccount);
+        currentCustomer.addAccount(existingSenderAccount);
 
-        AccountRepository accountRepository = new InMemoryAccountRepository(dataSource);
+        authenticationGateway.authenticate(currentCustomer);
 
-        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
 
-        AddBeneficiary addBeneficiary = new AddBeneficiary(accountRepository,idGenerator);
-
-        assertThatThrownBy(()-> addBeneficiary.handle(accountIban,beneficiaryIban,beneficiaryBic,beneficiaryName))
+        assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + beneficiaryBic + " is invalid.");
     }
 
-
-
-     */
 
     private AddBeneficiary buildAddBeneficiary(List<String> ids){
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
