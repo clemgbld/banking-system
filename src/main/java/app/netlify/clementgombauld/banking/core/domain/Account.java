@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public class Account {
 
+    private final Customer customer;
+
     private final String id;
 
     private final String iban;
@@ -38,11 +40,13 @@ public class Account {
         this.lastName = builder.lastName;
         this.transactions = Optional.ofNullable(builder.transactions).orElse(new ArrayList<>());
         this.beneficiaries = builder.beneficiaries;
+        this.customer = builder.customer;
     }
 
 
 
     public static class Builder {
+        private Customer customer;
         private String id;
         private  String iban;
         private  String bic;
@@ -94,9 +98,18 @@ public class Account {
             return this;
         }
 
+        public Builder withCustomer(Customer customer) {
+            this.customer = customer;
+            return this;
+        }
+
+
+
         public Account build() {
             return new Account(this);
         }
+
+
     }
 
 
@@ -117,7 +130,6 @@ public class Account {
     public boolean isInDifferentBank(String receiverAccountIban) {
         Beneficiary beneficiary = findBeneficiaryByIbanOrThrow(receiverAccountIban);
         return beneficiary.isInDifferentBank(bic);
-
     }
 
     public void addBeneficiary(String beneficiaryId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
