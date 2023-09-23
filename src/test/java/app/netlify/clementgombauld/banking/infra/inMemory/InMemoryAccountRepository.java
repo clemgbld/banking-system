@@ -9,11 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class InMemoryAccountRepository implements AccountRepository {
-    private  Map<String,Account> dataSource = new HashMap<>();
-
-    public InMemoryAccountRepository(Map<String, Account> dataSource) {
-        this.dataSource = dataSource;
-    }
+    private final Map<String,Account> dataSource = new HashMap<>();
 
     public InMemoryAccountRepository() {
     }
@@ -31,6 +27,7 @@ public class InMemoryAccountRepository implements AccountRepository {
                .withLastName(nullableAccount.getLastName())
                .withTransactions(nullableAccount.getTransactions())
                .withBeneficiaries(nullableAccount.getBeneficiaries())
+               .withCustomer(nullableAccount.getCustomer())
                .build());
     }
 

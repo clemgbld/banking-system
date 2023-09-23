@@ -12,9 +12,8 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,6 +64,7 @@ class TransferMoneyTest {
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)
                 .build();
+
         currentCustomer.addAccount(existingSenderAccount);
 
         Instant currentInstant = dateProvider.now();
@@ -88,10 +88,30 @@ class TransferMoneyTest {
 
         Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
-      assertThat(senderAccount.getBalance()).isEqualTo(new BigDecimal(100));
-      assertThat(receiverAccount.getBalance()).isEqualTo(new BigDecimal(105));
-      assertThat(senderAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)));
-      assertThat(receiverAccount.getTransactions()).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountBIC,senderAccountFirstName + " " +senderAccountLastName)));
+
+      assertThat(senderAccount).usingRecursiveComparison().isEqualTo(new Account.Builder()
+              .withId(senderAccountId)
+              .withIban(senderAccountIban)
+              .withBic(senderAccountBIC)
+              .withBalance(new BigDecimal(100))
+              .withFirstName(senderAccountFirstName)
+              .withLastName(senderAccountLastName)
+              .withTransactions(List.of(new MoneyTransferred("12345",Instant.ofEpochSecond(2534543253252L),new BigDecimal(105),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName),new MoneyTransferred(senderTransactionId,currentInstant,new BigDecimal(-5),receiverAccountIban,receiverAccountBIC,receiverAccountFirstName + " " + receiverAccountLastName)))
+              .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+              .withCustomer(currentCustomer)
+              .build());
+
+      assertThat(receiverAccount).usingRecursiveComparison().isEqualTo(new Account.Builder()
+              .withId(receiverAccountId)
+              .withIban(receiverAccountIban)
+              .withBic(receiverAccountBIC)
+              .withBalance(new BigDecimal(105))
+              .withFirstName(receiverAccountFirstName)
+              .withLastName(receiverAccountLastName)
+              .withTransactions(List.of(new MoneyTransferred(receiverTransactionId,currentInstant,new BigDecimal(5),senderAccountIban,senderAccountBIC,senderAccountFirstName + " " +senderAccountLastName)))
+              .withBeneficiaries(List.of())
+              .build());
+
     }
 
     /*

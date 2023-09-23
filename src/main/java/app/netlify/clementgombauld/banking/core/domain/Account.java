@@ -202,5 +202,7 @@ public class Account {
         return beneficiaries;
     }
 
+    public Customer getCustomer(){return customer;}
+
 
 }
