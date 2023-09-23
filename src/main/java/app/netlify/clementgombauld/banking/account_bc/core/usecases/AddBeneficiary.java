@@ -1,9 +1,9 @@
-package app.netlify.clementgombauld.banking.account.core.usecases;
+package app.netlify.clementgombauld.banking.account_bc.core.usecases;
 
-import app.netlify.clementgombauld.banking.account.core.domain.Account;
-import app.netlify.clementgombauld.banking.account.core.domain.AccountRepository;
-import app.netlify.clementgombauld.banking.account.core.domain.IdGenerator;
-import app.netlify.clementgombauld.banking.account.core.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.Account;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.AccountRepository;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.UnknownAccountWithIbanException;
 
 
 public class AddBeneficiary {

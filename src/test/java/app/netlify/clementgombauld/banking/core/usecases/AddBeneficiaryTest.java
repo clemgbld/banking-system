@@ -1,14 +1,14 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
-import app.netlify.clementgombauld.banking.account.core.domain.Account;
-import app.netlify.clementgombauld.banking.account.core.domain.AccountRepository;
-import app.netlify.clementgombauld.banking.account.core.domain.Beneficiary;
-import app.netlify.clementgombauld.banking.account.core.domain.IdGenerator;
-import app.netlify.clementgombauld.banking.account.core.domain.exceptions.DuplicatedBeneficiaryException;
-import app.netlify.clementgombauld.banking.account.core.domain.exceptions.InvalidBicException;
-import app.netlify.clementgombauld.banking.account.core.domain.exceptions.InvalidIbanException;
-import app.netlify.clementgombauld.banking.account.core.domain.exceptions.UnknownAccountWithIbanException;
-import app.netlify.clementgombauld.banking.account.core.usecases.AddBeneficiary;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.Account;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.AccountRepository;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.Beneficiary;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.InvalidBicException;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.InvalidIbanException;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.account_bc.core.usecases.AddBeneficiary;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account.core.domain;
+package app.netlify.clementgombauld.banking.account_bc.core.domain;
 
 public class Customer {
     private final String id;

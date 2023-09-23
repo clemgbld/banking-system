@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account.core.domain.exceptions;
+package app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions;
 
 public class InsufficientBalanceException extends RuntimeException{
     public InsufficientBalanceException() {
