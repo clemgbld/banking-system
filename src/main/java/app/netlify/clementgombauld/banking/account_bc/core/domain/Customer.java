@@ -1,12 +1,16 @@
 package app.netlify.clementgombauld.banking.account_bc.core.domain;
 
+import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.UnExistingAccountException;
+
+import java.util.Optional;
+
 public class Customer {
     private final String id;
     private final String firstName;
 
     private final String lastName;
 
-    private  Account account;
+    private Account account;
 
     public Customer(String id, String firstName, String lastName) {
         this.id = id;
@@ -19,6 +23,8 @@ public class Customer {
     }
 
     public Account getAccount() {
-        return account;
+       return Optional.ofNullable(account).orElseThrow(()->{
+           throw new UnExistingAccountException(id);
+       });
     }
 }

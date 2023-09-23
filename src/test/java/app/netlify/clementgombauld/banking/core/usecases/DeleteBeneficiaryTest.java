@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.account_bc.core.domain.*;
+import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.UnExistingAccountException;
 import app.netlify.clementgombauld.banking.account_bc.core.usecases.DeleteBeneficiary;
 import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.UnknownBeneficiaryException;
@@ -87,7 +88,15 @@ class DeleteBeneficiaryTest {
 
     @Test
     void shouldThrowAnExceptionWhenTheCurrentCustomerDoesNotHaveAnAccount(){
-
+        String beneficiaryIban = "FR5030004000700000157389538";
+        String customerId = "131435";
+        String customerFirstName = "Paul";
+        String customerLastName = "Duboit";
+        Customer currentCustomer = new Customer(customerId,customerFirstName,customerLastName);
+        authenticationGateway.authenticate(currentCustomer);
+        assertThatThrownBy(()->  deleteBeneficiary.handle(beneficiaryIban))
+                .isInstanceOf(UnExistingAccountException.class)
+                .hasMessage("Customer with id: " + customerId + " does not have any account");
     }
 
 
