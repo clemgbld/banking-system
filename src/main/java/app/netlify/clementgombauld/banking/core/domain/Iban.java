@@ -1,6 +1,6 @@
-package app.netlify.clementgombauld.banking.account_bc.core.domain;
+package app.netlify.clementgombauld.banking.core.domain;
 
-import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.InvalidIbanException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
 
 import java.util.Objects;
 

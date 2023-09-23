@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account_bc.core.domain;
+package app.netlify.clementgombauld.banking.core.domain;
 
 import java.math.BigDecimal;
 import java.time.Instant;

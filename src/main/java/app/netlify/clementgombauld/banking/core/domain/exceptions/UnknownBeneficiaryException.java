@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions;
+package app.netlify.clementgombauld.banking.core.domain.exceptions;
 
 public class UnknownBeneficiaryException extends RuntimeException{
 

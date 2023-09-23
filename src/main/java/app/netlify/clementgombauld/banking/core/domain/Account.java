@@ -1,7 +1,7 @@
-package app.netlify.clementgombauld.banking.account_bc.core.domain;
+package app.netlify.clementgombauld.banking.core.domain;
 
-import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.DuplicatedBeneficiaryException;
-import app.netlify.clementgombauld.banking.account_bc.core.domain.exceptions.UnknownBeneficiaryException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 
 import java.math.BigDecimal;
 import java.time.Instant;

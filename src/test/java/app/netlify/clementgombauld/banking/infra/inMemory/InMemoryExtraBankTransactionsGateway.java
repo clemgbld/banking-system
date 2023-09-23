@@ -1,7 +1,7 @@
 package app.netlify.clementgombauld.banking.infra.inMemory;
 
-import app.netlify.clementgombauld.banking.account_bc.core.domain.ExtraBankTransactionsGateway;
-import app.netlify.clementgombauld.banking.account_bc.core.domain.MoneyTransferred;
+import app.netlify.clementgombauld.banking.core.domain.ExtraBankTransactionsGateway;
+import app.netlify.clementgombauld.banking.core.domain.MoneyTransferred;
 
 import java.util.List;
 

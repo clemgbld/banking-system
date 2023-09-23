@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account_bc.core.domain;
+package app.netlify.clementgombauld.banking.core.domain;
 
 public interface ExtraBankTransactionsGateway {
     void transfer(MoneyTransferred transaction);
