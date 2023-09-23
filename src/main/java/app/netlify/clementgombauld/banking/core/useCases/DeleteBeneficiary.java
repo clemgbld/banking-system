@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 import app.netlify.clementgombauld.banking.core.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.core.domain.Customer;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 
 
 public class DeleteBeneficiary {
@@ -17,7 +18,7 @@ public class DeleteBeneficiary {
 
     public void handle( String beneficiaryIban) {
         Customer currentCustomer = authenticationGateway.currentCustomer()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(NoCurrentCustomerException::new);
         Account account = currentCustomer.getAccount();
         account.deleteBeneficiary(beneficiaryIban);
         accountRepository.update(account);

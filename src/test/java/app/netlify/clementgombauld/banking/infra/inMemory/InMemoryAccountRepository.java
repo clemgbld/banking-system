@@ -4,14 +4,18 @@ import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class InMemoryAccountRepository implements AccountRepository {
-    private final Map<String,Account> dataSource ;
+    private  Map<String,Account> dataSource = new HashMap<>();
 
     public InMemoryAccountRepository(Map<String, Account> dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public InMemoryAccountRepository() {
     }
 
     @Override
