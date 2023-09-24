@@ -23,8 +23,12 @@ public class Customer {
     }
 
     public Account getAccount() {
-       return Optional.ofNullable(account).orElseThrow(()->{
-           throw new UnExistingAccountException(id);
-       });
+        return Optional.ofNullable(account).orElseThrow(() -> {
+            throw new UnExistingAccountException(id);
+        });
+    }
+
+    public String fullName() {
+        return String.format("%s %s", firstName, lastName);
     }
 }

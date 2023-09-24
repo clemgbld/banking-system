@@ -17,18 +17,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AddBeneficiaryTest {
 
-    private  AuthenticationGateway authenticationGateway;
-    private  AccountRepository accountRepository;
+    private AuthenticationGateway authenticationGateway;
+    private AccountRepository accountRepository;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         authenticationGateway = new InMemoryAuthenticationGateway();
         accountRepository = new InMemoryAccountRepository();
     }
 
 
     @Test
-    void shouldAddBeneficiaryToTheGivenAccount(){
+    void shouldAddBeneficiaryToTheGivenAccount() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
@@ -38,17 +38,15 @@ class AddBeneficiaryTest {
         String beneficiaryId = "1234";
         String beneficiaryIban = "FR5030004000700000157389538";
         String beneficiaryBic = "BNPAFRPP123";
-        String beneficiaryName ="Bob Dylan";
+        String beneficiaryName = "Bob Dylan";
 
-        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
                 .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(accountFirstName)
-                .withLastName(accountLastName)
                 .withBeneficiaries(new ArrayList<>())
                 .withCustomer(currentCustomer)
                 .build();
@@ -59,18 +57,17 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
 
-       String expectedId = addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName);
+        String expectedId = addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName);
 
         Account account = accountRepository.findByIban(accountIban).orElseThrow(RuntimeException::new);
 
-      assertThat(account.getBeneficiaries()).usingRecursiveComparison().isEqualTo(List.of(new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName)));
-      assertThat(expectedId).isEqualTo(beneficiaryId);
+        assertThat(account.getBeneficiaries()).usingRecursiveComparison().isEqualTo(List.of(new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName)));
+        assertThat(expectedId).isEqualTo(beneficiaryId);
     }
 
 
-
     @Test
-    void shouldThrowAnExceptionWhenTheBeneficiaryHasAlreadyBeenAddedToTheAccount(){
+    void shouldThrowAnExceptionWhenTheBeneficiaryHasAlreadyBeenAddedToTheAccount() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
@@ -80,12 +77,12 @@ class AddBeneficiaryTest {
         String beneficiaryId = "1234";
         String beneficiaryIban = "FR5030004000700000157389538";
         String beneficiaryBic = "BNPAFRPP123";
-        String beneficiaryName ="Bob Dylan";
+        String beneficiaryName = "Bob Dylan";
 
-        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
 
-        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId,beneficiaryIban,beneficiaryBic,beneficiaryName);
+        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName);
         List<Beneficiary> existingBeneficiaries = new ArrayList<>();
         existingBeneficiaries.add(existingBeneficiary);
         Account existingAccount = new Account.Builder()
@@ -93,8 +90,6 @@ class AddBeneficiaryTest {
                 .withIban(accountIban)
                 .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(accountFirstName)
-                .withLastName(accountLastName)
                 .withBeneficiaries(existingBeneficiaries)
                 .withCustomer(currentCustomer)
                 .build();
@@ -105,16 +100,14 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
 
-      assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
-              .isInstanceOf(DuplicatedBeneficiaryException.class)
-              .hasMessage("The beneficiary with the iban : " + beneficiaryIban + " is already a beneficiary of the account " + accountId);
+        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+                .isInstanceOf(DuplicatedBeneficiaryException.class)
+                .hasMessage("The beneficiary with the iban : " + beneficiaryIban + " is already a beneficiary of the account " + accountId);
     }
 
 
-
-
     @Test
-    void shouldThrowAnInvalidIbanExceptionWhenTheBeneficiaryIbanIsNotValid(){
+    void shouldThrowAnInvalidIbanExceptionWhenTheBeneficiaryIbanIsNotValid() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
@@ -124,19 +117,17 @@ class AddBeneficiaryTest {
         String beneficiaryId = "1234";
         String beneficiaryIban = "FR6300000070000";
         String beneficiaryBic = "BNPAFRPP123";
-        String beneficiaryName ="Bob Dylan";
+        String beneficiaryName = "Bob Dylan";
 
-        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId,"FR5030004000700000157389538",beneficiaryBic,beneficiaryName);
+        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId, "FR5030004000700000157389538", beneficiaryBic, beneficiaryName);
         List<Beneficiary> existingBeneficiaries = new ArrayList<>();
         existingBeneficiaries.add(existingBeneficiary);
-        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
                 .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(accountFirstName)
-                .withLastName(accountLastName)
                 .withBeneficiaries(existingBeneficiaries)
                 .withCustomer(currentCustomer)
                 .build();
@@ -145,30 +136,28 @@ class AddBeneficiaryTest {
         authenticationGateway.authenticate(currentCustomer);
 
 
-       AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
 
-       assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
-               .isInstanceOf(InvalidIbanException.class)
-               .hasMessage("iban: " + beneficiaryIban + " is invalid.");
+        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+                .isInstanceOf(InvalidIbanException.class)
+                .hasMessage("iban: " + beneficiaryIban + " is invalid.");
     }
 
     @Test
-    void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer(){
+    void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer() {
         String beneficiaryId = "1234";
         String beneficiaryIban = "FR6300000070000";
         String beneficiaryBic = "BNPAFRPP123";
-        String beneficiaryName ="Bob Dylan";
+        String beneficiaryName = "Bob Dylan";
         AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
-        assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
+        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
     }
 
 
-
-
     @Test
-    void shouldThrowAnExceptionWhenTheBeneficiaryBicIsNotValid(){
+    void shouldThrowAnExceptionWhenTheBeneficiaryBicIsNotValid() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
@@ -178,17 +167,15 @@ class AddBeneficiaryTest {
         String beneficiaryId = "1234";
         String beneficiaryIban = "FR5030004000700000157389538";
         String beneficiaryBic = "BNPA";
-        String beneficiaryName ="Bob Dylan";
+        String beneficiaryName = "Bob Dylan";
 
-        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
                 .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(accountFirstName)
-                .withLastName(accountLastName)
                 .withBeneficiaries(new ArrayList<>())
                 .withCustomer(currentCustomer)
                 .build();
@@ -199,15 +186,15 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
 
-        assertThatThrownBy(()-> addBeneficiary.handle(beneficiaryIban,beneficiaryBic,beneficiaryName))
+        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + beneficiaryBic + " is invalid.");
     }
 
 
-    private AddBeneficiary buildAddBeneficiary(List<String> ids){
+    private AddBeneficiary buildAddBeneficiary(List<String> ids) {
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
-        return new AddBeneficiary(accountRepository,idGenerator,authenticationGateway);
+        return new AddBeneficiary(accountRepository, idGenerator, authenticationGateway);
     }
 
 }

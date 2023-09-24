@@ -58,8 +58,6 @@ class TransferMoneyTest {
                 .withIban(senderAccountIban)
                 .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(senderAccountFirstName)
-                .withLastName(senderAccountLastName)
                 .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)
@@ -73,8 +71,6 @@ class TransferMoneyTest {
                 .withIban(receiverAccountIban)
                 .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(100))
-                .withFirstName(receiverAccountFirstName)
-                .withLastName(receiverAccountLastName)
                 .withTransactions(null)
                 .withBeneficiaries(List.of())
                 .build());
@@ -94,8 +90,6 @@ class TransferMoneyTest {
                 .withIban(senderAccountIban)
                 .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(100))
-                .withFirstName(senderAccountFirstName)
-                .withLastName(senderAccountLastName)
                 .withTransactions(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName), new MoneyTransferred(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)
@@ -106,8 +100,6 @@ class TransferMoneyTest {
                 .withIban(receiverAccountIban)
                 .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(receiverAccountFirstName)
-                .withLastName(receiverAccountLastName)
                 .withTransactions(List.of(new MoneyTransferred(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, senderAccountBIC, senderAccountFirstName + " " + senderAccountLastName)))
                 .withBeneficiaries(List.of())
                 .build());
@@ -139,8 +131,6 @@ class TransferMoneyTest {
                 .withIban(senderAccountIban)
                 .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(senderAccountFirstName)
-                .withLastName(senderAccountLastName)
                 .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)
@@ -169,8 +159,6 @@ class TransferMoneyTest {
                         .withIban(senderAccountIban)
                         .withBic(senderAccountBIC)
                         .withBalance(new BigDecimal(100))
-                        .withFirstName(senderAccountFirstName)
-                        .withLastName(senderAccountLastName)
                         .withTransactions(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName), new MoneyTransferred(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                         .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                         .withCustomer(currentCustomer)
@@ -194,8 +182,6 @@ class TransferMoneyTest {
         String receiverTransactionId = "143E53245";
         String senderAccountFirstName = "Paul";
         String senderAccountLastName = "Duboit";
-        String receiverAccountFirstName = "John";
-        String receiverAccountLastName = "Smith";
 
 
         BigDecimal transactionAmount = new BigDecimal(5);
@@ -206,8 +192,6 @@ class TransferMoneyTest {
                 .withIban(senderAccountIban)
                 .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(senderAccountFirstName)
-                .withLastName(senderAccountLastName)
                 .withTransactions(List.of())
                 .withBeneficiaries(List.of())
                 .withCustomer(currentCustomer)
@@ -221,9 +205,6 @@ class TransferMoneyTest {
                 .withIban(receiverAccountIban)
                 .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(100))
-                .withFirstName(receiverAccountFirstName)
-                .withLastName(receiverAccountLastName)
-                .withTransactions(null)
                 .withBeneficiaries(List.of())
                 .build());
 
@@ -272,8 +253,6 @@ class TransferMoneyTest {
                 .withIban(senderAccountIban)
                 .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(senderAccountFirstName)
-                .withLastName(senderAccountLastName)
                 .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)
@@ -287,8 +266,6 @@ class TransferMoneyTest {
                 .withIban(receiverAccountIban)
                 .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(100))
-                .withFirstName(receiverAccountFirstName)
-                .withLastName(receiverAccountLastName)
                 .withTransactions(null)
                 .withBeneficiaries(List.of())
                 .build());
@@ -322,8 +299,6 @@ class TransferMoneyTest {
                 .withIban(senderAccountIban)
                 .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(senderAccountFirstName)
-                .withLastName(senderAccountLastName)
                 .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)

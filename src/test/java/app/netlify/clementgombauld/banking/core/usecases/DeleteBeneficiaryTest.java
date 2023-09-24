@@ -24,14 +24,14 @@ class DeleteBeneficiaryTest {
     private DeleteBeneficiary deleteBeneficiary;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         accountRepository = new InMemoryAccountRepository();
         authenticationGateway = new InMemoryAuthenticationGateway();
-        deleteBeneficiary = new DeleteBeneficiary(accountRepository,authenticationGateway);
+        deleteBeneficiary = new DeleteBeneficiary(accountRepository, authenticationGateway);
     }
 
     @Test
-    void shouldDeleteTheExpectedBeneficiary(){
+    void shouldDeleteTheExpectedBeneficiary() {
         String customerId = "131435";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
@@ -41,27 +41,25 @@ class DeleteBeneficiaryTest {
         String firstBeneficiaryId = "1234";
         String firstBeneficiaryIban = "FR5030004000700000157389538";
         String firstBeneficiaryBic = "BNPAFRPP123";
-        String firstBeneficiaryName ="Bob Dylan";
+        String firstBeneficiaryName = "Bob Dylan";
         String secondBeneficiaryId = "3455";
         String secondBeneficiaryIban = "FR2330004000700000157389539";
         String secondBeneficiaryBic = "BNPAFRPP123";
-        String secondBeneficiaryName ="Luc Smith";
+        String secondBeneficiaryName = "Luc Smith";
 
-        Beneficiary firstBeneficiary = new Beneficiary(firstBeneficiaryId,firstBeneficiaryIban,firstBeneficiaryBic,firstBeneficiaryName);
-        Beneficiary secondBeneficiary = new Beneficiary(secondBeneficiaryId,secondBeneficiaryIban,secondBeneficiaryBic,secondBeneficiaryName);
+        Beneficiary firstBeneficiary = new Beneficiary(firstBeneficiaryId, firstBeneficiaryIban, firstBeneficiaryBic, firstBeneficiaryName);
+        Beneficiary secondBeneficiary = new Beneficiary(secondBeneficiaryId, secondBeneficiaryIban, secondBeneficiaryBic, secondBeneficiaryName);
 
         List<Beneficiary> existingBeneficiaries = new ArrayList<>(List.of(firstBeneficiary, secondBeneficiary));
 
 
-        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
                 .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(accountFirstName)
-                .withLastName(accountLastName)
                 .withBeneficiaries(existingBeneficiaries)
                 .withCustomer(currentCustomer)
                 .build();
@@ -78,29 +76,29 @@ class DeleteBeneficiaryTest {
     }
 
     @Test
-    void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer(){
+    void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer() {
         String beneficiaryIban = "FR5030004000700000157389538";
-        assertThatThrownBy(()->  deleteBeneficiary.handle(beneficiaryIban))
+        assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
     }
 
     @Test
-    void shouldThrowAnExceptionWhenTheCurrentCustomerDoesNotHaveAnAccount(){
+    void shouldThrowAnExceptionWhenTheCurrentCustomerDoesNotHaveAnAccount() {
         String beneficiaryIban = "FR5030004000700000157389538";
         String customerId = "131435";
         String customerFirstName = "Paul";
         String customerLastName = "Duboit";
-        Customer currentCustomer = new Customer(customerId,customerFirstName,customerLastName);
+        Customer currentCustomer = new Customer(customerId, customerFirstName, customerLastName);
         authenticationGateway.authenticate(currentCustomer);
-        assertThatThrownBy(()->  deleteBeneficiary.handle(beneficiaryIban))
+        assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban))
                 .isInstanceOf(UnExistingAccountException.class)
                 .hasMessage("Customer with id: " + customerId + " does not have any account");
     }
 
 
     @Test
-    void shouldThrowAnExceptionWhenTheBeneficiaryToDeleteDoesNotExist(){
+    void shouldThrowAnExceptionWhenTheBeneficiaryToDeleteDoesNotExist() {
         String customerId = "131435";
         String accountIban = "FR1420041010050500013M02606";
         String accountBIC = "AGRIFFRII89";
@@ -109,15 +107,13 @@ class DeleteBeneficiaryTest {
         String accountLastName = "Duboit";
         String beneficiaryIban = "FR5030004000700000157389538";
 
-        Customer currentCustomer = new Customer(customerId,accountFirstName,accountLastName);
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
                 .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
-                .withFirstName(accountFirstName)
-                .withLastName(accountLastName)
                 .withBeneficiaries(new ArrayList<>())
                 .withCustomer(currentCustomer)
                 .build();
@@ -127,7 +123,7 @@ class DeleteBeneficiaryTest {
         authenticationGateway.authenticate(currentCustomer);
 
 
-        assertThatThrownBy(()-> deleteBeneficiary.handle(beneficiaryIban)).isInstanceOf(UnknownBeneficiaryException.class)
+        assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban)).isInstanceOf(UnknownBeneficiaryException.class)
                 .hasMessage("Cannot find any account with the iban: " + beneficiaryIban + " in your beneficiaries list.");
     }
 
