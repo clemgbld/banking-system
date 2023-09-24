@@ -107,10 +107,6 @@ public class Account {
         makeTransaction(transactionId, creationDate, transactionAmount.negate(), receiverAccountIban, beneficiary.getBic(), beneficiary.getName());
     }
 
-    public boolean isInDifferentBank(String receiverAccountIban) {
-        Beneficiary beneficiary = findBeneficiaryByIbanOrThrow(receiverAccountIban);
-        return beneficiary.isInDifferentBank(bic);
-    }
 
     public void addBeneficiary(String beneficiaryId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
         Beneficiary beneficiary = new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName);
@@ -127,7 +123,7 @@ public class Account {
                 .toList();
     }
 
-    private Beneficiary findBeneficiaryByIbanOrThrow(String beneficiaryIban) {
+    public Beneficiary findBeneficiaryByIbanOrThrow(String beneficiaryIban) {
         return findBeneficiaryByIban(beneficiaryIban).
                 orElseThrow(() -> new UnknownBeneficiaryException(beneficiaryIban));
     }
