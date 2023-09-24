@@ -1,10 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InsufficientBalanceException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -166,6 +163,47 @@ class TransferMoneyTest {
 
         assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, senderAccountBIC, senderAccountFirstName + " " + senderAccountLastName)));
         assertThat(extraBankAccountInfos).usingRecursiveComparison().isEqualTo(List.of(receiverAccountIban, receiverAccountBIC));
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheBicOfTheExternalBankIsNotValid() {
+        String customerId = "1345";
+        String senderAccountIban = "FR1420041010050500013M02606";
+        String receiverAccountIban = "FR5030004000700000157389538";
+        String senderAccountBIC = "AGRIFRPP989";
+        String receiverAccountBIC = "B";
+        String senderAccountId = "1";
+        String senderTransactionId = "13543A";
+        String receiverTransactionId = "143E53245";
+        String senderAccountFirstName = "Paul";
+        String senderAccountLastName = "Duboit";
+        String receiverAccountFirstName = "John";
+        String receiverAccountLastName = "Smith";
+
+
+        BigDecimal transactionAmount = new BigDecimal(5);
+
+        Customer currentCustomer = new Customer(customerId, senderAccountFirstName, senderAccountLastName);
+
+        Account existingSenderAccount = new Account.Builder()
+                .withId(senderAccountId)
+                .withIban(senderAccountIban)
+                .withBic(senderAccountBIC)
+                .withBalance(new BigDecimal(105))
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, "BNPAFRPP123", receiverAccountFirstName + " " + receiverAccountLastName)))
+                .withCustomer(currentCustomer)
+                .build();
+
+        currentCustomer.addAccount(existingSenderAccount);
+
+        authenticationGateway.authenticate(currentCustomer);
+
+        TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), List.of(), List.of());
+
+        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, receiverAccountBIC))
+                .isInstanceOf(InvalidBicException.class)
+                .hasMessage("bic: " + receiverAccountBIC + " is invalid.");
     }
 
 

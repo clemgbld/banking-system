@@ -39,8 +39,9 @@ public class TransferMoney {
         senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIban);
         if (senderAccount.isInDifferentBank(receiverAccountIban)) {
             accountRepository.update(senderAccount);
+            Bic externalReceiverAccountBic = new Bic(receiverAccountBic);
             MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), senderAccount.getBic(), currentCustomer.fullName());
-            extraBankTransactionsGateway.transfer(transaction, receiverAccountIban, receiverAccountBic);
+            extraBankTransactionsGateway.transfer(transaction, receiverAccountIban, externalReceiverAccountBic.value());
             return;
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
