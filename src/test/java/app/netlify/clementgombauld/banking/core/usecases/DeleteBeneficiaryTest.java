@@ -34,7 +34,6 @@ class DeleteBeneficiaryTest {
     void shouldDeleteTheExpectedBeneficiary() {
         String customerId = "131435";
         String accountIban = "FR1420041010050500013M02606";
-        String accountBIC = "AGRIFFRII89";
         String accountId = "1";
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
@@ -58,7 +57,6 @@ class DeleteBeneficiaryTest {
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
-                .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
                 .withBeneficiaries(existingBeneficiaries)
                 .withCustomer(currentCustomer)
@@ -101,7 +99,6 @@ class DeleteBeneficiaryTest {
     void shouldThrowAnExceptionWhenTheBeneficiaryToDeleteDoesNotExist() {
         String customerId = "131435";
         String accountIban = "FR1420041010050500013M02606";
-        String accountBIC = "AGRIFFRII89";
         String accountId = "1";
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
@@ -112,7 +109,6 @@ class DeleteBeneficiaryTest {
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
-                .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
                 .withBeneficiaries(new ArrayList<>())
                 .withCustomer(currentCustomer)

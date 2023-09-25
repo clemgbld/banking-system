@@ -21,7 +21,6 @@ public class InMemoryAccountRepository implements AccountRepository {
         return Optional.of(new Account.Builder()
                 .withId(nullableAccount.getId())
                 .withIban(nullableAccount.getIban())
-                .withBic(nullableAccount.getBic())
                 .withBalance(nullableAccount.getBalance())
                 .withTransactions(nullableAccount.getTransactions())
                 .withBeneficiaries(nullableAccount.getBeneficiaries())

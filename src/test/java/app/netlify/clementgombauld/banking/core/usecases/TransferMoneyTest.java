@@ -37,7 +37,7 @@ class TransferMoneyTest {
         String customerId = "1345";
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
-        String senderAccountBIC = "AGRIFRPP989";
+        String bic = "AGRIFRPP989";
         String receiverAccountBIC = "AGRIFRPP989";
         String senderAccountId = "1";
         String receiverAccountId = "2";
@@ -53,7 +53,6 @@ class TransferMoneyTest {
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
                 .withIban(senderAccountIban)
-                .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
                 .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
@@ -66,7 +65,6 @@ class TransferMoneyTest {
         accountRepository.update(new Account.Builder()
                 .withId(receiverAccountId)
                 .withIban(receiverAccountIban)
-                .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(100))
                 .withTransactions(null)
                 .withBeneficiaries(List.of())
@@ -77,7 +75,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), List.of(), List.of());
 
-        transferMoney.handle(transactionAmount, receiverAccountIban);
+        transferMoney.handle(transactionAmount, receiverAccountIban, bic);
 
         Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
@@ -85,7 +83,6 @@ class TransferMoneyTest {
         assertThat(senderAccount).usingRecursiveComparison().isEqualTo(new Account.Builder()
                 .withId(senderAccountId)
                 .withIban(senderAccountIban)
-                .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(100))
                 .withTransactions(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName), new MoneyTransferred(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
@@ -95,9 +92,8 @@ class TransferMoneyTest {
         assertThat(receiverAccount).usingRecursiveComparison().isEqualTo(new Account.Builder()
                 .withId(receiverAccountId)
                 .withIban(receiverAccountIban)
-                .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withTransactions(List.of(new MoneyTransferred(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, senderAccountBIC, senderAccountFirstName + " " + senderAccountLastName)))
+                .withTransactions(List.of(new MoneyTransferred(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, bic, senderAccountFirstName + " " + senderAccountLastName)))
                 .withBeneficiaries(List.of())
                 .build());
     }
@@ -108,7 +104,7 @@ class TransferMoneyTest {
         String customerId = "1345";
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
-        String senderAccountBIC = "AGRIFRPP989";
+        String bic = "AGRIFRPP989";
         String receiverAccountBIC = "BNPAFRPP123";
         String senderAccountId = "1";
         String senderTransactionId = "13543A";
@@ -126,7 +122,6 @@ class TransferMoneyTest {
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
                 .withIban(senderAccountIban)
-                .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
                 .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
                 .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
@@ -145,7 +140,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), extraBankTransactions, extraBankAccountInfos);
 
-        transferMoney.handle(transactionAmount, receiverAccountIban);
+        transferMoney.handle(transactionAmount, receiverAccountIban, bic);
 
         Account senderAccount = accountRepository.findByIban(senderAccountIban).orElseThrow(RuntimeException::new);
 
@@ -154,14 +149,13 @@ class TransferMoneyTest {
                 .isEqualTo(new Account.Builder()
                         .withId(senderAccountId)
                         .withIban(senderAccountIban)
-                        .withBic(senderAccountBIC)
                         .withBalance(new BigDecimal(100))
                         .withTransactions(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName), new MoneyTransferred(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                         .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
                         .withCustomer(currentCustomer)
                         .build());
 
-        assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, senderAccountBIC, senderAccountFirstName + " " + senderAccountLastName)));
+        assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new MoneyTransferred(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, bic, senderAccountFirstName + " " + senderAccountLastName)));
         assertThat(extraBankAccountInfos).usingRecursiveComparison().isEqualTo(List.of(receiverAccountIban, receiverAccountBIC));
     }
 
@@ -171,8 +165,7 @@ class TransferMoneyTest {
         String customerId = "1345";
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR3429051014050500014M02606";
-        String senderAccountBIC = "AGRIFRPP989";
-        String receiverAccountBIC = "AGRIFRPP989";
+        String bic = "AGRIFRPP989";
         String senderAccountId = "1";
         String receiverAccountId = "2";
         String senderTransactionId = "13543A";
@@ -187,7 +180,6 @@ class TransferMoneyTest {
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
                 .withIban(senderAccountIban)
-                .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
                 .withTransactions(List.of())
                 .withBeneficiaries(List.of())
@@ -200,7 +192,6 @@ class TransferMoneyTest {
         accountRepository.update(new Account.Builder()
                 .withId(receiverAccountId)
                 .withIban(receiverAccountIban)
-                .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(100))
                 .withBeneficiaries(List.of())
                 .build());
@@ -208,20 +199,32 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), List.of(), List.of());
 
-        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban)).isInstanceOf(UnknownBeneficiaryException.class)
+        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(UnknownBeneficiaryException.class)
                 .hasMessage("Cannot find any account with the iban: " + receiverAccountIban + " in your beneficiaries list.");
     }
 
     @Test
     void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer() {
         String receiverAccountIban = "FR5030004000700000157389538";
-        String receiverAccountBIC = "AGRIFRPP989";
+        String bic = "AGRIFRPP989";
 
         TransferMoney transferMoney = buildTransferMoney(List.of(), List.of(), List.of());
 
-        assertThatThrownBy(() -> transferMoney.handle(new BigDecimal(100), receiverAccountIban))
+        assertThatThrownBy(() -> transferMoney.handle(new BigDecimal(100), receiverAccountIban, bic))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheBicOfTheBankIsInvalid() {
+        String receiverAccountIban = "FR5030004000700000157389538";
+        String bic = "invalidBic";
+
+        TransferMoney transferMoney = buildTransferMoney(List.of(), List.of(), List.of());
+        assertThatThrownBy(() -> transferMoney.handle(new BigDecimal(100), receiverAccountIban, bic))
+                .isInstanceOf(InvalidBicException.class)
+                .hasMessage("bic: " + bic + " is invalid.");
+
     }
 
 
@@ -230,8 +233,7 @@ class TransferMoneyTest {
         String customerId = "1345";
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
-        String senderAccountBIC = "AGRIFRPP989";
-        String receiverAccountBIC = "AGRIFRPP989";
+        String bic = "AGRIFRPP989";
         String senderAccountId = "1";
         String receiverAccountId = "2";
         String senderTransactionId = "13543A";
@@ -248,10 +250,9 @@ class TransferMoneyTest {
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
                 .withIban(senderAccountIban)
-                .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
-                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, bic, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, bic, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)
                 .build();
         currentCustomer.addAccount(existingSenderAccount);
@@ -261,7 +262,6 @@ class TransferMoneyTest {
         accountRepository.update(new Account.Builder()
                 .withId(receiverAccountId)
                 .withIban(receiverAccountIban)
-                .withBic(receiverAccountBIC)
                 .withBalance(new BigDecimal(100))
                 .withTransactions(null)
                 .withBeneficiaries(List.of())
@@ -269,7 +269,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), List.of(), List.of());
 
-        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban)).isInstanceOf(InsufficientBalanceException.class);
+        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(InsufficientBalanceException.class);
     }
 
 
@@ -278,8 +278,7 @@ class TransferMoneyTest {
         String customerId = "1345";
         String senderAccountIban = "FR1420041010050500013M02606";
         String receiverAccountIban = "FR5030004000700000157389538";
-        String senderAccountBIC = "AGRIFRPP989";
-        String receiverAccountBIC = "AGRIFRPP989";
+        String bic = "AGRIFRPP989";
         String senderAccountId = "1";
         String senderTransactionId = "13543A";
         String receiverTransactionId = "143E53245";
@@ -294,10 +293,9 @@ class TransferMoneyTest {
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
                 .withIban(senderAccountIban)
-                .withBic(senderAccountBIC)
                 .withBalance(new BigDecimal(105))
-                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName))))
-                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName)))
+                .withTransactions(new ArrayList<>(List.of(new MoneyTransferred("12345", Instant.ofEpochSecond(2534543253252L), new BigDecimal(105), receiverAccountIban, bic, receiverAccountFirstName + " " + receiverAccountLastName))))
+                .withBeneficiaries(List.of(new Beneficiary("AE434", receiverAccountIban, bic, receiverAccountFirstName + " " + receiverAccountLastName)))
                 .withCustomer(currentCustomer)
                 .build();
 
@@ -307,7 +305,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), List.of(), List.of());
 
-        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban)).isInstanceOf(UnknownAccountWithIbanException.class)
+        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(UnknownAccountWithIbanException.class)
                 .hasMessage("There is no account with the iban: " + receiverAccountIban);
     }
 

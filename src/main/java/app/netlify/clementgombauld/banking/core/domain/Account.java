@@ -18,7 +18,6 @@ public class Account {
 
     private final String iban;
 
-    private final String bic;
 
     private Balance balance;
 
@@ -30,7 +29,6 @@ public class Account {
     private Account(Builder builder) {
         this.id = builder.id;
         this.iban = builder.iban;
-        this.bic = builder.bic;
         this.balance = new Balance(builder.balance);
         this.transactions = Optional.ofNullable(builder.transactions).orElse(new ArrayList<>());
         this.beneficiaries = builder.beneficiaries;
@@ -42,7 +40,6 @@ public class Account {
         private Customer customer;
         private String id;
         private String iban;
-        private String bic;
         private BigDecimal balance;
         private List<MoneyTransferred> transactions;
         private List<Beneficiary> beneficiaries;
@@ -58,10 +55,6 @@ public class Account {
             return this;
         }
 
-        public Builder withBic(String bic) {
-            this.bic = bic;
-            return this;
-        }
 
         public Builder withBalance(BigDecimal money) {
             this.balance = money;
@@ -142,10 +135,6 @@ public class Account {
 
     public String getId() {
         return id;
-    }
-
-    public String getBic() {
-        return bic;
     }
 
 

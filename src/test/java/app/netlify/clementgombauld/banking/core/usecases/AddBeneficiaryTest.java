@@ -31,7 +31,6 @@ class AddBeneficiaryTest {
     void shouldAddBeneficiaryToTheGivenAccount() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
-        String accountBIC = "AGRIFFRII89";
         String accountId = "1";
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
@@ -45,7 +44,6 @@ class AddBeneficiaryTest {
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
-                .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
                 .withBeneficiaries(new ArrayList<>())
                 .withCustomer(currentCustomer)
@@ -70,7 +68,6 @@ class AddBeneficiaryTest {
     void shouldThrowAnExceptionWhenTheBeneficiaryHasAlreadyBeenAddedToTheAccount() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
-        String accountBIC = "AGRIFFRII89";
         String accountId = "1";
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
@@ -88,7 +85,6 @@ class AddBeneficiaryTest {
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
-                .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
                 .withBeneficiaries(existingBeneficiaries)
                 .withCustomer(currentCustomer)
@@ -110,7 +106,6 @@ class AddBeneficiaryTest {
     void shouldThrowAnInvalidIbanExceptionWhenTheBeneficiaryIbanIsNotValid() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
-        String accountBIC = "AGRIFFRII89";
         String accountId = "1";
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
@@ -126,7 +121,6 @@ class AddBeneficiaryTest {
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
-                .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
                 .withBeneficiaries(existingBeneficiaries)
                 .withCustomer(currentCustomer)
@@ -160,7 +154,6 @@ class AddBeneficiaryTest {
     void shouldThrowAnExceptionWhenTheBeneficiaryBicIsNotValid() {
         String customerId = "13455";
         String accountIban = "FR1420041010050500013M02606";
-        String accountBIC = "AGRIFFRII89";
         String accountId = "1";
         String accountFirstName = "Paul";
         String accountLastName = "Duboit";
@@ -174,7 +167,6 @@ class AddBeneficiaryTest {
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(accountIban)
-                .withBic(accountBIC)
                 .withBalance(new BigDecimal(105))
                 .withBeneficiaries(new ArrayList<>())
                 .withCustomer(currentCustomer)

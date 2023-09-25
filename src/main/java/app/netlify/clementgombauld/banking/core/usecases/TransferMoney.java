@@ -29,7 +29,8 @@ public class TransferMoney {
         this.authenticationGateway = authenticationGateway;
     }
 
-    public void handle(BigDecimal transactionAmount, String receiverAccountIban) {
+    public void handle(BigDecimal transactionAmount, String receiverAccountIban, String bic) {
+        Bic bankBic = new Bic(bic);
         Instant creationDate = dateProvider.now();
         Customer currentCustomer = authenticationGateway.currentCustomer()
                 .orElseThrow(NoCurrentCustomerException::new);
@@ -38,16 +39,16 @@ public class TransferMoney {
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIban);
         Beneficiary beneficiary = senderAccount.findBeneficiaryByIbanOrThrow(receiverAccountIban);
-        if (beneficiary.isInDifferentBank(senderAccount.getBic())) {
+        if (beneficiary.isInDifferentBank(bankBic.value())) {
             accountRepository.update(senderAccount);
-            MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), senderAccount.getBic(), currentCustomer.fullName());
+            MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
             extraBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
             return;
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
                 .orElseThrow(throwUnknownAccountException(receiverAccountIban));
 
-        receiverAccount.deposit(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), senderAccount.getBic(), currentCustomer.fullName());
+        receiverAccount.deposit(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
         accountRepository.update(senderAccount, receiverAccount);
     }
 
