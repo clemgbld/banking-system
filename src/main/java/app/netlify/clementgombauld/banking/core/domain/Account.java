@@ -31,7 +31,7 @@ public class Account {
         this.iban = builder.iban;
         this.balance = new Balance(builder.balance);
         this.transactions = Optional.ofNullable(builder.transactions).orElse(new ArrayList<>());
-        this.beneficiaries = builder.beneficiaries;
+        this.beneficiaries = Optional.ofNullable(builder.beneficiaries).orElse(new ArrayList<>());
         this.customer = builder.customer;
     }
 

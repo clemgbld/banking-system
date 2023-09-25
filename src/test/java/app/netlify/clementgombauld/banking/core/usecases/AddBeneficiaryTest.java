@@ -45,7 +45,6 @@ class AddBeneficiaryTest {
                 .withId(accountId)
                 .withIban(accountIban)
                 .withBalance(new BigDecimal(105))
-                .withBeneficiaries(new ArrayList<>())
                 .withCustomer(currentCustomer)
                 .build();
 
