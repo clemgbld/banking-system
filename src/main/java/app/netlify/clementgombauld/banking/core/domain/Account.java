@@ -18,7 +18,6 @@ public class Account {
 
     private final String iban;
 
-
     private Balance balance;
 
     private final List<MoneyTransferred> transactions;
@@ -29,7 +28,7 @@ public class Account {
     private Account(Builder builder) {
         this.id = builder.id;
         this.iban = builder.iban;
-        this.balance = new Balance(builder.balance);
+        this.balance = initBalance(builder.balance);
         this.transactions = Optional.ofNullable(builder.transactions).orElse(new ArrayList<>());
         this.beneficiaries = Optional.ofNullable(builder.beneficiaries).orElse(new ArrayList<>());
         this.customer = builder.customer;
@@ -91,7 +90,14 @@ public class Account {
     }
 
     public void deposit(String transactionId, Instant creationDate, BigDecimal transactionAmount, String senderIban, String senderAccountBic, String senderAccountFullName) {
+        Optional<Beneficiary> optionalBeneficiary = findBeneficiaryByIban(senderIban);
+        if (optionalBeneficiary.isPresent()) {
+            Beneficiary beneficiary = optionalBeneficiary.get();
+            makeTransaction(transactionId, creationDate, transactionAmount, beneficiary.getIban(), beneficiary.getBic(), beneficiary.getName());
+            return;
+        }
         makeTransaction(transactionId, creationDate, transactionAmount, senderIban, senderAccountBic, senderAccountFullName);
+
     }
 
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount, String receiverAccountIban) {
@@ -154,6 +160,11 @@ public class Account {
 
     public List<MoneyTransferred> getTransactions() {
         return transactions;
+    }
+
+    private Balance initBalance(BigDecimal balance) {
+        BigDecimal initialBalance = Optional.ofNullable(balance).orElse(new BigDecimal(0));
+        return new Balance(initialBalance);
     }
 
 
