@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.infra.inMemory.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
@@ -14,6 +15,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ReceiveMoneyFromExternalBankTest {
 
+    public static final long CURRENT_DATE_IN_MS = 2534543253252L;
+    public static final Instant CURRENT_DATE = Instant.ofEpochMilli(2534543253252L);
+    public static final String TRANSACTION_ID = "2143";
+    private IdGenerator idGenerator;
+    private DateProvider dateProvider;
+    private AccountRepository accountRepository;
+
+
+    @BeforeEach
+    void setUp() {
+        idGenerator = new InMemoryIdGenerator(List.of(TRANSACTION_ID));
+        dateProvider = new InMemoryDateProvider(CURRENT_DATE_IN_MS);
+        accountRepository = new InMemoryAccountRepository();
+    }
+
     @Test
     void shouldAddMoneyToTheExpectedBankAccountFromTheExternalBankWhenTheSenderAccountIsABeneficiary() {
         String accountId = "1";
@@ -22,13 +38,10 @@ class ReceiveMoneyFromExternalBankTest {
         String beneficiaryIban = "FR5030004000700000157389538";
         String accountName = "John Smith Junior";
         BigDecimal transactionAmount = new BigDecimal(5);
-        String transactionId = "2143";
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName = "John Smith";
-        long currentDateInMs = 2534543253252L;
-        Instant currentDate = Instant.ofEpochMilli(currentDateInMs);
 
-        AccountRepository accountRepository = new InMemoryAccountRepository();
+
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
@@ -36,15 +49,7 @@ class ReceiveMoneyFromExternalBankTest {
                 .build()
         );
 
-        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(transactionId));
-
-        DateProvider dateProvider = new InMemoryDateProvider(currentDateInMs);
-
-        CurrencyByCountryCodeGateway currencyByCountryCodeGateway = new InMemoryCurrencyByCountryCodeGateway(Map.of());
-
-        ExchangeRateGateway exchangeRateGateway = new InMemoryExchangeRateGateway(Map.of());
-
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = new ReceiveMoneyFromExternalBank(accountRepository, idGenerator, dateProvider, currencyByCountryCodeGateway, exchangeRateGateway);
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of());
 
         receiveMoneyFromExternalBank.handle(receiverAccountIban, beneficiaryIban, beneficiaryBic, accountName, transactionAmount);
 
@@ -57,7 +62,7 @@ class ReceiveMoneyFromExternalBankTest {
                         .withBalance(transactionAmount)
                         .withIban(receiverAccountIban)
                         .withBeneficiaries(List.of(new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName)))
-                        .withTransactions(List.of(new MoneyTransferred(transactionId, currentDate, transactionAmount, beneficiaryIban, beneficiaryBic, beneficiaryName)))
+                        .withTransactions(List.of(new MoneyTransferred(TRANSACTION_ID, CURRENT_DATE, transactionAmount, beneficiaryIban, beneficiaryBic, beneficiaryName)))
                         .build()
 
         );
@@ -72,26 +77,14 @@ class ReceiveMoneyFromExternalBankTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         String transactionId = "2143";
         String senderAccountBic = "ACMEUS33123";
-        long currentDateInMs = 2534543253252L;
-        Instant currentDate = Instant.ofEpochMilli(currentDateInMs);
 
-        AccountRepository accountRepository = new InMemoryAccountRepository();
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
                 .build()
         );
 
-        IdGenerator idGenerator = new InMemoryIdGenerator(List.of(transactionId));
-
-        DateProvider dateProvider = new InMemoryDateProvider(currentDateInMs);
-
-        CurrencyByCountryCodeGateway currencyByCountryCodeGateway = new InMemoryCurrencyByCountryCodeGateway(Map.of("US", "USD"));
-
-        ExchangeRateGateway exchangeRateGateway = new InMemoryExchangeRateGateway(Map.of("USD", Map.of("EUR", new BigDecimal("0.88"))));
-
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = new ReceiveMoneyFromExternalBank(accountRepository, idGenerator, dateProvider, currencyByCountryCodeGateway, exchangeRateGateway);
-
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of("USD", Map.of("EUR", new BigDecimal("0.88"))));
 
         receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountIban, senderAccountBic, senderAccountName, transactionAmount);
 
@@ -103,10 +96,19 @@ class ReceiveMoneyFromExternalBankTest {
                         .withId(accountId)
                         .withBalance(new BigDecimal("4.40"))
                         .withIban(receiverAccountIban)
-                        .withTransactions(List.of(new MoneyTransferred(transactionId, currentDate, new BigDecimal("4.40"), senderAccountIban, senderAccountBic, senderAccountName)))
+                        .withTransactions(List.of(new MoneyTransferred(transactionId, CURRENT_DATE, new BigDecimal("4.40"), senderAccountIban, senderAccountBic, senderAccountName)))
                         .build()
 
         );
 
+    }
+
+    private ReceiveMoneyFromExternalBank buildReceiveMoneyFromExternalBank(Map<String, String> countryCodeToCurrency, Map<String, Map<String, BigDecimal>> exchangeRateStore) {
+
+        CurrencyByCountryCodeGateway currencyByCountryCodeGateway = new InMemoryCurrencyByCountryCodeGateway(countryCodeToCurrency);
+
+        ExchangeRateGateway exchangeRateGateway = new InMemoryExchangeRateGateway(exchangeRateStore);
+
+        return new ReceiveMoneyFromExternalBank(accountRepository, idGenerator, dateProvider, currencyByCountryCodeGateway, exchangeRateGateway);
     }
 }
