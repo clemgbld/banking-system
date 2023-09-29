@@ -4,30 +4,50 @@ import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicExce
 
 import java.util.Objects;
 
-public record Bic(String value) {
+public class Bic {
+
+    private final org.iban4j.Bic bic;
+
     public Bic(String value) {
-        this.value = validateBic(value);
+        this.bic = validateBic(value);
     }
 
-    private String validateBic(String value){
+    public String value() {
+        return bic.toString();
+    }
+
+    private org.iban4j.Bic validateBic(String value) {
         try {
-            var bic = org.iban4j.Bic.valueOf(value);
-            return bic.toString();
-        }catch (Exception exception){
+            return org.iban4j.Bic.valueOf(value);
+        } catch (Exception exception) {
             throw new InvalidBicException(value);
         }
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Bic bic)) return false;
-        return value.equals(bic.value);
+        if (!(o instanceof Bic bic1)) return false;
+        return Objects.equals(bic, bic1.bic);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(bic);
+    }
+
+    @Override
+    public String toString() {
+        return "Bic{" +
+                "bic=" + bic +
+                '}';
+    }
+
+    public boolean isSameCountry(String value) {
+        return getCountryCode().equals(value);
+    }
+
+    public String getCountryCode() {
+        return bic.getCountryCode().name();
     }
 }

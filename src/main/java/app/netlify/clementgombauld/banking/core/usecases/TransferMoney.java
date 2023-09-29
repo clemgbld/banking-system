@@ -29,7 +29,7 @@ public class TransferMoney {
         this.authenticationGateway = authenticationGateway;
     }
 
-    public void handle(BigDecimal transactionAmount, String receiverAccountIban, String bic) {
+    public void handle(BigDecimal transactionAmount, String receiverAccountIdentifier, String bic) {
         Bic bankBic = new Bic(bic);
         Instant creationDate = dateProvider.now();
         Customer currentCustomer = authenticationGateway.currentCustomer()
@@ -37,16 +37,16 @@ public class TransferMoney {
         Account senderAccount = currentCustomer.getAccount();
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
-        senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIban);
-        Beneficiary beneficiary = senderAccount.findBeneficiaryByIbanOrThrow(receiverAccountIban);
+        senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIdentifier);
+        Beneficiary beneficiary = senderAccount.findBeneficiaryByIbanOrThrow(receiverAccountIdentifier);
         if (beneficiary.isInDifferentBank(bankBic.value())) {
             accountRepository.update(senderAccount);
             MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
             extraBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
             return;
         }
-        Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
-                .orElseThrow(throwUnknownAccountException(receiverAccountIban));
+        Account receiverAccount = accountRepository.findByIban(receiverAccountIdentifier)
+                .orElseThrow(throwUnknownAccountException(receiverAccountIdentifier));
 
         receiverAccount.deposit(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
         accountRepository.update(senderAccount, receiverAccount);

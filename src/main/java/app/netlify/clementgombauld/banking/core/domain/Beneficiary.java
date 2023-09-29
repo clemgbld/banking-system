@@ -62,7 +62,7 @@ public class Beneficiary {
     public String toString() {
         return "Beneficiary{" +
                 "id='" + id + '\'' +
-                ", iban=" + iban +
+                ", accountIdentifier=" + iban +
                 ", bic=" + bic +
                 ", name='" + name + '\'' +
                 '}';

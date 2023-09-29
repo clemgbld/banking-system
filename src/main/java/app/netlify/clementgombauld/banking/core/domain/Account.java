@@ -185,7 +185,7 @@ public class Account {
         return "Account{" +
                 "customer=" + customer +
                 ", id='" + id + '\'' +
-                ", iban='" + iban + '\'' +
+                ", accountIdentifier='" + iban + '\'' +
                 ", balance=" + balance +
                 ", transactions=" + transactions +
                 ", beneficiaries=" + beneficiaries +

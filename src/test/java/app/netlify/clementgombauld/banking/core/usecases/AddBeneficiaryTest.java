@@ -97,7 +97,7 @@ class AddBeneficiaryTest {
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(DuplicatedBeneficiaryException.class)
-                .hasMessage("The beneficiary with the iban : " + beneficiaryIban + " is already a beneficiary of the account " + accountId);
+                .hasMessage("The beneficiary with the accountIdentifier : " + beneficiaryIban + " is already a beneficiary of the account " + accountId);
     }
 
 
@@ -133,7 +133,7 @@ class AddBeneficiaryTest {
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(InvalidIbanException.class)
-                .hasMessage("iban: " + beneficiaryIban + " is invalid.");
+                .hasMessage("accountIdentifier: " + beneficiaryIban + " is invalid.");
     }
 
     @Test

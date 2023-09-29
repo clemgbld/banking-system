@@ -1,6 +1,8 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
 import app.netlify.clementgombauld.banking.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ReceiveMoneyFromExternalBankTest {
 
@@ -72,7 +75,7 @@ class ReceiveMoneyFromExternalBankTest {
     void shouldAddMoneyToTheExpectedBankAccountFromTheExternalBankWhenTheSenderAccountHasADifferentCurrencyAndMakeTheConversion() {
         String accountId = "1";
         String receiverAccountIban = "FR1420041010050500013M02606";
-        String senderAccountIban = "US12345678901234567890";
+        String senderAccountABARoutingNumber = "123456789";
         String senderAccountName = "John Smith Junior";
         BigDecimal transactionAmount = new BigDecimal(5);
         String transactionId = "2143";
@@ -86,7 +89,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of("USD", Map.of("EUR", new BigDecimal("0.88"))));
 
-        receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountIban, senderAccountBic, senderAccountName, transactionAmount);
+        receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount);
 
 
         Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
@@ -96,11 +99,33 @@ class ReceiveMoneyFromExternalBankTest {
                         .withId(accountId)
                         .withBalance(new BigDecimal("4.40"))
                         .withIban(receiverAccountIban)
-                        .withTransactions(List.of(new MoneyTransferred(transactionId, CURRENT_DATE, new BigDecimal("4.40"), senderAccountIban, senderAccountBic, senderAccountName)))
+                        .withTransactions(List.of(new MoneyTransferred(transactionId, CURRENT_DATE, new BigDecimal("4.40"), senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
                         .build()
 
         );
 
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheSenderAccountBicIsInvalid() {
+        String accountId = "1";
+        String receiverAccountIban = "FR1420041010050500013M02606";
+        String senderAccountABARoutingNumber = "123456789";
+        String senderAccountName = "John Smith Junior";
+        BigDecimal transactionAmount = new BigDecimal(5);
+        String senderAccountBic = "ACMEUS331";
+
+        accountRepository.update(new Account.Builder()
+                .withId(accountId)
+                .withIban(receiverAccountIban)
+                .build()
+        );
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of());
+
+        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
+                .isInstanceOf(InvalidBicException.class)
+                .hasMessage("bic: " + senderAccountBic + " is invalid.");
     }
 
     private ReceiveMoneyFromExternalBank buildReceiveMoneyFromExternalBank(Map<String, String> countryCodeToCurrency, Map<String, Map<String, BigDecimal>> exchangeRateStore) {

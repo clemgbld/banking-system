@@ -120,7 +120,7 @@ class DeleteBeneficiaryTest {
 
 
         assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban)).isInstanceOf(UnknownBeneficiaryException.class)
-                .hasMessage("Cannot find any account with the iban: " + beneficiaryIban + " in your beneficiaries list.");
+                .hasMessage("Cannot find any account with the accountIdentifier: " + beneficiaryIban + " in your beneficiaries list.");
     }
 
 }

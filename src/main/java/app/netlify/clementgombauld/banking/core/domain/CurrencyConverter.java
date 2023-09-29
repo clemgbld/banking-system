@@ -12,8 +12,8 @@ public class CurrencyConverter {
         this.exchangeRateGateway = exchangeRateGateway;
     }
 
-    public BigDecimal convert(String iban, BigDecimal amount) {
-        String currency = currencyByCountryCodeGateway.retrieve(iban.substring(0, 2)).orElseThrow();
+    public BigDecimal convert(Bic bic, BigDecimal amount) {
+        String currency = currencyByCountryCodeGateway.retrieve(bic.getCountryCode()).orElseThrow();
         BigDecimal exchangeRate = exchangeRateGateway.retrieve(currency, BankInfoType.CURRENCY.getValue()).orElseThrow();
         return amount.multiply(exchangeRate);
     }

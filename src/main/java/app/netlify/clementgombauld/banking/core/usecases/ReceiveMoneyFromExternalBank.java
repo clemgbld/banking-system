@@ -17,7 +17,6 @@ public class ReceiveMoneyFromExternalBank {
     private final CurrencyConverter currencyConverter;
 
     public ReceiveMoneyFromExternalBank(AccountRepository accountRepository, IdGenerator idGenerator, DateProvider dateProvider, CurrencyByCountryCodeGateway currencyByCountryCodeGateway, ExchangeRateGateway exchangeRateGateway) {
-
         this.accountRepository = accountRepository;
         this.idGenerator = idGenerator;
         this.dateProvider = dateProvider;
@@ -25,19 +24,20 @@ public class ReceiveMoneyFromExternalBank {
     }
 
 
-    public void handle(String receiverAccountIban, String senderAccountIban, String senderAccountBic, String senderAccountName, BigDecimal transactionAmount) {
+    public void handle(String receiverAccountIban, String senderAccountIdentifier, String senderAccountBic, String senderAccountName, BigDecimal transactionAmount) {
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
         String transactionId = idGenerator.generate();
         Instant currentDate = dateProvider.now();
-        if (BankInfoType.COUNTRY.getValue().equals(senderAccountIban.substring(0, 2))) {
-            receiverAccount.deposit(transactionId, currentDate, transactionAmount, senderAccountIban, senderAccountBic, senderAccountName);
+        Bic validSenderAccountBic = new Bic(senderAccountBic);
+        if (validSenderAccountBic.isSameCountry(BankInfoType.COUNTRY.getValue())) {
+            receiverAccount.deposit(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic, senderAccountName);
             accountRepository.update(receiverAccount);
             return;
         }
 
-        BigDecimal convertedAmount = currencyConverter.convert(senderAccountIban, transactionAmount);
+        BigDecimal convertedAmount = currencyConverter.convert(validSenderAccountBic, transactionAmount);
 
-        receiverAccount.deposit(transactionId, currentDate, convertedAmount, senderAccountIban, senderAccountBic, senderAccountName);
+        receiverAccount.deposit(transactionId, currentDate, convertedAmount, senderAccountIdentifier, senderAccountBic, senderAccountName);
 
         accountRepository.update(receiverAccount);
 

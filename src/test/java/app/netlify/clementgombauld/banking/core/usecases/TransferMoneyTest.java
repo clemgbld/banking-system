@@ -200,7 +200,7 @@ class TransferMoneyTest {
         TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), List.of(), List.of());
 
         assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(UnknownBeneficiaryException.class)
-                .hasMessage("Cannot find any account with the iban: " + receiverAccountIban + " in your beneficiaries list.");
+                .hasMessage("Cannot find any account with the accountIdentifier: " + receiverAccountIban + " in your beneficiaries list.");
     }
 
     @Test
@@ -306,7 +306,7 @@ class TransferMoneyTest {
         TransferMoney transferMoney = buildTransferMoney(List.of(senderTransactionId, receiverTransactionId), List.of(), List.of());
 
         assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(UnknownAccountWithIbanException.class)
-                .hasMessage("There is no account with the iban: " + receiverAccountIban);
+                .hasMessage("There is no account with the accountIdentifier: " + receiverAccountIban);
     }
 
 
