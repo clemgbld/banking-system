@@ -7,14 +7,14 @@ import java.util.Objects;
 public record Iban(String value) {
 
     public Iban(String value) {
-      this.value = validateIban(value);
+        this.value = validateIban(value);
     }
 
-    private String validateIban(String value){
+    private String validateIban(String value) {
         try {
             var iban = org.iban4j.Iban.valueOf(value);
             return iban.toString();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new InvalidIbanException(value);
         }
     }
@@ -30,5 +30,12 @@ public record Iban(String value) {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return "Iban{" +
+                "value='" + value + '\'' +
+                '}';
     }
 }

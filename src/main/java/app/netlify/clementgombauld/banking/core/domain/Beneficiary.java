@@ -1,6 +1,8 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
 
+import java.util.Objects;
+
 public class Beneficiary {
 
     private final String id;
@@ -44,5 +46,25 @@ public class Beneficiary {
         return !this.bic.equals(new Bic(bic));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Beneficiary that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(iban, that.iban) && Objects.equals(bic, that.bic) && Objects.equals(name, that.name);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, iban, bic, name);
+    }
+
+    @Override
+    public String toString() {
+        return "Beneficiary{" +
+                "id='" + id + '\'' +
+                ", iban=" + iban +
+                ", bic=" + bic +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -10,12 +10,12 @@ public record Balance(BigDecimal value) {
     public static final int COMPARATOR = 0;
     public static final int ZERO_BALANCE = 0;
 
-    Balance add(BigDecimal amount){
+    Balance add(BigDecimal amount) {
         return new Balance(value.add(amount));
     }
 
-    void checkBalanceSufficiency(BigDecimal amount){
-        if(isBalanceInsufficient(amount)){
+    void checkBalanceSufficiency(BigDecimal amount) {
+        if (isBalanceInsufficient(amount)) {
             throw new InsufficientBalanceException();
         }
     }
@@ -34,5 +34,12 @@ public record Balance(BigDecimal value) {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return "Balance{" +
+                "value=" + value +
+                '}';
     }
 }

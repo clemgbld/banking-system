@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -167,5 +168,27 @@ public class Account {
         return new Balance(initialBalance);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account account)) return false;
+        return Objects.equals(id, account.id) && Objects.equals(iban, account.iban) && Objects.equals(balance, account.balance) && Objects.equals(transactions, account.transactions) && Objects.equals(beneficiaries, account.beneficiaries);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, iban, balance, transactions, beneficiaries);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "customer=" + customer +
+                ", id='" + id + '\'' +
+                ", iban='" + iban + '\'' +
+                ", balance=" + balance +
+                ", transactions=" + transactions +
+                ", beneficiaries=" + beneficiaries +
+                '}';
+    }
 }
