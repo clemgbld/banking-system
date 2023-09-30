@@ -1,5 +1,7 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrencyFoundException;
+
 import java.math.BigDecimal;
 
 public class CurrencyConverter {
@@ -13,8 +15,13 @@ public class CurrencyConverter {
     }
 
     public BigDecimal convert(Bic bic, BigDecimal amount) {
-        String currency = countryGateway.retrieveCurrencyByCountryCode(bic.getCountryCode()).orElseThrow();
+        String countryCode = bic.getCountryCode();
+
+        String currency = countryGateway.retrieveCurrencyByCountryCode(countryCode)
+                .orElseThrow(() -> new NoCurrencyFoundException(countryCode));
+
         BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency, BankInfoType.CURRENCY.getValue()).orElseThrow();
+
         return amount.multiply(exchangeRate);
     }
 }

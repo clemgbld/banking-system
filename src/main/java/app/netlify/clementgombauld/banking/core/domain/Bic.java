@@ -8,8 +8,11 @@ public class Bic {
 
     private final org.iban4j.Bic bic;
 
+    private final org.iban4j.CountryCode countryCode;
+
     public Bic(String value) {
         this.bic = validateBic(value);
+        this.countryCode = this.bic.getCountryCode();
     }
 
     public String value() {
@@ -43,11 +46,11 @@ public class Bic {
                 '}';
     }
 
-    public boolean isSameCountry(String value) {
-        return getCountryCode().equals(value);
+    public String getCountryCode() {
+        return countryCode.name();
     }
 
-    public String getCountryCode() {
-        return bic.getCountryCode().name();
+    public boolean isFrench() {
+        return getCountryCode().equals(BankInfoType.COUNTRY.getValue());
     }
 }
