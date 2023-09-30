@@ -183,6 +183,11 @@ class ReceiveMoneyFromExternalBankTest {
 
     @Test
     void shouldNotPerformAnyCurrencyConversionWhenTheRetrievedCurrencyIsTheSameThanTheBankCurrency() {
-
+        String accountId = "1";
+        String receiverAccountIban = "FR1420041010050500013M02606";
+        String senderAccountABARoutingNumber = "123456789";
+        String senderAccountName = "John Smith Junior";
+        BigDecimal transactionAmount = new BigDecimal(5);
+        String senderAccountBic = "ACMEUS33123";
     }
 }

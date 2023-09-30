@@ -27,6 +27,15 @@ public class Bic {
         }
     }
 
+
+    public String getCountryCode() {
+        return countryCode.name();
+    }
+
+    public boolean isBankCountry() {
+        return getCountryCode().equals(BankInfoType.COUNTRY.getValue());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -46,11 +55,4 @@ public class Bic {
                 '}';
     }
 
-    public String getCountryCode() {
-        return countryCode.name();
-    }
-
-    public boolean isFrench() {
-        return getCountryCode().equals(BankInfoType.COUNTRY.getValue());
-    }
 }

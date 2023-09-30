@@ -29,7 +29,7 @@ public class ReceiveMoneyFromExternalBank {
         String transactionId = idGenerator.generate();
         Instant currentDate = dateProvider.now();
         Bic validSenderAccountBic = new Bic(senderAccountBic);
-        if (validSenderAccountBic.isFrench()) {
+        if (validSenderAccountBic.isBankCountry()) {
             receiverAccount.deposit(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic, senderAccountName);
             accountRepository.save(receiverAccount);
             return;
