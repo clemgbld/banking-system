@@ -3,18 +3,18 @@ package app.netlify.clementgombauld.banking.core.domain;
 import java.math.BigDecimal;
 
 public class CurrencyConverter {
-    private final CurrencyByCountryCodeGateway currencyByCountryCodeGateway;
+    private final CountryGateway countryGateway;
 
-    private final ExchangeRateGateway exchangeRateGateway;
+    private final CurrencyGateway currencyGateway;
 
-    public CurrencyConverter(CurrencyByCountryCodeGateway currencyByCountryCodeGateway, ExchangeRateGateway exchangeRateGateway) {
-        this.currencyByCountryCodeGateway = currencyByCountryCodeGateway;
-        this.exchangeRateGateway = exchangeRateGateway;
+    public CurrencyConverter(CountryGateway countryGateway, CurrencyGateway currencyGateway) {
+        this.countryGateway = countryGateway;
+        this.currencyGateway = currencyGateway;
     }
 
     public BigDecimal convert(Bic bic, BigDecimal amount) {
-        String currency = currencyByCountryCodeGateway.retrieve(bic.getCountryCode()).orElseThrow();
-        BigDecimal exchangeRate = exchangeRateGateway.retrieve(currency, BankInfoType.CURRENCY.getValue()).orElseThrow();
+        String currency = countryGateway.retrieveCurrencyByCountryCode(bic.getCountryCode()).orElseThrow();
+        BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency, BankInfoType.CURRENCY.getValue()).orElseThrow();
         return amount.multiply(exchangeRate);
     }
 }

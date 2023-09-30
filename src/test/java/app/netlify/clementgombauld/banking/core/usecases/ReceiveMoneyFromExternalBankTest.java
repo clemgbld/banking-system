@@ -2,7 +2,6 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
 import app.netlify.clementgombauld.banking.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -130,10 +129,10 @@ class ReceiveMoneyFromExternalBankTest {
 
     private ReceiveMoneyFromExternalBank buildReceiveMoneyFromExternalBank(Map<String, String> countryCodeToCurrency, Map<String, Map<String, BigDecimal>> exchangeRateStore) {
 
-        CurrencyByCountryCodeGateway currencyByCountryCodeGateway = new InMemoryCurrencyByCountryCodeGateway(countryCodeToCurrency);
+        CountryGateway countryGateway = new InMemoryCountryGateway(countryCodeToCurrency);
 
-        ExchangeRateGateway exchangeRateGateway = new InMemoryExchangeRateGateway(exchangeRateStore);
+        CurrencyGateway currencyGateway = new InMemoryCurrencyGateway(exchangeRateStore);
 
-        return new ReceiveMoneyFromExternalBank(accountRepository, idGenerator, dateProvider, currencyByCountryCodeGateway, exchangeRateGateway);
+        return new ReceiveMoneyFromExternalBank(accountRepository, idGenerator, dateProvider, countryGateway, currencyGateway);
     }
 }

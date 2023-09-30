@@ -16,11 +16,11 @@ public class ReceiveMoneyFromExternalBank {
 
     private final CurrencyConverter currencyConverter;
 
-    public ReceiveMoneyFromExternalBank(AccountRepository accountRepository, IdGenerator idGenerator, DateProvider dateProvider, CurrencyByCountryCodeGateway currencyByCountryCodeGateway, ExchangeRateGateway exchangeRateGateway) {
+    public ReceiveMoneyFromExternalBank(AccountRepository accountRepository, IdGenerator idGenerator, DateProvider dateProvider, CountryGateway countryGateway, CurrencyGateway currencyGateway) {
         this.accountRepository = accountRepository;
         this.idGenerator = idGenerator;
         this.dateProvider = dateProvider;
-        this.currencyConverter = new CurrencyConverter(currencyByCountryCodeGateway, exchangeRateGateway);
+        this.currencyConverter = new CurrencyConverter(countryGateway, currencyGateway);
     }
 
 
