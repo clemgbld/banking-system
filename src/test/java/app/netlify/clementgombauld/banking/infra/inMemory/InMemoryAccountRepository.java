@@ -30,12 +30,12 @@ public class InMemoryAccountRepository implements AccountRepository {
 
 
     @Override
-    public void update(Account... accounts) {
+    public void save(Account... accounts) {
         Arrays.stream(accounts).forEach(account -> dataSource.put(account.getIban(), account));
     }
 
     @Override
-    public void update(Account account) {
+    public void save(Account account) {
         dataSource.put(account.getIban(), account);
     }
 }

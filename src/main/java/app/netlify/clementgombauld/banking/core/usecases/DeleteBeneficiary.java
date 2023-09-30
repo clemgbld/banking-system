@@ -11,16 +11,17 @@ import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCusto
 public class DeleteBeneficiary {
     private final AccountRepository accountRepository;
     private final AuthenticationGateway authenticationGateway;
+
     public DeleteBeneficiary(AccountRepository accountRepository, AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
         this.authenticationGateway = authenticationGateway;
     }
 
-    public void handle( String beneficiaryIban) {
+    public void handle(String beneficiaryIban) {
         Customer currentCustomer = authenticationGateway.currentCustomer()
                 .orElseThrow(NoCurrentCustomerException::new);
         Account account = currentCustomer.getAccount();
         account.deleteBeneficiary(beneficiaryIban);
-        accountRepository.update(account);
+        accountRepository.save(account);
     }
 }

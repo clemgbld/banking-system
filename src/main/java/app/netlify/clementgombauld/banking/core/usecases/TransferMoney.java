@@ -40,7 +40,7 @@ public class TransferMoney {
         senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIdentifier);
         Beneficiary beneficiary = senderAccount.findBeneficiaryByIbanOrThrow(receiverAccountIdentifier);
         if (beneficiary.isInDifferentBank(bankBic.value())) {
-            accountRepository.update(senderAccount);
+            accountRepository.save(senderAccount);
             MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
             extraBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
             return;
@@ -49,7 +49,7 @@ public class TransferMoney {
                 .orElseThrow(throwUnknownAccountException(receiverAccountIdentifier));
 
         receiverAccount.deposit(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
-        accountRepository.update(senderAccount, receiverAccount);
+        accountRepository.save(senderAccount, receiverAccount);
     }
 
     private Supplier<UnknownAccountWithIbanException> throwUnknownAccountException(String iban) {

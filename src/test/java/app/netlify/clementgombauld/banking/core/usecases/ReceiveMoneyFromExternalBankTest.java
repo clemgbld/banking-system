@@ -46,7 +46,7 @@ class ReceiveMoneyFromExternalBankTest {
         String beneficiaryName = "John Smith";
 
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
                 .withBeneficiaries(List.of(new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName)))
@@ -82,7 +82,7 @@ class ReceiveMoneyFromExternalBankTest {
         String transactionId = "2143";
         String senderAccountBic = "ACMEUS33123";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
                 .build()
@@ -116,7 +116,7 @@ class ReceiveMoneyFromExternalBankTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         String senderAccountBic = "ACMEUS331";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
                 .build()
@@ -147,7 +147,7 @@ class ReceiveMoneyFromExternalBankTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         String senderAccountBic = "ACMEUS33123";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
                 .build()
@@ -168,7 +168,7 @@ class ReceiveMoneyFromExternalBankTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         String senderAccountBic = "ACMEUS33123";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
                 .build()
@@ -178,6 +178,11 @@ class ReceiveMoneyFromExternalBankTest {
         assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
                 .isInstanceOf(ExchangeRateNotFound.class)
                 .hasMessage("No Exchange Rate found for this currency : USD.");
+
+    }
+
+    @Test
+    void shouldNotPerformAnyCurrencyConversionWhenTheRetrievedCurrencyIsTheSameThanTheBankCurrency() {
 
     }
 }
