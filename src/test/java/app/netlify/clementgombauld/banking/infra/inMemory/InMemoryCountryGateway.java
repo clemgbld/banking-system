@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.infra.inMemory;
 
 import app.netlify.clementgombauld.banking.core.domain.CountryGateway;
+import app.netlify.clementgombauld.banking.core.domain.Currency;
 
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +14,8 @@ public class InMemoryCountryGateway implements CountryGateway {
     }
 
     @Override
-    public Optional<String> retrieveCurrencyByCountryCode(String countryCode) {
-        return Optional.ofNullable(mapCountryCodeToCurrency.get(countryCode));
+    public Optional<Currency> retrieveCurrencyByCountryCode(String countryCode) {
+        Optional<String> currency = Optional.ofNullable(mapCountryCodeToCurrency.get(countryCode));
+        return currency.map(Currency::new);
     }
 }

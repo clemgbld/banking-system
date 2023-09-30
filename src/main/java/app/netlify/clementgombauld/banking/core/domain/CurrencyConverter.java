@@ -18,12 +18,12 @@ public class CurrencyConverter {
     public BigDecimal convert(Bic bic, BigDecimal amount) {
         String countryCode = bic.getCountryCode();
 
-        String currency = countryGateway.retrieveCurrencyByCountryCode(countryCode)
+        Currency currency = countryGateway.retrieveCurrencyByCountryCode(countryCode)
                 .orElseThrow(() -> new CurrencyNotFoundException(countryCode));
 
-        if (currency.equals(BankInfoType.CURRENCY.getValue())) return amount;
+        if (currency.isBankCurrency()) return amount;
 
-        BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency, BankInfoType.CURRENCY.getValue())
+        BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency.value(), BankInfoType.CURRENCY.getValue())
                 .orElseThrow(() -> new ExchangeRateNotFound(currency));
 
         return amount.multiply(exchangeRate);
