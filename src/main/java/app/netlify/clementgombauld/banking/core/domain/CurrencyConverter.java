@@ -21,6 +21,8 @@ public class CurrencyConverter {
         String currency = countryGateway.retrieveCurrencyByCountryCode(countryCode)
                 .orElseThrow(() -> new CurrencyNotFoundException(countryCode));
 
+        if (currency.equals(BankInfoType.CURRENCY.getValue())) return amount;
+
         BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency, BankInfoType.CURRENCY.getValue())
                 .orElseThrow(() -> new ExchangeRateNotFound(currency));
 

@@ -188,6 +188,27 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountABARoutingNumber = "123456789";
         String senderAccountName = "John Smith Junior";
         BigDecimal transactionAmount = new BigDecimal(5);
-        String senderAccountBic = "ACMEUS33123";
+        String transactionId = "2143";
+        String senderAccountBic = "DEUTDEFF";
+
+        accountRepository.save(new Account.Builder()
+                .withId(accountId)
+                .withIban(receiverAccountIban)
+                .build()
+        );
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("DE", "EUR"), Map.of());
+
+        receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount);
+
+        Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
+
+        assertThat(account).usingRecursiveComparison().isEqualTo(
+                new Account.Builder()
+                        .withId(accountId)
+                        .withBalance(transactionAmount)
+                        .withIban(receiverAccountIban)
+                        .withTransactions(List.of(new MoneyTransferred(transactionId, CURRENT_DATE, transactionAmount, senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
+                        .build());
     }
 }
