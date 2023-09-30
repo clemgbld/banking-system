@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrencyFoundException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.CurrencyNotFoundException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.ExchangeRateNotFound;
 
 import java.math.BigDecimal;
 
@@ -18,9 +19,10 @@ public class CurrencyConverter {
         String countryCode = bic.getCountryCode();
 
         String currency = countryGateway.retrieveCurrencyByCountryCode(countryCode)
-                .orElseThrow(() -> new NoCurrencyFoundException(countryCode));
+                .orElseThrow(() -> new CurrencyNotFoundException(countryCode));
 
-        BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency, BankInfoType.CURRENCY.getValue()).orElseThrow();
+        BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency, BankInfoType.CURRENCY.getValue())
+                .orElseThrow(() -> new ExchangeRateNotFound(currency));
 
         return amount.multiply(exchangeRate);
     }

@@ -16,6 +16,7 @@ public class InMemoryCurrencyGateway implements CurrencyGateway {
 
     @Override
     public Optional<BigDecimal> retrieveExchangeRate(String initialCurrency, String targetCurrency) {
-        return Optional.ofNullable(exchangeRateStore.get(initialCurrency).get(targetCurrency));
+        Optional<Map<String, BigDecimal>> exchangeRates = Optional.ofNullable(exchangeRateStore.get(initialCurrency));
+        return exchangeRates.map(stringBigDecimalMap -> stringBigDecimalMap.get(targetCurrency));
     }
 }

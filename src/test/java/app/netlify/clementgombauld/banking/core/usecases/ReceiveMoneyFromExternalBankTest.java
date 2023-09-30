@@ -1,8 +1,9 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.ExchangeRateNotFound;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrencyFoundException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.CurrencyNotFoundException;
 import app.netlify.clementgombauld.banking.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -154,7 +155,29 @@ class ReceiveMoneyFromExternalBankTest {
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of());
         assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
-                .isInstanceOf(NoCurrencyFoundException.class)
+                .isInstanceOf(CurrencyNotFoundException.class)
                 .hasMessage("No Currency found for country code : US.");
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheExchangeRateIsNotFoundForaGivenCurrency() {
+        String accountId = "1";
+        String receiverAccountIban = "FR1420041010050500013M02606";
+        String senderAccountABARoutingNumber = "123456789";
+        String senderAccountName = "John Smith Junior";
+        BigDecimal transactionAmount = new BigDecimal(5);
+        String senderAccountBic = "ACMEUS33123";
+
+        accountRepository.update(new Account.Builder()
+                .withId(accountId)
+                .withIban(receiverAccountIban)
+                .build()
+        );
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of());
+        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
+                .isInstanceOf(ExchangeRateNotFound.class)
+                .hasMessage("No Exchange Rate found for this currency : USD.");
+
     }
 }
