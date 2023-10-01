@@ -22,4 +22,9 @@ public class InMemoryBeneficiaryRepository implements BeneficiaryRepository {
     public Optional<Beneficiary> findByAccountIdAndIban(String accountId, String iban) {
         return Optional.ofNullable(beneficiaryStore.get(accountId + iban));
     }
+
+    @Override
+    public void delete(String accountId, String iban) {
+        beneficiaryStore.remove(accountId + iban);
+    }
 }

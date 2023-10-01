@@ -1,27 +1,30 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 
-import app.netlify.clementgombauld.banking.core.domain.Account;
-import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
-import app.netlify.clementgombauld.banking.core.domain.AuthenticationGateway;
-import app.netlify.clementgombauld.banking.core.domain.Customer;
+import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 
 
 public class DeleteBeneficiary {
-    private final AccountRepository accountRepository;
+
+    private final BeneficiaryRepository beneficiaryRepository;
     private final AuthenticationGateway authenticationGateway;
 
-    public DeleteBeneficiary(AccountRepository accountRepository, AuthenticationGateway authenticationGateway) {
-        this.accountRepository = accountRepository;
+    public DeleteBeneficiary(BeneficiaryRepository beneficiaryRepository, AuthenticationGateway authenticationGateway) {
+        this.beneficiaryRepository = beneficiaryRepository;
         this.authenticationGateway = authenticationGateway;
     }
 
     public void handle(String beneficiaryIban) {
+        Iban validBeneficiaryIban = new Iban(beneficiaryIban);
         Customer currentCustomer = authenticationGateway.currentCustomer()
                 .orElseThrow(NoCurrentCustomerException::new);
         Account account = currentCustomer.getAccount();
-        account.deleteBeneficiary(beneficiaryIban);
-        accountRepository.save(account);
+        beneficiaryRepository.findByAccountIdAndIban(account.getId(), validBeneficiaryIban.value())
+                .orElseThrow(() -> {
+                    throw new UnknownBeneficiaryException(validBeneficiaryIban.value());
+                });
+        beneficiaryRepository.delete(account.getId(), validBeneficiaryIban.value());
     }
 }
