@@ -31,7 +31,7 @@ public class ReceiveMoneyFromExternalBank {
         Bic validSenderAccountBic = new Bic(senderAccountBic);
         if (validSenderAccountBic.isBankCountry()) {
             receiverAccount.deposit(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic, senderAccountName);
-            accountRepository.save(receiverAccount);
+            accountRepository.update(receiverAccount);
             return;
         }
 
@@ -39,7 +39,7 @@ public class ReceiveMoneyFromExternalBank {
 
         receiverAccount.deposit(transactionId, currentDate, convertedAmount, senderAccountIdentifier, senderAccountBic, senderAccountName);
 
-        accountRepository.save(receiverAccount);
+        accountRepository.update(receiverAccount);
 
     }
 }
