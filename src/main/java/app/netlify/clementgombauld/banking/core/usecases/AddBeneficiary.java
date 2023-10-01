@@ -7,12 +7,15 @@ import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCusto
 public class AddBeneficiary {
     private final AccountRepository accountRepository;
 
+    private final BeneficiaryRepository beneficiaryRepository;
+
     private final IdGenerator idGenerator;
 
     private final AuthenticationGateway authenticationGateway;
 
-    public AddBeneficiary(AccountRepository accountRepository, IdGenerator idGenerator, AuthenticationGateway authenticationGateway) {
+    public AddBeneficiary(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository, IdGenerator idGenerator, AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
+        this.beneficiaryRepository = beneficiaryRepository;
         this.idGenerator = idGenerator;
         this.authenticationGateway = authenticationGateway;
     }
@@ -22,8 +25,7 @@ public class AddBeneficiary {
                 .orElseThrow(NoCurrentCustomerException::new);
         Account account = currentCustomer.getAccount();
         String beneficiaryId = idGenerator.generate();
-        account.addBeneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName);
-        accountRepository.save(account);
+        beneficiaryRepository.insert(account.getId(), new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName));
         return beneficiaryId;
     }
 }
