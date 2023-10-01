@@ -107,15 +107,6 @@ public class Account {
         makeTransaction(transactionId, creationDate, transactionAmount.negate(), receiverAccountIban, beneficiary.getBic(), beneficiary.getName());
     }
 
-
-    public void addBeneficiary(String beneficiaryId, String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
-        Beneficiary beneficiary = new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName);
-        findBeneficiaryByIban(beneficiaryIban).ifPresent((b) -> {
-            throw new DuplicatedBeneficiaryException(beneficiaryIban, id);
-        });
-        beneficiaries.add(beneficiary);
-    }
-
     public void deleteBeneficiary(String beneficiaryIban) {
         findBeneficiaryByIbanOrThrow(beneficiaryIban);
         this.beneficiaries = beneficiaries.stream()
