@@ -21,7 +21,7 @@ public class Account {
 
     private Balance balance;
 
-    private final List<MoneyTransferred> transactions;
+    private final List<Transaction> transactions;
 
     private List<Beneficiary> beneficiaries;
 
@@ -41,7 +41,7 @@ public class Account {
         private String id;
         private String iban;
         private BigDecimal balance;
-        private List<MoneyTransferred> transactions;
+        private List<Transaction> transactions;
         private List<Beneficiary> beneficiaries;
 
 
@@ -62,7 +62,7 @@ public class Account {
         }
 
 
-        public Builder withTransactions(List<MoneyTransferred> transactions) {
+        public Builder withTransactions(List<Transaction> transactions) {
             this.transactions = transactions;
             return this;
         }
@@ -137,7 +137,7 @@ public class Account {
 
     private void makeTransaction(String transactionId, Instant creationDate, BigDecimal transactionAmount, String iban, String bic, String name) {
         balance = balance.add(transactionAmount);
-        transactions.add(new MoneyTransferred(transactionId, creationDate, transactionAmount, iban, bic, name));
+        transactions.add(new Transaction(transactionId, creationDate, transactionAmount, iban, bic, name));
     }
 
     public String getId() {
@@ -159,7 +159,7 @@ public class Account {
     }
 
 
-    public List<MoneyTransferred> getTransactions() {
+    public List<Transaction> getTransactions() {
         return transactions;
     }
 

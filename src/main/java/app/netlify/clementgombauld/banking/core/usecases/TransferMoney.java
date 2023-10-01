@@ -41,7 +41,7 @@ public class TransferMoney {
         Beneficiary beneficiary = senderAccount.findBeneficiaryByIbanOrThrow(receiverAccountIdentifier);
         if (beneficiary.isInDifferentBank(bankBic.value())) {
             accountRepository.save(senderAccount);
-            MoneyTransferred transaction = new MoneyTransferred(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
+            Transaction transaction = new Transaction(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
             extraBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
             return;
         }

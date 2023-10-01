@@ -66,7 +66,7 @@ class ReceiveMoneyFromExternalBankTest {
                         .withBalance(transactionAmount)
                         .withIban(receiverAccountIban)
                         .withBeneficiaries(List.of(new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName)))
-                        .withTransactions(List.of(new MoneyTransferred(TRANSACTION_ID, CURRENT_DATE, transactionAmount, beneficiaryIban, beneficiaryBic, beneficiaryName)))
+                        .withTransactions(List.of(new Transaction(TRANSACTION_ID, CURRENT_DATE, transactionAmount, beneficiaryIban, beneficiaryBic, beneficiaryName)))
                         .build()
 
         );
@@ -100,7 +100,7 @@ class ReceiveMoneyFromExternalBankTest {
                         .withId(accountId)
                         .withBalance(new BigDecimal("4.40"))
                         .withIban(receiverAccountIban)
-                        .withTransactions(List.of(new MoneyTransferred(transactionId, CURRENT_DATE, new BigDecimal("4.40"), senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
+                        .withTransactions(List.of(new Transaction(transactionId, CURRENT_DATE, new BigDecimal("4.40"), senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
                         .build()
 
         );
@@ -208,7 +208,7 @@ class ReceiveMoneyFromExternalBankTest {
                         .withId(accountId)
                         .withBalance(transactionAmount)
                         .withIban(receiverAccountIban)
-                        .withTransactions(List.of(new MoneyTransferred(transactionId, CURRENT_DATE, transactionAmount, senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
+                        .withTransactions(List.of(new Transaction(transactionId, CURRENT_DATE, transactionAmount, senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
                         .build());
     }
 }
