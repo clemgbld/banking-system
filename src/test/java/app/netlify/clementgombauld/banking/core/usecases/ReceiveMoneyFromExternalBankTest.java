@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +27,15 @@ class ReceiveMoneyFromExternalBankTest {
     private DateProvider dateProvider;
     private AccountRepository accountRepository;
 
+    private BeneficiaryRepository beneficiaryRepository;
+
 
     @BeforeEach
     void setUp() {
         idGenerator = new InMemoryIdGenerator(List.of(TRANSACTION_ID));
         dateProvider = new InMemoryDateProvider(CURRENT_DATE_IN_MS);
         accountRepository = new InMemoryAccountRepository();
+        beneficiaryRepository = new InMemoryBeneficiaryRepository();
     }
 
     @Test
@@ -49,28 +53,32 @@ class ReceiveMoneyFromExternalBankTest {
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
                 .withIban(receiverAccountIban)
-                .withBeneficiaries(List.of(new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName)))
                 .build()
         );
 
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of());
+        beneficiaryRepository.insert(accountId, new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName));
+
+        Map<String, Transaction> transactionStore = new HashMap<>();
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of(), transactionStore);
 
         receiveMoneyFromExternalBank.handle(receiverAccountIban, beneficiaryIban, beneficiaryBic, accountName, transactionAmount);
 
 
         Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
 
-        assertThat(account).usingRecursiveComparison().isEqualTo(
+        assertThat(account).isEqualTo(
                 new Account.Builder()
                         .withId(accountId)
                         .withBalance(transactionAmount)
                         .withIban(receiverAccountIban)
-                        .withBeneficiaries(List.of(new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName)))
-                        .withTransactions(List.of(new Transaction(TRANSACTION_ID, CURRENT_DATE, transactionAmount, beneficiaryIban, beneficiaryBic, beneficiaryName)))
                         .build()
 
         );
+
+        assertThat(transactionStore.get(accountId)).isEqualTo(new Transaction(TRANSACTION_ID, CURRENT_DATE, transactionAmount, beneficiaryIban, beneficiaryBic, beneficiaryName));
     }
+
 
     @Test
     void shouldAddMoneyToTheExpectedBankAccountFromTheExternalBankWhenTheSenderAccountHasADifferentCurrencyAndMakeTheConversion() {
@@ -88,21 +96,26 @@ class ReceiveMoneyFromExternalBankTest {
                 .build()
         );
 
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of("USD", Map.of("EUR", new BigDecimal("0.88"))));
+        Map<String, Transaction> transactionStore = new HashMap<>();
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of("USD", Map.of("EUR", new BigDecimal("0.88"))), transactionStore);
 
         receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount);
 
 
         Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
 
-        assertThat(account).usingRecursiveComparison().isEqualTo(
+        assertThat(account).isEqualTo(
                 new Account.Builder()
                         .withId(accountId)
                         .withBalance(new BigDecimal("4.40"))
                         .withIban(receiverAccountIban)
-                        .withTransactions(List.of(new Transaction(transactionId, CURRENT_DATE, new BigDecimal("4.40"), senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
                         .build()
 
+        );
+
+        assertThat(transactionStore.get(accountId)).isEqualTo(
+                new Transaction(transactionId, CURRENT_DATE, new BigDecimal("4.40"), senderAccountABARoutingNumber, senderAccountBic, senderAccountName)
         );
 
     }
@@ -122,21 +135,13 @@ class ReceiveMoneyFromExternalBankTest {
                 .build()
         );
 
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of());
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of(), Map.of());
 
         assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + senderAccountBic + " is invalid.");
     }
 
-    private ReceiveMoneyFromExternalBank buildReceiveMoneyFromExternalBank(Map<String, String> countryCodeToCurrency, Map<String, Map<String, BigDecimal>> exchangeRateStore) {
-
-        CountryGateway countryGateway = new InMemoryCountryGateway(countryCodeToCurrency);
-
-        CurrencyGateway currencyGateway = new InMemoryCurrencyGateway(exchangeRateStore);
-
-        return new ReceiveMoneyFromExternalBank(accountRepository, idGenerator, dateProvider, countryGateway, currencyGateway);
-    }
 
     @Test
     void shouldThrowAnExceptionWhenTheCurrencyIsNotFoundForAGivenCountry() {
@@ -153,7 +158,7 @@ class ReceiveMoneyFromExternalBankTest {
                 .build()
         );
 
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of());
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of(), Map.of());
         assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
                 .isInstanceOf(CurrencyNotFoundException.class)
                 .hasMessage("No Currency found for country code : US.");
@@ -174,7 +179,7 @@ class ReceiveMoneyFromExternalBankTest {
                 .build()
         );
 
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of());
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of(), Map.of());
         assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
                 .isInstanceOf(ExchangeRateNotFound.class)
                 .hasMessage("No Exchange Rate found for this currency : USD.");
@@ -197,18 +202,31 @@ class ReceiveMoneyFromExternalBankTest {
                 .build()
         );
 
-        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("DE", "EUR"), Map.of());
+        Map<String, Transaction> transactionStore = new HashMap<>();
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("DE", "EUR"), Map.of(), transactionStore);
 
         receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount);
 
         Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
 
-        assertThat(account).usingRecursiveComparison().isEqualTo(
+        assertThat(account).isEqualTo(
                 new Account.Builder()
                         .withId(accountId)
                         .withBalance(transactionAmount)
                         .withIban(receiverAccountIban)
-                        .withTransactions(List.of(new Transaction(transactionId, CURRENT_DATE, transactionAmount, senderAccountABARoutingNumber, senderAccountBic, senderAccountName)))
                         .build());
+        assertThat(transactionStore.get(accountId)).isEqualTo(new Transaction(transactionId, CURRENT_DATE, transactionAmount, senderAccountABARoutingNumber, senderAccountBic, senderAccountName));
+    }
+
+    private ReceiveMoneyFromExternalBank buildReceiveMoneyFromExternalBank(Map<String, String> countryCodeToCurrency, Map<String, Map<String, BigDecimal>> exchangeRateStore, Map<String, Transaction> transactionStore) {
+
+        CountryGateway countryGateway = new InMemoryCountryGateway(countryCodeToCurrency);
+
+        CurrencyGateway currencyGateway = new InMemoryCurrencyGateway(exchangeRateStore);
+
+        TransactionRepository transactionRepository = new InMemoryTransactionRepository(transactionStore);
+
+        return new ReceiveMoneyFromExternalBank(accountRepository, transactionRepository, beneficiaryRepository, idGenerator, dateProvider, countryGateway, currencyGateway);
     }
 }

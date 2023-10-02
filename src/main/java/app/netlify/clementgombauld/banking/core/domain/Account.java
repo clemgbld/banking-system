@@ -1,6 +1,5 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
-import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 
 import java.math.BigDecimal;
@@ -23,7 +22,7 @@ public class Account {
 
     private final List<Transaction> transactions;
 
-    private List<Beneficiary> beneficiaries;
+    private final List<Beneficiary> beneficiaries;
 
 
     private Account(Builder builder) {
@@ -99,6 +98,10 @@ public class Account {
         }
         makeTransaction(transactionId, creationDate, transactionAmount, senderIban, senderAccountBic, senderAccountFullName);
 
+    }
+
+    public void deposit(BigDecimal transactionAmount) {
+        balance = balance.add(transactionAmount);
     }
 
     public void withdraw(String transactionId, Instant creationDate, BigDecimal transactionAmount, String receiverAccountIban) {
