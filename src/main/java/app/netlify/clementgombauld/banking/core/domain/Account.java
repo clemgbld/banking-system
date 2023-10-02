@@ -107,12 +107,6 @@ public class Account {
         makeTransaction(transactionId, creationDate, transactionAmount.negate(), receiverAccountIban, beneficiary.getBic(), beneficiary.getName());
     }
 
-    public void deleteBeneficiary(String beneficiaryIban) {
-        findBeneficiaryByIbanOrThrow(beneficiaryIban);
-        this.beneficiaries = beneficiaries.stream()
-                .filter(b -> !b.hasIban(beneficiaryIban))
-                .toList();
-    }
 
     public Beneficiary findBeneficiaryByIbanOrThrow(String beneficiaryIban) {
         return findBeneficiaryByIban(beneficiaryIban).

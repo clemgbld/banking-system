@@ -39,7 +39,7 @@ public class TransferMoney {
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIdentifier);
         Beneficiary beneficiary = senderAccount.findBeneficiaryByIbanOrThrow(receiverAccountIdentifier);
-        if (beneficiary.isInDifferentBank(bankBic.value())) {
+        if (beneficiary.isInDifferentBank(bankBic)) {
             accountRepository.update(senderAccount);
             Transaction transaction = new Transaction(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
             extraBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());

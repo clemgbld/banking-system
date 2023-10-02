@@ -21,10 +21,6 @@ public class Beneficiary {
         this.name = name;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public String getIban() {
         return iban.value();
     }
@@ -42,8 +38,8 @@ public class Beneficiary {
         return this.iban.equals(new Iban(iban));
     }
 
-    public boolean isInDifferentBank(String bic) {
-        return !this.bic.equals(new Bic(bic));
+    public boolean isInDifferentBank(Bic bic) {
+        return !this.bic.equals(bic);
     }
 
     @Override
