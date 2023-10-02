@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.SameBankException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -30,11 +31,16 @@ public class ReceiveMoneyFromExternalBank {
     }
 
 
-    public void handle(String receiverAccountIban, String senderAccountIdentifier, String senderAccountBic, String senderAccountName, BigDecimal transactionAmount) {
-        Account receiverAccount = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
+    public void handle(String receiverAccountIban, String senderAccountIdentifier, String senderAccountBic, String senderAccountName, BigDecimal transactionAmount, String bic) {
+        Bic validSenderAccountBic = new Bic(senderAccountBic);
+        Bic bankBic = new Bic(bic);
+        if (bankBic.equals(validSenderAccountBic)) {
+            throw new SameBankException();
+        }
+        Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
+                .orElseThrow(RuntimeException::new);
         String transactionId = idGenerator.generate();
         Instant currentDate = dateProvider.now();
-        Bic validSenderAccountBic = new Bic(senderAccountBic);
         if (validSenderAccountBic.isBankCountry()) {
             receiverAccount.deposit(transactionAmount);
             accountRepository.update(receiverAccount);

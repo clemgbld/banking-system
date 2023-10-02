@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.ExchangeRateNotFound;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.CurrencyNotFoundException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.SameBankException;
 import app.netlify.clementgombauld.banking.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,7 @@ class ReceiveMoneyFromExternalBankTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName = "John Smith";
+        String bic = "AGRIFRPP989";
 
 
         accountRepository.update(new Account.Builder()
@@ -62,7 +64,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of(), transactionStore);
 
-        receiveMoneyFromExternalBank.handle(receiverAccountIban, beneficiaryIban, beneficiaryBic, accountName, transactionAmount);
+        receiveMoneyFromExternalBank.handle(receiverAccountIban, beneficiaryIban, beneficiaryBic, accountName, transactionAmount, bic);
 
 
         Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
@@ -89,6 +91,7 @@ class ReceiveMoneyFromExternalBankTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         String transactionId = "2143";
         String senderAccountBic = "ACMEUS33123";
+        String bic = "AGRIFRPP989";
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
@@ -100,7 +103,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of("USD", Map.of("EUR", new BigDecimal("0.88"))), transactionStore);
 
-        receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount);
+        receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount, bic);
 
 
         Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
@@ -128,6 +131,7 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountName = "John Smith Junior";
         BigDecimal transactionAmount = new BigDecimal(5);
         String senderAccountBic = "ACMEUS331";
+        String bic = "AGRIFRPP989";
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
@@ -137,7 +141,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of(), Map.of());
 
-        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
+        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount, bic))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + senderAccountBic + " is invalid.");
     }
@@ -151,6 +155,7 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountName = "John Smith Junior";
         BigDecimal transactionAmount = new BigDecimal(5);
         String senderAccountBic = "ACMEUS33123";
+        String bic = "AGRIFRPP989";
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
@@ -159,7 +164,7 @@ class ReceiveMoneyFromExternalBankTest {
         );
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of(), Map.of());
-        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
+        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount, bic))
                 .isInstanceOf(CurrencyNotFoundException.class)
                 .hasMessage("No Currency found for country code : US.");
     }
@@ -172,6 +177,7 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountName = "John Smith Junior";
         BigDecimal transactionAmount = new BigDecimal(5);
         String senderAccountBic = "ACMEUS33123";
+        String bic = "AGRIFRPP989";
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
@@ -180,9 +186,32 @@ class ReceiveMoneyFromExternalBankTest {
         );
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of(), Map.of());
-        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount))
+        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount, bic))
                 .isInstanceOf(ExchangeRateNotFound.class)
                 .hasMessage("No Exchange Rate found for this currency : USD.");
+
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheSenderAccountIsNoFromAnExternalBank() {
+        String accountId = "1";
+        String receiverAccountIban = "FR1420041010050500013M02606";
+        String senderAccountABARoutingNumber = "123456789";
+        String senderAccountName = "John Smith Junior";
+        BigDecimal transactionAmount = new BigDecimal(5);
+        String senderAccountBic = "AGRIFRPP989";
+        String bic = "AGRIFRPP989";
+
+        accountRepository.update(new Account.Builder()
+                .withId(accountId)
+                .withIban(receiverAccountIban)
+                .build()
+        );
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("US", "USD"), Map.of(), Map.of());
+        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount, bic))
+                .isInstanceOf(SameBankException.class)
+                .hasMessage("Your account does not belong to an external bank.");
 
     }
 
@@ -195,6 +224,8 @@ class ReceiveMoneyFromExternalBankTest {
         BigDecimal transactionAmount = new BigDecimal(5);
         String transactionId = "2143";
         String senderAccountBic = "DEUTDEFF";
+        String bic = "AGRIFRPP989";
+
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
@@ -206,7 +237,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of("DE", "EUR"), Map.of(), transactionStore);
 
-        receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount);
+        receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount, bic);
 
         Account account = accountRepository.findByIban(receiverAccountIban).orElseThrow(RuntimeException::new);
 
