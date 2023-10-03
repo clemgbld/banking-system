@@ -3,10 +3,7 @@ package app.netlify.clementgombauld.banking.infra.inMemory;
 import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class InMemoryAccountRepository implements AccountRepository {
     private final Map<String, Account> dataSource = new HashMap<>();
@@ -17,14 +14,10 @@ public class InMemoryAccountRepository implements AccountRepository {
     @Override
     public Optional<Account> findByIban(String iban) {
         Account nullableAccount = dataSource.getOrDefault(iban, null);
-        if (nullableAccount == null) return Optional.empty();
-        return Optional.of(new Account.Builder()
+        return Objects.isNull(nullableAccount) ? Optional.empty() : Optional.of(new Account.Builder()
                 .withId(nullableAccount.getId())
                 .withIban(nullableAccount.getIban())
                 .withBalance(nullableAccount.getBalance())
-                .withTransactions(nullableAccount.getTransactions())
-                .withBeneficiaries(nullableAccount.getBeneficiaries())
-                .withCustomer(nullableAccount.getCustomer())
                 .build());
     }
 

@@ -4,6 +4,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 
 
 import java.math.BigDecimal;
@@ -13,6 +14,10 @@ import java.util.function.Supplier;
 public class TransferMoney {
     private final AccountRepository accountRepository;
 
+    private final BeneficiaryRepository beneficiaryRepository;
+
+    private final TransactionRepository transactionRepository;
+
     private final DateProvider dateProvider;
 
     private final IdGenerator idGenerator;
@@ -21,8 +26,10 @@ public class TransferMoney {
 
     private final AuthenticationGateway authenticationGateway;
 
-    public TransferMoney(AccountRepository accountRepository, DateProvider dateProvider, IdGenerator idGenerator, ExtraBankTransactionsGateway extraBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
+    public TransferMoney(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository, TransactionRepository transactionRepository, DateProvider dateProvider, IdGenerator idGenerator, ExtraBankTransactionsGateway extraBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
+        this.beneficiaryRepository = beneficiaryRepository;
+        this.transactionRepository = transactionRepository;
         this.dateProvider = dateProvider;
         this.idGenerator = idGenerator;
         this.extraBankTransactionsGateway = extraBankTransactionsGateway;
@@ -37,8 +44,11 @@ public class TransferMoney {
         Account senderAccount = currentCustomer.getAccount();
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
-        senderAccount.withdraw(senderTransactionId, creationDate, transactionAmount, receiverAccountIdentifier);
-        Beneficiary beneficiary = senderAccount.findBeneficiaryByIbanOrThrow(receiverAccountIdentifier);
+        senderAccount.withdraw(transactionAmount);
+        Beneficiary beneficiary = beneficiaryRepository.findByAccountIdAndIban(senderAccount.getId(), receiverAccountIdentifier)
+                .orElseThrow(() -> new UnknownBeneficiaryException(receiverAccountIdentifier));
+        transactionRepository.insert(senderAccount.getId(), new Transaction(senderTransactionId, creationDate, transactionAmount.negate(), receiverAccountIdentifier, beneficiary.getBic(), beneficiary.getName()));
+
         if (beneficiary.isInDifferentBank(bankBic)) {
             accountRepository.update(senderAccount);
             Transaction transaction = new Transaction(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
@@ -48,8 +58,9 @@ public class TransferMoney {
         Account receiverAccount = accountRepository.findByIban(receiverAccountIdentifier)
                 .orElseThrow(throwUnknownAccountException(receiverAccountIdentifier));
 
-        receiverAccount.deposit(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
+        receiverAccount.deposit(transactionAmount);
         accountRepository.update(senderAccount, receiverAccount);
+        transactionRepository.insert(receiverAccount.getId(), new Transaction(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName()));
     }
 
     private Supplier<UnknownAccountWithIbanException> throwUnknownAccountException(String iban) {
