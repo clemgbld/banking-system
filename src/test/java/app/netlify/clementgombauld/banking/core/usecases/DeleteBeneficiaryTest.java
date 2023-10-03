@@ -58,7 +58,7 @@ class DeleteBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingAccount);
+        currentCustomer.openAccount(existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -108,7 +108,7 @@ class DeleteBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingAccount);
+        currentCustomer.openAccount(existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -135,7 +135,7 @@ class DeleteBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingAccount);
+        currentCustomer.openAccount(existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 

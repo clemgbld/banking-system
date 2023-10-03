@@ -47,7 +47,7 @@ class AddBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingSenderAccount);
+        currentCustomer.openAccount(existingSenderAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -88,7 +88,7 @@ class AddBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingAccount);
+        currentCustomer.openAccount(existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -118,7 +118,7 @@ class AddBeneficiaryTest {
                 .withIban(accountIban)
                 .withBalance(new BigDecimal(105))
                 .build();
-        currentCustomer.addAccount(existingAccount);
+        currentCustomer.openAccount(existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -163,7 +163,7 @@ class AddBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingSenderAccount);
+        currentCustomer.openAccount(existingSenderAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 

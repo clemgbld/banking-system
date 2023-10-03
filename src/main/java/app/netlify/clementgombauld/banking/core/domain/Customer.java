@@ -19,7 +19,7 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    public void addAccount(Account account) {
+    public void openAccount(Account account) {
         this.account = account;
     }
 

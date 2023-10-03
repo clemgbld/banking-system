@@ -62,7 +62,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingSenderAccount);
+        currentCustomer.openAccount(existingSenderAccount);
 
         Instant currentInstant = dateProvider.now();
         accountRepository.update(new Account.Builder()
@@ -130,7 +130,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingSenderAccount);
+        currentCustomer.openAccount(existingSenderAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -187,7 +187,7 @@ class TransferMoneyTest {
                 .withIban(senderAccountIban)
                 .withBalance(new BigDecimal(105))
                 .build();
-        currentCustomer.addAccount(existingSenderAccount);
+        currentCustomer.openAccount(existingSenderAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -254,7 +254,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingSenderAccount);
+        currentCustomer.openAccount(existingSenderAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
@@ -295,7 +295,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.addAccount(existingSenderAccount);
+        currentCustomer.openAccount(existingSenderAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
