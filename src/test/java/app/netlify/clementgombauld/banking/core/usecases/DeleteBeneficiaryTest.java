@@ -54,7 +54,7 @@ class DeleteBeneficiaryTest {
 
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
-                .withIban(accountIban)
+                .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
@@ -104,7 +104,7 @@ class DeleteBeneficiaryTest {
 
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
-                .withIban(accountIban)
+                .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
@@ -131,7 +131,7 @@ class DeleteBeneficiaryTest {
 
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
-                .withIban(accountIban)
+                .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 

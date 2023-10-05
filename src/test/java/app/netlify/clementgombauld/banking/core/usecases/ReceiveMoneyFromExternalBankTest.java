@@ -54,7 +54,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .build()
         );
 
@@ -73,7 +73,7 @@ class ReceiveMoneyFromExternalBankTest {
                 new Account.Builder()
                         .withId(accountId)
                         .withBalance(transactionAmount)
-                        .withIban(receiverAccountIban)
+                        .withIban(new Iban(receiverAccountIban))
                         .build()
 
         );
@@ -95,7 +95,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .build()
         );
 
@@ -112,7 +112,7 @@ class ReceiveMoneyFromExternalBankTest {
                 new Account.Builder()
                         .withId(accountId)
                         .withBalance(new BigDecimal("4.40"))
-                        .withIban(receiverAccountIban)
+                        .withIban(new Iban(receiverAccountIban))
                         .build()
 
         );
@@ -135,7 +135,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .build()
         );
 
@@ -159,7 +159,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .build()
         );
 
@@ -181,7 +181,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .build()
         );
 
@@ -204,7 +204,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .build()
         );
 
@@ -229,7 +229,7 @@ class ReceiveMoneyFromExternalBankTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(accountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .build()
         );
 
@@ -245,7 +245,7 @@ class ReceiveMoneyFromExternalBankTest {
                 new Account.Builder()
                         .withId(accountId)
                         .withBalance(transactionAmount)
-                        .withIban(receiverAccountIban)
+                        .withIban(new Iban(receiverAccountIban))
                         .build());
         assertThat(transactionStore.get(accountId)).isEqualTo(new Transaction(transactionId, CURRENT_DATE, transactionAmount, senderAccountABARoutingNumber, senderAccountBic, senderAccountName));
     }

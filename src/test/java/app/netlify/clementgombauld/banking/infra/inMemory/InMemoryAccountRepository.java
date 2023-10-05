@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.infra.inMemory;
 
 import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
+import app.netlify.clementgombauld.banking.core.domain.Iban;
 
 import java.util.*;
 
@@ -16,7 +17,7 @@ public class InMemoryAccountRepository implements AccountRepository {
         Account nullableAccount = dataSource.getOrDefault(iban, null);
         return Objects.isNull(nullableAccount) ? Optional.empty() : Optional.of(new Account.Builder()
                 .withId(nullableAccount.getId())
-                .withIban(nullableAccount.getIban())
+                .withIban(new Iban(nullableAccount.getIban()))
                 .withBalance(nullableAccount.getBalance())
                 .build());
     }

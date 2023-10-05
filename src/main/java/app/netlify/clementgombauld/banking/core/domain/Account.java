@@ -9,7 +9,7 @@ import java.util.Optional;
 public class Account {
     private final String id;
 
-    private final String iban;
+    private final Iban iban;
 
     private Balance balance;
 
@@ -23,7 +23,7 @@ public class Account {
 
     public static class Builder {
         private String id;
-        private String iban;
+        private Iban iban;
         private BigDecimal balance;
 
         public Builder withId(String id) {
@@ -31,7 +31,7 @@ public class Account {
             return this;
         }
 
-        public Builder withIban(String iban) {
+        public Builder withIban(Iban iban) {
             this.iban = iban;
             return this;
         }
@@ -67,7 +67,7 @@ public class Account {
 
 
     public String getIban() {
-        return iban;
+        return iban.value();
     }
 
     public BigDecimal getBalance() {

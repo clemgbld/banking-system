@@ -58,7 +58,7 @@ class TransferMoneyTest {
         Customer currentCustomer = new Customer(customerId, senderAccountFirstName, senderAccountLastName);
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
-                .withIban(senderAccountIban)
+                .withIban(new Iban(senderAccountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
@@ -67,7 +67,7 @@ class TransferMoneyTest {
         Instant currentInstant = dateProvider.now();
         accountRepository.update(new Account.Builder()
                 .withId(receiverAccountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .withBalance(new BigDecimal(100))
                 .build());
 
@@ -86,7 +86,7 @@ class TransferMoneyTest {
 
         assertThat(senderAccount).usingRecursiveComparison().isEqualTo(new Account.Builder()
                 .withId(senderAccountId)
-                .withIban(senderAccountIban)
+                .withIban(new Iban(senderAccountIban))
                 .withBalance(new BigDecimal(100))
                 .build());
 
@@ -95,7 +95,7 @@ class TransferMoneyTest {
         assertThat(receiverAccount)
                 .isEqualTo(new Account.Builder()
                         .withId(receiverAccountId)
-                        .withIban(receiverAccountIban)
+                        .withIban(new Iban(receiverAccountIban))
                         .withBalance(new BigDecimal(105))
                         .build());
 
@@ -126,7 +126,7 @@ class TransferMoneyTest {
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
-                .withIban(senderAccountIban)
+                .withIban(new Iban(senderAccountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
@@ -153,7 +153,7 @@ class TransferMoneyTest {
         assertThat(senderAccount)
                 .isEqualTo(new Account.Builder()
                         .withId(senderAccountId)
-                        .withIban(senderAccountIban)
+                        .withIban(new Iban(senderAccountIban))
                         .withBalance(new BigDecimal(100))
                         .build());
 
@@ -169,7 +169,7 @@ class TransferMoneyTest {
     void shouldThrowAnExceptionWhenTheReceiverAccountIsNotIsNotInTheBeneficiariesListOfTheSenderAccount() {
         String customerId = "1345";
         String senderAccountIban = "FR1420041010050500013M02606";
-        String receiverAccountIban = "FR3429051014050500014M02606";
+        String receiverAccountIban = "FR5030004000700000157389538";
         String bic = "AGRIFRPP989";
         String senderAccountId = "1";
         String receiverAccountId = "2";
@@ -184,7 +184,7 @@ class TransferMoneyTest {
         Customer currentCustomer = new Customer(customerId, senderAccountFirstName, senderAccountLastName);
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
-                .withIban(senderAccountIban)
+                .withIban(new Iban(senderAccountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
         currentCustomer.openAccount(existingSenderAccount);
@@ -193,7 +193,7 @@ class TransferMoneyTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(receiverAccountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .withBalance(new BigDecimal(100))
                 .build());
 
@@ -250,7 +250,7 @@ class TransferMoneyTest {
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
-                .withIban(senderAccountIban)
+                .withIban(new Iban(senderAccountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
@@ -260,7 +260,7 @@ class TransferMoneyTest {
 
         accountRepository.update(new Account.Builder()
                 .withId(receiverAccountId)
-                .withIban(receiverAccountIban)
+                .withIban(new Iban(receiverAccountIban))
                 .withBalance(new BigDecimal(100))
                 .build());
 
@@ -291,7 +291,7 @@ class TransferMoneyTest {
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(senderAccountId)
-                .withIban(senderAccountIban)
+                .withIban(new Iban(senderAccountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 

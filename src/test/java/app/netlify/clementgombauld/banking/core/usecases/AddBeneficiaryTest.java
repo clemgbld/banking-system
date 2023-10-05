@@ -43,7 +43,7 @@ class AddBeneficiaryTest {
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
-                .withIban(accountIban)
+                .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
@@ -84,7 +84,7 @@ class AddBeneficiaryTest {
 
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
-                .withIban(accountIban)
+                .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
@@ -115,7 +115,7 @@ class AddBeneficiaryTest {
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
-                .withIban(accountIban)
+                .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
         currentCustomer.openAccount(existingAccount);
@@ -159,7 +159,7 @@ class AddBeneficiaryTest {
 
         Account existingSenderAccount = new Account.Builder()
                 .withId(accountId)
-                .withIban(accountIban)
+                .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
