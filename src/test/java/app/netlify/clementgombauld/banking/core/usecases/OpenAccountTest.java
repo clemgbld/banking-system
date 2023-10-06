@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryCustomerRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIbanGenerator;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class OpenAccountTest {
@@ -58,6 +60,17 @@ class OpenAccountTest {
         );
 
         assertThat(customerFromRepository).isEqualTo(exepectCustomer);
+
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenThereIsNoAuthenticatedCustomer() {
+        String accountId = "1";
+        String generatedIban = "FR1420041010050500013M02606";
+        OpenAccount openAccount = buildOpenAccount(new HashMap<>(), generatedIban, List.of(accountId));
+        assertThatThrownBy(openAccount::handle)
+                .isInstanceOf(NoCurrentCustomerException.class)
+                .hasMessage("No current customer authenticated.");
 
     }
 

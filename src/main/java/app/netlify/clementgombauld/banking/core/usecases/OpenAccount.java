@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 
 public class OpenAccount {
 
@@ -21,7 +22,7 @@ public class OpenAccount {
 
     public void handle() {
         Customer customer = authenticationGateway.currentCustomer()
-                .orElseThrow();
+                .orElseThrow(NoCurrentCustomerException::new);
         String accountId = idGenerator.generate();
         Iban iban = ibanGenerator.generate();
         customer.openAccount(new Account.Builder()
