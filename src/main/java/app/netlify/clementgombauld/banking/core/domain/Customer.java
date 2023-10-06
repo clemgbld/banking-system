@@ -1,5 +1,6 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
+import app.netlify.clementgombauld.banking.core.domain.exceptions.AccountAlreadyOpenedException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnExistingAccountException;
 
 import java.util.Objects;
@@ -20,6 +21,9 @@ public class Customer {
     }
 
     public void openAccount(Account account) {
+        if (!Objects.isNull(this.account)) {
+            throw new AccountAlreadyOpenedException(id);
+        }
         this.account = account;
     }
 

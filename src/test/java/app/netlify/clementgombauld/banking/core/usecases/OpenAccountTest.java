@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.AccountAlreadyOpenedException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryCustomerRepository;
@@ -60,6 +61,30 @@ class OpenAccountTest {
         );
 
         assertThat(customerFromRepository).isEqualTo(exepectCustomer);
+
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheCustomerHasAlreadyOpenedAnAccount() {
+        String customerId = "134343";
+        String firstName = "Jean";
+        String lastName = "Paul";
+        String accountId = "1";
+        String generatedIban = "FR1420041010050500013M02606";
+
+        Customer customer = new Customer(customerId, firstName, lastName);
+        customer.openAccount(new Account.Builder()
+                .withId(accountId)
+                .withIban(new Iban(generatedIban))
+                .build());
+
+        authenticationGateway.authenticate(customer);
+
+        OpenAccount openAccount = buildOpenAccount(new HashMap<>(), generatedIban, List.of(accountId));
+
+        assertThatThrownBy(openAccount::handle)
+                .isInstanceOf(AccountAlreadyOpenedException.class)
+                .hasMessage("Customer with id: " + customerId + " has already opened an account.");
 
     }
 
