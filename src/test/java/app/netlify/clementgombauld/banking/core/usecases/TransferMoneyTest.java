@@ -311,7 +311,7 @@ class TransferMoneyTest {
     private TransferMoney buildTransferMoney(List<String> ids, List<Transaction> capturedTransactions, List<String> capturedAccountInfos, Map<String, Transaction> transactionStore) {
         TransactionRepository transactionRepository = new InMemoryTransactionRepository(transactionStore);
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
-        ExtraBankTransactionsGateway extraBankTransactionsGateway = new InMemoryExtraBankTransactionsGateway(capturedTransactions, capturedAccountInfos);
-        return new TransferMoney(accountRepository, beneficiaryRepository, transactionRepository, dateProvider, idGenerator, extraBankTransactionsGateway, authenticationGateway);
+        ExternalBankTransactionsGateway externalBankTransactionsGateway = new InMemoryExternalBankTransactionsGateway(capturedTransactions, capturedAccountInfos);
+        return new TransferMoney(accountRepository, beneficiaryRepository, transactionRepository, dateProvider, idGenerator, externalBankTransactionsGateway, authenticationGateway);
     }
 }

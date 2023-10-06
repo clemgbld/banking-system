@@ -1,16 +1,16 @@
 package app.netlify.clementgombauld.banking.infra.inMemory;
 
-import app.netlify.clementgombauld.banking.core.domain.ExtraBankTransactionsGateway;
+import app.netlify.clementgombauld.banking.core.domain.ExternalBankTransactionsGateway;
 import app.netlify.clementgombauld.banking.core.domain.Transaction;
 
 import java.util.List;
 
-public class InMemoryExtraBankTransactionsGateway implements ExtraBankTransactionsGateway {
+public class InMemoryExternalBankTransactionsGateway implements ExternalBankTransactionsGateway {
     private final List<Transaction> extraBankTransactions;
 
     private final List<String> accountInfos;
 
-    public InMemoryExtraBankTransactionsGateway(List<Transaction> extraBankTransactions, List<String> accountInfos) {
+    public InMemoryExternalBankTransactionsGateway(List<Transaction> extraBankTransactions, List<String> accountInfos) {
         this.extraBankTransactions = extraBankTransactions;
         this.accountInfos = accountInfos;
     }

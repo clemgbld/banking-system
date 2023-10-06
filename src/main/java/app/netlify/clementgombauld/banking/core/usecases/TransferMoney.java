@@ -22,17 +22,17 @@ public class TransferMoney {
 
     private final IdGenerator idGenerator;
 
-    private final ExtraBankTransactionsGateway extraBankTransactionsGateway;
+    private final ExternalBankTransactionsGateway externalBankTransactionsGateway;
 
     private final AuthenticationGateway authenticationGateway;
 
-    public TransferMoney(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository, TransactionRepository transactionRepository, DateProvider dateProvider, IdGenerator idGenerator, ExtraBankTransactionsGateway extraBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
+    public TransferMoney(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository, TransactionRepository transactionRepository, DateProvider dateProvider, IdGenerator idGenerator, ExternalBankTransactionsGateway externalBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
         this.beneficiaryRepository = beneficiaryRepository;
         this.transactionRepository = transactionRepository;
         this.dateProvider = dateProvider;
         this.idGenerator = idGenerator;
-        this.extraBankTransactionsGateway = extraBankTransactionsGateway;
+        this.externalBankTransactionsGateway = externalBankTransactionsGateway;
         this.authenticationGateway = authenticationGateway;
     }
 
@@ -52,7 +52,7 @@ public class TransferMoney {
         if (beneficiary.isInDifferentBank(bankBic)) {
             accountRepository.update(senderAccount);
             Transaction transaction = new Transaction(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName());
-            extraBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
+            externalBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
             return;
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIdentifier)
