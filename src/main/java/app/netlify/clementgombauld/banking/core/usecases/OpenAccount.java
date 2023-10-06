@@ -20,11 +20,12 @@ public class OpenAccount {
         this.authenticationGateway = authenticationGateway;
     }
 
-    public void handle() {
+    public AccountIdentity handle() {
         Customer customer = authenticationGateway.currentCustomer()
                 .orElseThrow(NoCurrentCustomerException::new);
         String accountId = idGenerator.generate();
         Iban iban = ibanGenerator.generate();
+
         customer.openAccount(new Account.Builder()
                 .withId(accountId)
                 .withIban(iban)
@@ -32,5 +33,6 @@ public class OpenAccount {
 
         customerRepository.update(customer);
 
+        return new AccountIdentity(accountId, iban.value());
     }
 }

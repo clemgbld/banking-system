@@ -43,7 +43,7 @@ class OpenAccountTest {
 
         OpenAccount openAccount = buildOpenAccount(customerStore, generatedIban, List.of(accountId));
 
-        openAccount.handle();
+        AccountIdentity accountIdentity = openAccount.handle();
 
         Customer customerFromRepository = customerStore.get(customerId);
 
@@ -61,6 +61,7 @@ class OpenAccountTest {
         );
 
         assertThat(customerFromRepository).isEqualTo(exepectCustomer);
+        assertThat(accountIdentity).isEqualTo(new AccountIdentity(accountId, generatedIban));
 
     }
 
