@@ -68,7 +68,6 @@ class OpenAccountTest {
 
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
         return new OpenAccount(customerRepository, ibanGenerator, idGenerator, authenticationGateway);
-        ;
     }
 
 }
