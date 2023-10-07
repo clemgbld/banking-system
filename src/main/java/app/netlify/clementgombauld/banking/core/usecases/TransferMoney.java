@@ -2,8 +2,6 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithCustomerId;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 
@@ -25,7 +23,7 @@ public class TransferMoney {
 
     private final ExternalBankTransactionsGateway externalBankTransactionsGateway;
 
-    private final AuthenticationGateway authenticationGateway;
+    private final CustomerAccountFinder customerAccountFinder;
 
     public TransferMoney(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository, TransactionRepository transactionRepository, DateProvider dateProvider, IdGenerator idGenerator, ExternalBankTransactionsGateway externalBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
@@ -34,17 +32,14 @@ public class TransferMoney {
         this.dateProvider = dateProvider;
         this.idGenerator = idGenerator;
         this.externalBankTransactionsGateway = externalBankTransactionsGateway;
-        this.authenticationGateway = authenticationGateway;
+        this.customerAccountFinder = new CustomerAccountFinder(authenticationGateway, accountRepository);
     }
 
     public void handle(BigDecimal transactionAmount, String receiverAccountIdentifier, String bic) {
         Bic bankBic = new Bic(bic);
         Instant creationDate = dateProvider.now();
-        Customer currentCustomer = authenticationGateway.currentCustomer()
-                .orElseThrow(NoCurrentCustomerException::new);
-        Account senderAccount = accountRepository.findByCustomerId(currentCustomer.getId())
-                .orElseThrow(() -> new UnknownAccountWithCustomerId(currentCustomer.getId()));
-
+        Account senderAccount = customerAccountFinder.findAccount();
+        Customer currentCustomer = customerAccountFinder.currentCustomer();
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(transactionAmount);

@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
+import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryBeneficiaryRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
@@ -9,7 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +42,8 @@ class AddBeneficiaryTest {
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName = "Bob Dylan";
 
+        Map<String, Account> accountStore = new HashMap<>();
+
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
         Account existingSenderAccount = new Account.Builder()
@@ -47,12 +52,12 @@ class AddBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.openAccount(existingSenderAccount);
+        accountStore.put(customerId, existingSenderAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
 
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
 
         String expectedId = addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName);
 
@@ -77,6 +82,7 @@ class AddBeneficiaryTest {
 
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
+        Map<String, Account> accountStore = new HashMap<>();
 
         Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName);
 
@@ -88,11 +94,12 @@ class AddBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.openAccount(existingAccount);
+        accountStore.put(customerId, existingAccount);
+
 
         authenticationGateway.authenticate(currentCustomer);
 
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(DuplicatedBeneficiaryException.class)
@@ -112,18 +119,20 @@ class AddBeneficiaryTest {
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName = "Bob Dylan";
 
+        Map<String, Account> accountStore = new HashMap<>();
+
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
-        currentCustomer.openAccount(existingAccount);
+        accountStore.put(customerId, existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
 
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(InvalidIbanException.class)
@@ -136,7 +145,7 @@ class AddBeneficiaryTest {
         String beneficiaryIban = "FR6300000070000";
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName = "Bob Dylan";
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId));
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
@@ -155,6 +164,8 @@ class AddBeneficiaryTest {
         String beneficiaryBic = "BNPA";
         String beneficiaryName = "Bob Dylan";
 
+        Map<String, Account> accountStore = new HashMap<>();
+
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
         Account existingSenderAccount = new Account.Builder()
@@ -163,21 +174,44 @@ class AddBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.openAccount(existingSenderAccount);
+        accountStore.put(customerId, existingSenderAccount);
+
 
         authenticationGateway.authenticate(currentCustomer);
 
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + beneficiaryBic + " is invalid.");
     }
 
+    @Test
+    void shouldThrowAnExceptionWhenTheAccountDoesNotExists() {
+        String customerId = "13455";
+        String accountFirstName = "Paul";
+        String accountLastName = "Duboit";
+        String beneficiaryId = "1234";
+        String beneficiaryIban = "FR5030004000700000157389538";
+        String beneficiaryBic = "BNPA";
+        String beneficiaryName = "Bob Dylan";
 
-    private AddBeneficiary buildAddBeneficiary(List<String> ids) {
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
+
+        authenticationGateway.authenticate(currentCustomer);
+
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId));
+
+        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+                .isInstanceOf(UnknownAccountWithCustomerId.class)
+                .hasMessage("There is no account with the customerId: " + customerId);
+    }
+
+
+    private AddBeneficiary buildAddBeneficiary(Map<String, Account> accountStore, List<String> ids) {
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
-        return new AddBeneficiary(beneficiaryRepository, idGenerator, authenticationGateway);
+        AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
+        return new AddBeneficiary(beneficiaryRepository, idGenerator, authenticationGateway, accountRepository);
     }
 
 }

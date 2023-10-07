@@ -2,7 +2,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.DuplicatedBeneficiaryException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
+
 
 import java.util.Optional;
 
@@ -12,18 +12,16 @@ public class AddBeneficiary {
 
     private final IdGenerator idGenerator;
 
-    private final AuthenticationGateway authenticationGateway;
+    private final CustomerAccountFinder customerAccountFinder;
 
-    public AddBeneficiary(BeneficiaryRepository beneficiaryRepository, IdGenerator idGenerator, AuthenticationGateway authenticationGateway) {
+    public AddBeneficiary(BeneficiaryRepository beneficiaryRepository, IdGenerator idGenerator, AuthenticationGateway authenticationGateway, AccountRepository accountRepository) {
         this.beneficiaryRepository = beneficiaryRepository;
         this.idGenerator = idGenerator;
-        this.authenticationGateway = authenticationGateway;
+        this.customerAccountFinder = new CustomerAccountFinder(authenticationGateway, accountRepository);
     }
 
     public String handle(String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
-        Customer currentCustomer = authenticationGateway.currentCustomer()
-                .orElseThrow(NoCurrentCustomerException::new);
-        Account account = currentCustomer.getAccount();
+        Account account = customerAccountFinder.findAccount();
         Optional<Beneficiary> potentialDuplicatedBeneficiary = beneficiaryRepository.findByAccountIdAndIban(account.getId(), beneficiaryIban);
         potentialDuplicatedBeneficiary.ifPresent((beneficiary) -> {
             throw new DuplicatedBeneficiaryException(beneficiaryIban, account.getId());
