@@ -16,4 +16,9 @@ public class InMemoryCustomerRepository implements CustomerRepository {
     public void update(Customer customer) {
         customerStore.put(customer.getId(), customer);
     }
+
+    @Override
+    public void delete(Customer currentCustomer) {
+        customerStore.remove(currentCustomer.getId());
+    }
 }
