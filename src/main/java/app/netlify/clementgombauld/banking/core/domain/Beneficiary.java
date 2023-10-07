@@ -13,10 +13,10 @@ public class Beneficiary {
 
     private final String name;
 
-    public Beneficiary(String id, String iban, String bic, String name) {
+    public Beneficiary(String id, Iban iban, Bic bic, String name) {
         this.id = id;
-        this.iban = new Iban(iban);
-        this.bic = new Bic(bic);
+        this.iban = iban;
+        this.bic = bic;
 
         this.name = name;
     }

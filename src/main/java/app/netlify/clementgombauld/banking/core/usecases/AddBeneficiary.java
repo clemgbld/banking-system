@@ -27,7 +27,7 @@ public class AddBeneficiary {
             throw new DuplicatedBeneficiaryException(beneficiaryIban, account.getId());
         });
         String beneficiaryId = idGenerator.generate();
-        beneficiaryRepository.insert(account.getId(), new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName));
+        beneficiaryRepository.insert(account.getId(), new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName));
         return beneficiaryId;
     }
 }

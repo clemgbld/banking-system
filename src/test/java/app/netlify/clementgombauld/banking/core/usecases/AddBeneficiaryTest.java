@@ -62,7 +62,7 @@ class AddBeneficiaryTest {
         String expectedId = addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName);
 
         assertThat(beneficiaryRepository.findByAccountIdAndIban(accountId, beneficiaryIban).orElseThrow())
-                .isEqualTo(new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName));
+                .isEqualTo(new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName));
 
         assertThat(expectedId).isEqualTo(beneficiaryId);
     }
@@ -84,7 +84,7 @@ class AddBeneficiaryTest {
 
         Map<String, Account> accountStore = new HashMap<>();
 
-        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId, beneficiaryIban, beneficiaryBic, beneficiaryName);
+        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName);
 
         beneficiaryRepository.insert(accountId, existingBeneficiary);
 
