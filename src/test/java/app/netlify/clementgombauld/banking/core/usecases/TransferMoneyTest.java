@@ -2,7 +2,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
-import app.netlify.clementgombauld.banking.infra.inMemory.*;
+import app.netlify.clementgombauld.banking.core.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

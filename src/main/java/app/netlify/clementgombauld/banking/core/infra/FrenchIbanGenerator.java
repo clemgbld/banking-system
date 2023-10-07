@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.infra;
+package app.netlify.clementgombauld.banking.core.infra;
 
 import app.netlify.clementgombauld.banking.core.domain.BankInfoType;
 import app.netlify.clementgombauld.banking.core.domain.Iban;

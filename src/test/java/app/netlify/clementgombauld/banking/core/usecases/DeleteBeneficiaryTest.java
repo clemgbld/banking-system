@@ -2,9 +2,9 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
-import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
-import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
-import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryBeneficiaryRepository;
+import app.netlify.clementgombauld.banking.core.infra.inMemory.InMemoryAccountRepository;
+import app.netlify.clementgombauld.banking.core.infra.inMemory.InMemoryAuthenticationGateway;
+import app.netlify.clementgombauld.banking.core.infra.inMemory.InMemoryBeneficiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

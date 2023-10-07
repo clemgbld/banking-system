@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.infra.inMemory;
+package app.netlify.clementgombauld.banking.core.infra.inMemory;
 
 import app.netlify.clementgombauld.banking.core.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.core.domain.Customer;

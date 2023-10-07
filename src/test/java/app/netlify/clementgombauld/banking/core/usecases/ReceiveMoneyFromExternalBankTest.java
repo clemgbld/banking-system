@@ -5,7 +5,7 @@ import app.netlify.clementgombauld.banking.core.domain.exceptions.ExchangeRateNo
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.CurrencyNotFoundException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.SameBankException;
-import app.netlify.clementgombauld.banking.infra.inMemory.*;
+import app.netlify.clementgombauld.banking.core.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

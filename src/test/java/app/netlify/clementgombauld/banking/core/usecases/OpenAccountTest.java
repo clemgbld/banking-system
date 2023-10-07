@@ -3,10 +3,8 @@ package app.netlify.clementgombauld.banking.core.usecases;
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.AccountAlreadyOpenedException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
-import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryCustomerRepository;
-import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIbanGenerator;
-import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryIdGenerator;
+import app.netlify.clementgombauld.banking.core.infra.inMemory.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,30 +35,22 @@ class OpenAccountTest {
 
         Customer customer = new Customer(customerId, firstName, lastName);
 
-        Map<String, Customer> customerStore = new HashMap<>();
+        Map<String, Account> accountStore = new HashMap<>();
 
         authenticationGateway.authenticate(customer);
 
-        OpenAccount openAccount = buildOpenAccount(customerStore, generatedIban, List.of(accountId));
+        OpenAccount openAccount = buildOpenAccount(accountStore, generatedIban, List.of(accountId));
 
         openAccount.handle();
 
-        Customer customerFromRepository = customerStore.get(customerId);
+        Account createdAccount = accountStore.get(generatedIban);
 
-        Customer exepectCustomer = new Customer(
-                customerId,
-                firstName,
-                lastName
-        );
-
-        exepectCustomer.openAccount(
-                new Account.Builder()
-                        .withId(accountId)
+        assertThat(createdAccount).isEqualTo(
+                new Account.Builder().withId(accountId)
                         .withIban(new Iban(generatedIban))
+                        .withCustomer(customer)
                         .build()
         );
-
-        assertThat(customerFromRepository).isEqualTo(exepectCustomer);
 
     }
 
@@ -72,19 +62,22 @@ class OpenAccountTest {
         String accountId = "1";
         String generatedIban = "FR1420041010050500013M02606";
 
+        Map<String, Account> accountStore = new HashMap<>();
+
         Customer customer = new Customer(customerId, firstName, lastName);
-        customer.openAccount(new Account.Builder()
+
+        accountStore.put(customerId, new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(generatedIban))
                 .build());
 
         authenticationGateway.authenticate(customer);
 
-        OpenAccount openAccount = buildOpenAccount(new HashMap<>(), generatedIban, List.of(accountId));
+        OpenAccount openAccount = buildOpenAccount(accountStore, generatedIban, List.of(accountId));
 
         assertThatThrownBy(openAccount::handle)
                 .isInstanceOf(AccountAlreadyOpenedException.class)
-                .hasMessage("Customer with id: " + customerId + " has already opened an account.");
+                .hasMessage("Account with customerId: " + customerId + " is already opened.");
 
     }
 
@@ -99,13 +92,12 @@ class OpenAccountTest {
 
     }
 
-    private OpenAccount buildOpenAccount(Map<String, Customer> customerStore, String generatedIban, List<String> ids) {
-        CustomerRepository customerRepository = new InMemoryCustomerRepository(customerStore);
+    private OpenAccount buildOpenAccount(Map<String, Account> accountStore, String generatedIban, List<String> ids) {
 
         IbanGenerator ibanGenerator = new InMemoryIbanGenerator(generatedIban);
-
+        AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
-        return new OpenAccount(customerRepository, ibanGenerator, idGenerator, authenticationGateway);
+        return new OpenAccount(accountRepository, ibanGenerator, idGenerator, authenticationGateway);
     }
 
 }

@@ -13,10 +13,12 @@ public class Account {
 
     private Balance balance;
 
+    private Customer customer;
 
     private Account(Builder builder) {
         this.id = builder.id;
         this.iban = builder.iban;
+        this.customer = builder.customer;
         this.balance = initBalance(builder.balance);
     }
 
@@ -25,6 +27,8 @@ public class Account {
         private String id;
         private Iban iban;
         private BigDecimal balance;
+
+        private Customer customer;
 
         public Builder withId(String id) {
             this.id = id;
@@ -39,6 +43,11 @@ public class Account {
 
         public Builder withBalance(BigDecimal money) {
             this.balance = money;
+            return this;
+        }
+
+        public Builder withCustomer(Customer customer) {
+            this.customer = customer;
             return this;
         }
 
@@ -84,20 +93,21 @@ public class Account {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Account account)) return false;
-        return Objects.equals(id, account.id) && Objects.equals(iban, account.iban) && Objects.equals(balance, account.balance);
+        return Objects.equals(id, account.id) && Objects.equals(iban, account.iban) && Objects.equals(balance, account.balance) && Objects.equals(customer, account.customer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, iban, balance);
+        return Objects.hash(id, iban, balance, customer);
     }
 
     @Override
     public String toString() {
         return "Account{" +
                 "id='" + id + '\'' +
-                ", iban='" + iban + '\'' +
+                ", iban=" + iban +
                 ", balance=" + balance +
+                ", customer=" + customer +
                 '}';
     }
 }

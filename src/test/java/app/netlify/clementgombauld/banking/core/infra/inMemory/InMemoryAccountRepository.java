@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.infra.inMemory;
+package app.netlify.clementgombauld.banking.core.infra.inMemory;
 
 import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
@@ -24,6 +24,11 @@ public class InMemoryAccountRepository implements AccountRepository {
     @Override
     public Optional<Account> findByCustomerId(String customerId) {
         return findById(customerId);
+    }
+
+    @Override
+    public void insert(Account account) {
+        dataSource.put(account.getIban(), account);
     }
 
 

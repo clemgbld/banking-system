@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.infra.inMemory;
+package app.netlify.clementgombauld.banking.core.infra.inMemory;
 
 import app.netlify.clementgombauld.banking.core.domain.Beneficiary;
 import app.netlify.clementgombauld.banking.core.domain.BeneficiaryRepository;
