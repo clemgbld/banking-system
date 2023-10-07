@@ -84,11 +84,6 @@ public class Account {
     }
 
 
-    private Balance initBalance(BigDecimal balance) {
-        BigDecimal initialBalance = Optional.ofNullable(balance).orElse(new BigDecimal(0));
-        return new Balance(initialBalance);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,5 +104,10 @@ public class Account {
                 ", balance=" + balance +
                 ", customer=" + customer +
                 '}';
+    }
+
+    private Balance initBalance(BigDecimal balance) {
+        BigDecimal initialBalance = Optional.ofNullable(balance).orElse(new BigDecimal(0));
+        return new Balance(initialBalance);
     }
 }
