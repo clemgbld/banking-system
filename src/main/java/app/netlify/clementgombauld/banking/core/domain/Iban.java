@@ -4,38 +4,42 @@ import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanExc
 
 import java.util.Objects;
 
-public record Iban(String value) {
+
+public class Iban {
+    private final org.iban4j.Iban iban;
 
     public Iban(String value) {
-        this.value = validateIban(value);
+        this.iban = validateIban(value);
     }
 
-    private String validateIban(String value) {
+    public String value() {
+        return iban.toString();
+    }
+
+    private org.iban4j.Iban validateIban(String value) {
         try {
-            var iban = org.iban4j.Iban.valueOf(value);
-            return iban.toString();
+            return org.iban4j.Iban.valueOf(value);
         } catch (Exception e) {
             throw new InvalidIbanException(value);
         }
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Iban iban)) return false;
-        return value.equals(iban.value);
+        if (!(o instanceof Iban iban1)) return false;
+        return Objects.equals(iban, iban1.iban);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(iban);
     }
 
     @Override
     public String toString() {
         return "Iban{" +
-                "value='" + value + '\'' +
+                "iban=" + iban +
                 '}';
     }
 }
