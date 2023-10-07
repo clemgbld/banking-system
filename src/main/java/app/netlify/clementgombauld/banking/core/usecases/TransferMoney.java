@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithCustomerId;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
 
@@ -41,7 +42,9 @@ public class TransferMoney {
         Instant creationDate = dateProvider.now();
         Customer currentCustomer = authenticationGateway.currentCustomer()
                 .orElseThrow(NoCurrentCustomerException::new);
-        Account senderAccount = currentCustomer.getAccount();
+        Account senderAccount = accountRepository.findByCustomerId(currentCustomer.getId())
+                .orElseThrow(() -> new UnknownAccountWithCustomerId(currentCustomer.getId()));
+
         String senderTransactionId = idGenerator.generate();
         String receiverTransactionId = idGenerator.generate();
         senderAccount.withdraw(transactionAmount);

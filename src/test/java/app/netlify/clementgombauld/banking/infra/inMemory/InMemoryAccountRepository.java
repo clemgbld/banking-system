@@ -7,19 +7,23 @@ import app.netlify.clementgombauld.banking.core.domain.Iban;
 import java.util.*;
 
 public class InMemoryAccountRepository implements AccountRepository {
-    private final Map<String, Account> dataSource = new HashMap<>();
+    private Map<String, Account> dataSource = new HashMap<>();
+
+    public InMemoryAccountRepository(Map<String, Account> dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public InMemoryAccountRepository() {
     }
 
     @Override
     public Optional<Account> findByIban(String iban) {
-        Account nullableAccount = dataSource.getOrDefault(iban, null);
-        return Objects.isNull(nullableAccount) ? Optional.empty() : Optional.of(new Account.Builder()
-                .withId(nullableAccount.getId())
-                .withIban(new Iban(nullableAccount.getIban()))
-                .withBalance(nullableAccount.getBalance())
-                .build());
+        return findById(iban);
+    }
+
+    @Override
+    public Optional<Account> findByCustomerId(String customerId) {
+        return findById(customerId);
     }
 
 
@@ -31,5 +35,15 @@ public class InMemoryAccountRepository implements AccountRepository {
     @Override
     public void update(Account account) {
         dataSource.put(account.getIban(), account);
+    }
+
+
+    private Optional<Account> findById(String id) {
+        Account nullableAccount = dataSource.getOrDefault(id, null);
+        return Objects.isNull(nullableAccount) ? Optional.empty() : Optional.of(new Account.Builder()
+                .withId(nullableAccount.getId())
+                .withIban(new Iban(nullableAccount.getIban()))
+                .withBalance(nullableAccount.getBalance())
+                .build());
     }
 }
