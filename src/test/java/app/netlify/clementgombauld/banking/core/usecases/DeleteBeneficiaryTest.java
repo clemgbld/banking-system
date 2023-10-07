@@ -1,16 +1,16 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnExistingAccountException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownBeneficiaryException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
+import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.infra.inMemory.InMemoryBeneficiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,13 +19,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class DeleteBeneficiaryTest {
     private BeneficiaryRepository beneficiaryRepository;
     private AuthenticationGateway authenticationGateway;
-    private DeleteBeneficiary deleteBeneficiary;
 
     @BeforeEach
     void setUp() {
         beneficiaryRepository = new InMemoryBeneficiaryRepository();
         authenticationGateway = new InMemoryAuthenticationGateway();
-        deleteBeneficiary = new DeleteBeneficiary(beneficiaryRepository, authenticationGateway);
     }
 
     @Test
@@ -49,6 +47,7 @@ class DeleteBeneficiaryTest {
         beneficiaryRepository.insert(accountId, firstBeneficiary);
         beneficiaryRepository.insert(accountId, secondBeneficiary);
 
+        Map<String, Account> accountStore = new HashMap<>();
 
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
@@ -58,9 +57,12 @@ class DeleteBeneficiaryTest {
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.openAccount(existingAccount);
+        accountStore.put(customerId, existingAccount);
+
 
         authenticationGateway.authenticate(currentCustomer);
+
+        DeleteBeneficiary deleteBeneficiary = buildDeleteBeneficiary(accountStore);
 
         deleteBeneficiary.handle(secondBeneficiaryIban);
 
@@ -72,6 +74,7 @@ class DeleteBeneficiaryTest {
     @Test
     void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer() {
         String beneficiaryIban = "FR5030004000700000157389538";
+        DeleteBeneficiary deleteBeneficiary = buildDeleteBeneficiary(new HashMap<>());
         assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
@@ -85,9 +88,10 @@ class DeleteBeneficiaryTest {
         String customerLastName = "Duboit";
         Customer currentCustomer = new Customer(customerId, customerFirstName, customerLastName);
         authenticationGateway.authenticate(currentCustomer);
+        DeleteBeneficiary deleteBeneficiary = buildDeleteBeneficiary(new HashMap<>());
         assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban))
-                .isInstanceOf(UnExistingAccountException.class)
-                .hasMessage("Customer with id: " + customerId + " does not have any account");
+                .isInstanceOf(UnknownAccountWithCustomerId.class)
+                .hasMessage("There is no account with the customerId: " + customerId);
     }
 
 
@@ -101,17 +105,17 @@ class DeleteBeneficiaryTest {
         String beneficiaryIban = "FR5030004000700000157389538";
 
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
-
+        Map<String, Account> accountStore = new HashMap<>();
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
-
-        currentCustomer.openAccount(existingAccount);
+        accountStore.put(customerId, existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
+        DeleteBeneficiary deleteBeneficiary = buildDeleteBeneficiary(accountStore);
 
         assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban)).isInstanceOf(UnknownBeneficiaryException.class)
                 .hasMessage("Cannot find any account with the accountIdentifier: " + beneficiaryIban + " in your beneficiaries list.");
@@ -128,21 +132,27 @@ class DeleteBeneficiaryTest {
         String beneficiaryIban = "FR50300040007000001573895";
 
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
-
+        Map<String, Account> accountStore = new HashMap<>();
         Account existingAccount = new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(accountIban))
                 .withBalance(new BigDecimal(105))
                 .build();
 
-        currentCustomer.openAccount(existingAccount);
+        accountStore.put(customerId, existingAccount);
 
         authenticationGateway.authenticate(currentCustomer);
 
+        DeleteBeneficiary deleteBeneficiary = buildDeleteBeneficiary(accountStore);
 
         assertThatThrownBy(() -> deleteBeneficiary.handle(beneficiaryIban))
                 .isInstanceOf(InvalidIbanException.class)
                 .hasMessage("accountIdentifier: " + beneficiaryIban + " is invalid.");
+    }
+
+    private DeleteBeneficiary buildDeleteBeneficiary(Map<String, Account> accountStore) {
+        AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
+        return new DeleteBeneficiary(beneficiaryRepository, authenticationGateway, accountRepository);
     }
 
 }
