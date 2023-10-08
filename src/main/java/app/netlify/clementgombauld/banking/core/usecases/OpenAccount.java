@@ -4,6 +4,8 @@ import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.AccountAlreadyOpenedException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
 
+import java.time.Instant;
+
 public class OpenAccount {
 
     private final AccountRepository accountRepository;
@@ -14,17 +16,21 @@ public class OpenAccount {
 
     private final AuthenticationGateway authenticationGateway;
 
-    public OpenAccount(AccountRepository accountRepository, IbanGenerator ibanGenerator, IdGenerator idGenerator, AuthenticationGateway authenticationGateway) {
+    private final DateProvider dateProvider;
+
+    public OpenAccount(AccountRepository accountRepository, IbanGenerator ibanGenerator, IdGenerator idGenerator, AuthenticationGateway authenticationGateway, DateProvider dateProvider) {
         this.accountRepository = accountRepository;
         this.ibanGenerator = ibanGenerator;
         this.idGenerator = idGenerator;
         this.authenticationGateway = authenticationGateway;
+        this.dateProvider = dateProvider;
     }
 
     public void handle() {
         Customer currentCustomer = authenticationGateway.currentCustomer()
                 .orElseThrow(NoCurrentCustomerException::new);
         String accountId = idGenerator.generate();
+        Instant currentDate = dateProvider.now();
         Iban iban = ibanGenerator.generate();
         accountRepository.findByCustomerId(currentCustomer.getId())
                 .ifPresent((c) -> {
@@ -34,6 +40,7 @@ public class OpenAccount {
                 .withId(accountId)
                 .withIban(iban)
                 .withCustomer(currentCustomer)
+                .withCreatedOn(currentDate)
                 .build());
 
     }

@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.domain;
 
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -13,13 +14,17 @@ public class Account {
 
     private Balance balance;
 
-    private Customer customer;
+    private final Instant createdOn;
+
+    private final Customer customer;
 
     private Account(Builder builder) {
         this.id = builder.id;
         this.iban = builder.iban;
         this.customer = builder.customer;
         this.balance = initBalance(builder.balance);
+        this.createdOn = builder.createdOn;
+
     }
 
 
@@ -29,6 +34,8 @@ public class Account {
         private BigDecimal balance;
 
         private Customer customer;
+
+        private Instant createdOn;
 
         public Builder withId(String id) {
             this.id = id;
@@ -48,6 +55,11 @@ public class Account {
 
         public Builder withCustomer(Customer customer) {
             this.customer = customer;
+            return this;
+        }
+
+        public Builder withCreatedOn(Instant createdOn) {
+            this.createdOn = createdOn;
             return this;
         }
 
@@ -83,17 +95,21 @@ public class Account {
         return balance.value();
     }
 
+    public Instant getCreationDate() {
+        return createdOn;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Account account)) return false;
-        return Objects.equals(id, account.id) && Objects.equals(iban, account.iban) && Objects.equals(balance, account.balance) && Objects.equals(customer, account.customer);
+        return Objects.equals(id, account.id) && Objects.equals(iban, account.iban) && Objects.equals(balance, account.balance) && Objects.equals(createdOn, account.createdOn) && Objects.equals(customer, account.customer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, iban, balance, customer);
+        return Objects.hash(id, iban, balance, createdOn, customer);
     }
 
     @Override
@@ -102,6 +118,7 @@ public class Account {
                 "id='" + id + '\'' +
                 ", iban=" + iban +
                 ", balance=" + balance +
+                ", createdOn=" + createdOn +
                 ", customer=" + customer +
                 '}';
     }
