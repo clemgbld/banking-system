@@ -16,9 +16,15 @@ class CloseAccountTest {
 
     private AuthenticationGateway authenticationGateway;
 
+    private AccountRepository accountRepository;
+
+    private Map<String, Account> accountStore;
+
     @BeforeEach
     void setUp() {
         authenticationGateway = new InMemoryAuthenticationGateway();
+        accountStore = new HashMap<>();
+        accountRepository = new InMemoryAccountRepository(accountStore);
     }
 
 
@@ -32,21 +38,22 @@ class CloseAccountTest {
 
         Customer customer = new Customer(customerId, firstName, lastName);
 
-        Map<String, Account> accountStore = new HashMap<>();
-        accountStore.put(customerId, new Account.Builder()
+        Account accountToDelete = new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(accountIban))
-                .build());
+                .build();
+
+        accountStore.put(customerId, accountToDelete);
+        accountStore.put(accountId, accountToDelete);
 
         authenticationGateway.authenticate(customer);
-
-        AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
 
         CloseAccount closeAccount = new CloseAccount(accountRepository, authenticationGateway);
 
         closeAccount.handle(null, null, null);
 
-        assertThat(accountStore.get(customerId)).isNull();
+        assertThat(accountStore.get(accountId)).isNull();
     }
+
 
 }

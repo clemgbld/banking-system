@@ -1,5 +1,6 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
+import app.netlify.clementgombauld.banking.core.domain.Account;
 import app.netlify.clementgombauld.banking.core.domain.AccountRepository;
 import app.netlify.clementgombauld.banking.core.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.core.domain.Customer;
@@ -17,6 +18,7 @@ public class CloseAccount {
 
     public void handle(String externalAccountIban, String externalBic, String bic) {
         Customer currentCustomer = authenticationGateway.currentCustomer().orElseThrow();
-        accountRepository.deleteByCustomerId(currentCustomer.getId());
+        Account account = accountRepository.findByCustomerId(currentCustomer.getId()).orElseThrow();
+        accountRepository.deleteById(account.getId());
     }
 }

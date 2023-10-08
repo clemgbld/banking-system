@@ -13,5 +13,5 @@ public interface AccountRepository {
 
     void update(Account account);
 
-    void deleteByCustomerId(String customerId);
+    void deleteById(String id);
 }

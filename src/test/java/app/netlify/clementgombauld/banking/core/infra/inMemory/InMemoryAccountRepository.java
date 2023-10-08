@@ -43,8 +43,8 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     @Override
-    public void deleteByCustomerId(String customerId) {
-        dataSource.remove(customerId);
+    public void deleteById(String id) {
+        dataSource.remove(id);
     }
 
 
