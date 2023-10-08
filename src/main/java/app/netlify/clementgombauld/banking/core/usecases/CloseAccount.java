@@ -1,8 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithCustomerId;
+
 
 public class CloseAccount {
 
@@ -18,6 +17,11 @@ public class CloseAccount {
 
     public void handle(String externalAccountIban, String externalBic, String bic) {
         Account account = customerAccountFinder.findAccount();
-        accountRepository.deleteById(account.getId());
+        if (account.hasEmptyBalance()) {
+            accountRepository.deleteById(account.getId());
+            return;
+        }
+        new Iban(externalAccountIban);
+
     }
 }

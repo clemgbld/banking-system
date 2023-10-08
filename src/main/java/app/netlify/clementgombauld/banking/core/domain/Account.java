@@ -81,6 +81,10 @@ public class Account {
         deposit(transactionAmount.negate());
     }
 
+    public boolean hasEmptyBalance() {
+        return balance.isEmpty();
+    }
+
 
     public String getId() {
         return id;

@@ -14,10 +14,14 @@ public record Balance(BigDecimal value) {
         return new Balance(value.add(amount));
     }
 
-    void checkBalanceSufficiency(BigDecimal amount) {
+    public void checkBalanceSufficiency(BigDecimal amount) {
         if (isBalanceInsufficient(amount)) {
             throw new InsufficientBalanceException();
         }
+    }
+
+    public boolean isEmpty() {
+        return this.value.compareTo(new BigDecimal(0)) == COMPARATOR;
     }
 
     private boolean isBalanceInsufficient(BigDecimal amount) {
@@ -42,4 +46,6 @@ public record Balance(BigDecimal value) {
                 "value=" + value +
                 '}';
     }
+
+
 }
