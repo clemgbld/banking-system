@@ -42,6 +42,11 @@ public class InMemoryAccountRepository implements AccountRepository {
         dataSource.put(account.getIban(), account);
     }
 
+    @Override
+    public void deleteByCustomerId(String customerId) {
+        dataSource.remove(customerId);
+    }
+
 
     private Optional<Account> findById(String id) {
         Account nullableAccount = dataSource.getOrDefault(id, null);
