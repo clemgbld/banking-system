@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithCustomerId;
 import app.netlify.clementgombauld.banking.core.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.core.infra.inMemory.InMemoryAuthenticationGateway;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +63,20 @@ class CloseAccountTest {
         assertThatThrownBy(() -> closeAccount.handle(null, null, null))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheCustomerHasNoAccount() {
+        String customerId = "13434";
+        String firstName = "John";
+        String lastName = "Smith";
+        Customer customer = new Customer(customerId, firstName, lastName);
+        authenticationGateway.authenticate(customer);
+
+        CloseAccount closeAccount = new CloseAccount(accountRepository, authenticationGateway);
+        assertThatThrownBy(() -> closeAccount.handle(null, null, null))
+                .isInstanceOf(UnknownAccountWithCustomerId.class)
+                .hasMessage("There is no account with the customerId: " + customerId);
     }
 
 
