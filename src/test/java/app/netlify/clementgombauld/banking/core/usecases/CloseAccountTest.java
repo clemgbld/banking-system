@@ -190,5 +190,33 @@ class CloseAccountTest {
                 .hasMessage("bic: " + externalBic + " is invalid.");
     }
 
+    @Test
+    void shouldThrowAnExceptionWhenTheBalanceIsNotEmptyAndWhenTheBankBicIsInvalid() {
+        String customerId = "13434";
+        String firstName = "John";
+        String lastName = "Smith";
+        String accountId = "1";
+        String accountIban = "FR1420041010050500013M02606";
+        String externalAccountIban = "FR5030004000700000157389538";
+        String externalBic = "AGRIFRPP989";
+        String bic = "invalidBankBic";
+
+        Customer customer = new Customer(customerId, firstName, lastName);
+
+        accountStore.put(customerId, new Account.Builder()
+                .withId(accountId)
+                .withIban(new Iban(accountIban))
+                .withBalance(new BigDecimal(10))
+                .build());
+
+        authenticationGateway.authenticate(customer);
+
+        CloseAccount closeAccount = new CloseAccount(accountRepository, authenticationGateway);
+
+        assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic))
+                .isInstanceOf(InvalidBicException.class)
+                .hasMessage("bic: " + bic + " is invalid.");
+    }
+
 
 }
