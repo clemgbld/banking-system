@@ -38,7 +38,10 @@ public class CloseAccount {
         String externalTransactionId = idGenerator.generate();
         Customer currentCustomer = customerAccountFinder.currentCustomer();
 
-        externalBankTransactionsGateway.transfer(new Transaction(externalTransactionId, currentDate, account.getBalance(), account.getIban(), validBankBic.value(), currentCustomer.fullName()), validExternalIban.value(), validExternalBic.value());
+        externalBankTransactionsGateway.transfer(new Transaction(externalTransactionId, currentDate, account.getBalance(), account.getIban(), validBankBic.value(), currentCustomer.fullName())
+                , validExternalIban.value(),
+                validExternalBic.value());
+        
         account.clearBalance();
         accountRepository.update(account);
         accountRepository.deleteById(account.getId());
