@@ -1,8 +1,10 @@
 package app.netlify.clementgombauld.banking.core.domain;
 
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoBicException;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class Bic {
 
@@ -20,10 +22,12 @@ public class Bic {
     }
 
     private org.iban4j.Bic validateBic(String value) {
+        String nonNullValue = Optional.ofNullable(value)
+                .orElseThrow(NoBicException::new);
         try {
-            return org.iban4j.Bic.valueOf(value);
+            return org.iban4j.Bic.valueOf(nonNullValue);
         } catch (Exception exception) {
-            throw new InvalidBicException(value);
+            throw new InvalidBicException(nonNullValue);
         }
     }
 

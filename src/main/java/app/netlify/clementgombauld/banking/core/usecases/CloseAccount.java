@@ -1,12 +1,12 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.NoBicException;
 
 
 public class CloseAccount {
 
     private final AccountRepository accountRepository;
-
 
     private final CustomerAccountFinder customerAccountFinder;
 
@@ -22,6 +22,7 @@ public class CloseAccount {
             return;
         }
         new Iban(externalAccountIban);
+        new Bic(externalBic);
 
     }
 }

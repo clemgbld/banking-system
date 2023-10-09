@@ -1,10 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.NoIbanException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithCustomerId;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.core.infra.inMemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.core.infra.inMemory.InMemoryAuthenticationGateway;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +80,7 @@ class CloseAccountTest {
     }
 
     @Test
-    void shouldThrowANoIbanExceptionWhenTheBalanceIsNotEmptyAndWhenThereIsNoIban() {
+    void shouldThrowANoIbanExceptionWhenTheBalanceIsNotEmptyAndWhenThereIsNoExternalBankIban() {
         String customerId = "13434";
         String firstName = "John";
         String lastName = "Smith";
@@ -111,7 +108,7 @@ class CloseAccountTest {
     }
 
     @Test
-    void shouldThrowANoIbanExceptionWhenTheBalanceIsNotEmptyAndWhenTheIbanIsNotValid() {
+    void shouldThrowAnExceptionWhenTheBalanceIsNotEmptyAndWhenTheExternalBankIbanIsNotValid() {
         String customerId = "13434";
         String firstName = "John";
         String lastName = "Smith";
@@ -136,6 +133,61 @@ class CloseAccountTest {
         assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic))
                 .isInstanceOf(InvalidIbanException.class)
                 .hasMessage("accountIdentifier: " + externalAccountIban + " is invalid.");
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheBalanceIsNotEmptyAndWhenThereIsNoExternalBankBic() {
+        String customerId = "13434";
+        String firstName = "John";
+        String lastName = "Smith";
+        String accountId = "1";
+        String accountIban = "FR1420041010050500013M02606";
+        String externalAccountIban = "FR5030004000700000157389538";
+        String bic = "AGRIFRPP989";
+
+        Customer customer = new Customer(customerId, firstName, lastName);
+
+        accountStore.put(customerId, new Account.Builder()
+                .withId(accountId)
+                .withIban(new Iban(accountIban))
+                .withBalance(new BigDecimal(10))
+                .build());
+
+        authenticationGateway.authenticate(customer);
+
+        CloseAccount closeAccount = new CloseAccount(accountRepository, authenticationGateway);
+
+        assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, null, bic))
+                .isInstanceOf(NoBicException.class)
+                .hasMessage("No BIC provided.");
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenTheBalanceIsNotEmptyAndWhenTheExternalBicIsInvalid() {
+        String customerId = "13434";
+        String firstName = "John";
+        String lastName = "Smith";
+        String accountId = "1";
+        String accountIban = "FR1420041010050500013M02606";
+        String externalAccountIban = "FR5030004000700000157389538";
+        String externalBic = "InvalidBic";
+        String bic = "AGRIFRPP989";
+
+        Customer customer = new Customer(customerId, firstName, lastName);
+
+        accountStore.put(customerId, new Account.Builder()
+                .withId(accountId)
+                .withIban(new Iban(accountIban))
+                .withBalance(new BigDecimal(10))
+                .build());
+
+        authenticationGateway.authenticate(customer);
+
+        CloseAccount closeAccount = new CloseAccount(accountRepository, authenticationGateway);
+
+        assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic))
+                .isInstanceOf(InvalidBicException.class)
+                .hasMessage("bic: " + externalBic + " is invalid.");
     }
 
 

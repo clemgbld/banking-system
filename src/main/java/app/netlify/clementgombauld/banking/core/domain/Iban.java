@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidIbanExc
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoIbanException;
 
 import java.util.Objects;
+import java.util.Optional;
 
 
 public class Iban {
@@ -18,13 +19,12 @@ public class Iban {
     }
 
     private org.iban4j.Iban validateIban(String value) {
-        if (value == null) {
-            throw new NoIbanException();
-        }
+        String nonNullValue = Optional.ofNullable(value)
+                .orElseThrow(NoIbanException::new);
         try {
-            return org.iban4j.Iban.valueOf(value);
+            return org.iban4j.Iban.valueOf(nonNullValue);
         } catch (Exception e) {
-            throw new InvalidIbanException(value);
+            throw new InvalidIbanException(nonNullValue);
         }
     }
 
