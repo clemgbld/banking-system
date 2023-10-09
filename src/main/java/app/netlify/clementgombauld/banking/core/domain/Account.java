@@ -81,6 +81,10 @@ public class Account {
         deposit(transactionAmount.negate());
     }
 
+    public void clearBalance() {
+        this.balance = new Balance(new BigDecimal(0));
+    }
+
     public boolean hasEmptyBalance() {
         return balance.isEmpty();
     }
