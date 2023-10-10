@@ -8,6 +8,7 @@ import java.util.Optional;
 
 
 public class Account {
+    public static final int INITIAL_BALANCE = 0;
     private final String id;
 
     private final Iban iban;
@@ -82,7 +83,7 @@ public class Account {
     }
 
     public void clearBalance() {
-        this.balance = new Balance(new BigDecimal(0));
+        this.balance = new Balance(new BigDecimal(INITIAL_BALANCE));
     }
 
     public boolean hasEmptyBalance() {
@@ -132,7 +133,7 @@ public class Account {
     }
 
     private Balance initBalance(BigDecimal balance) {
-        BigDecimal initialBalance = Optional.ofNullable(balance).orElse(new BigDecimal(0));
+        BigDecimal initialBalance = Optional.ofNullable(balance).orElse(new BigDecimal(INITIAL_BALANCE));
         return new Balance(initialBalance);
     }
 }
