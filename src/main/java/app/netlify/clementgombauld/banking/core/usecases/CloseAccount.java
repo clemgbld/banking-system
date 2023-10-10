@@ -17,11 +17,14 @@ public class CloseAccount {
 
     private final IdGenerator idGenerator;
 
-    public CloseAccount(AccountRepository accountRepository, AuthenticationGateway authenticationGateway, ExternalBankTransactionsGateway externalBankTransactionsGateway, DateProvider dateProvider, IdGenerator idGenerator) {
+    private final TransactionRepository transactionRepository;
+
+    public CloseAccount(AccountRepository accountRepository, AuthenticationGateway authenticationGateway, ExternalBankTransactionsGateway externalBankTransactionsGateway, DateProvider dateProvider, IdGenerator idGenerator, TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
         this.externalBankTransactionsGateway = externalBankTransactionsGateway;
         this.dateProvider = dateProvider;
         this.idGenerator = idGenerator;
+        this.transactionRepository = transactionRepository;
         this.customerAccountFinder = new CustomerAccountFinder(authenticationGateway, accountRepository);
     }
 
@@ -36,12 +39,16 @@ public class CloseAccount {
         Bic validBankBic = new Bic(bic);
         Instant currentDate = dateProvider.now();
         String externalTransactionId = idGenerator.generate();
+        String transactionId = idGenerator.generate();
         Customer currentCustomer = customerAccountFinder.currentCustomer();
 
         externalBankTransactionsGateway.transfer(new Transaction(externalTransactionId, currentDate, account.getBalance(), account.getIban(), validBankBic.value(), currentCustomer.fullName())
                 , validExternalIban.value(),
                 validExternalBic.value());
-        
+
+        transactionRepository.insert(account.getId(),
+                new Transaction(transactionId, currentDate, account.negativeBalance(), validExternalIban.value(), validExternalBic.value(), accountName));
+
         account.clearBalance();
         accountRepository.update(account);
         accountRepository.deleteById(account.getId());

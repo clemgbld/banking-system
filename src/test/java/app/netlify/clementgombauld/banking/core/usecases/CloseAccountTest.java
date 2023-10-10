@@ -22,6 +22,8 @@ class CloseAccountTest {
 
     public static final String TRANSACTION_ID1 = "1A324524";
 
+    public static final String TRANSACTION_ID2 = "FQE45A345";
+
     public static final String ACCOUNT_NAME = "John Doe";
     private AuthenticationGateway authenticationGateway;
 
@@ -42,6 +44,10 @@ class CloseAccountTest {
 
     private IdGenerator idGenerator;
 
+    private Map<String, Transaction> transactionStore;
+
+    private TransactionRepository transactionRepository;
+
     @BeforeEach
     void setUp() {
         authenticationGateway = new InMemoryAuthenticationGateway();
@@ -51,7 +57,9 @@ class CloseAccountTest {
         transactions = new ArrayList<>();
         bankInfos = new ArrayList<>();
         externalBankTransactionsGateway = new InMemoryExternalBankTransactionsGateway(transactions, bankInfos);
-        idGenerator = new InMemoryIdGenerator(List.of(TRANSACTION_ID1));
+        idGenerator = new InMemoryIdGenerator(List.of(TRANSACTION_ID1, TRANSACTION_ID2));
+        transactionStore = new HashMap<>();
+        transactionRepository = new InMemoryTransactionRepository(transactionStore);
     }
 
 
@@ -122,7 +130,7 @@ class CloseAccountTest {
 
         assertThat(bankInfos).isEqualTo(List.of(externalAccountIban, externalBic));
         assertThat(transactions).isEqualTo(List.of(new Transaction(TRANSACTION_ID1, CURRENT_DATE, new BigDecimal(10), accountIban, bic, firstName + " " + lastName)));
-
+        assertThat(transactionStore.get(ACCOUNT_ID)).isEqualTo(new Transaction(TRANSACTION_ID2, CURRENT_DATE, new BigDecimal(-10), externalAccountIban, externalBic, ACCOUNT_NAME));
 
     }
 
@@ -283,7 +291,7 @@ class CloseAccountTest {
     }
 
     private CloseAccount buildCloseAccount() {
-        return new CloseAccount(accountRepository, authenticationGateway, externalBankTransactionsGateway, dateProvider, idGenerator);
+        return new CloseAccount(accountRepository, authenticationGateway, externalBankTransactionsGateway, dateProvider, idGenerator, transactionRepository);
     }
 
 

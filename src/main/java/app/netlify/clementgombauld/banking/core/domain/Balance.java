@@ -24,6 +24,10 @@ public record Balance(BigDecimal value) {
         return this.value.compareTo(new BigDecimal(0)) == COMPARATOR;
     }
 
+    public BigDecimal negate() {
+        return value.negate();
+    }
+
     private boolean isBalanceInsufficient(BigDecimal amount) {
         return value.subtract(amount).compareTo(new BigDecimal(ZERO_BALANCE)) < COMPARATOR;
     }

@@ -90,6 +90,10 @@ public class Account {
         return balance.isEmpty();
     }
 
+    public BigDecimal negativeBalance() {
+        return balance.negate();
+    }
+
 
     public String getId() {
         return id;
