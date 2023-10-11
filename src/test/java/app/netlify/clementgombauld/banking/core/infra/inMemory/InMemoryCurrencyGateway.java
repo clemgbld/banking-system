@@ -1,5 +1,7 @@
 package app.netlify.clementgombauld.banking.core.infra.inMemory;
 
+import app.netlify.clementgombauld.banking.core.domain.BankInfoType;
+import app.netlify.clementgombauld.banking.core.domain.Currency;
 import app.netlify.clementgombauld.banking.core.domain.CurrencyGateway;
 
 import java.math.BigDecimal;
@@ -15,8 +17,8 @@ public class InMemoryCurrencyGateway implements CurrencyGateway {
     }
 
     @Override
-    public Optional<BigDecimal> retrieveExchangeRate(String initialCurrency, String targetCurrency) {
-        Optional<Map<String, BigDecimal>> exchangeRates = Optional.ofNullable(exchangeRateStore.get(initialCurrency));
-        return exchangeRates.map(stringBigDecimalMap -> stringBigDecimalMap.get(targetCurrency));
+    public Optional<BigDecimal> retrieveExchangeRate(Currency initialCurrency, BankInfoType targetCurrency) {
+        Optional<Map<String, BigDecimal>> exchangeRates = Optional.ofNullable(exchangeRateStore.get(initialCurrency.value()));
+        return exchangeRates.map(stringBigDecimalMap -> stringBigDecimalMap.get(targetCurrency.getValue()));
     }
 }

@@ -24,7 +24,7 @@ public class CurrencyConverter {
 
         if (currency.isBankCurrency()) return amount;
 
-        BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency.value(), BankInfoType.CURRENCY.getValue())
+        BigDecimal exchangeRate = currencyGateway.retrieveExchangeRate(currency, BankInfoType.CURRENCY)
                 .orElseThrow(() -> new ExchangeRateNotFound(currency));
 
         return amount.multiply(exchangeRate);
