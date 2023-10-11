@@ -2,7 +2,8 @@ package app.netlify.clementgombauld.banking.core.domain;
 
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoBicException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.SameBankException;
+import org.iban4j.CountryCode;
+;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -11,7 +12,7 @@ public class Bic {
 
     private final org.iban4j.Bic bic;
 
-    private final org.iban4j.CountryCode countryCode;
+    private final CountryCode countryCode;
 
     public Bic(String value) {
         this.bic = validateBic(value);
@@ -33,12 +34,12 @@ public class Bic {
     }
 
 
-    public String getCountryCode() {
-        return countryCode.name();
+    public CountryCode getCountryCode() {
+        return countryCode;
     }
 
     public boolean isBankCountry() {
-        return getCountryCode().equals(BankInfoType.COUNTRY.getValue());
+        return getCountryCode().equals(CountryCode.FR);
     }
 
 
