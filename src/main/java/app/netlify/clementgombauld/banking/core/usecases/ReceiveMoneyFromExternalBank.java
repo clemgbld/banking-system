@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.SameBankException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.UnknownAccountWithIbanException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -38,7 +39,7 @@ public class ReceiveMoneyFromExternalBank {
             throw new SameBankException();
         }
         Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new UnknownAccountWithIbanException(receiverAccountIban));
         String transactionId = idGenerator.generate();
         Instant currentDate = dateProvider.now();
         if (validSenderAccountBic.isBankCountry()) {

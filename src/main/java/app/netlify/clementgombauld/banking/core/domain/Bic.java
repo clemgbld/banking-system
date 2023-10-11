@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.core.domain;
 
 import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
 import app.netlify.clementgombauld.banking.core.domain.exceptions.NoBicException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.SameBankException;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +40,7 @@ public class Bic {
     public boolean isBankCountry() {
         return getCountryCode().equals(BankInfoType.COUNTRY.getValue());
     }
+
 
     @Override
     public boolean equals(Object o) {

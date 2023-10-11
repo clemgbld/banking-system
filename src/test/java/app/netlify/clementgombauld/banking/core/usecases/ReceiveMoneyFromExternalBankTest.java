@@ -1,10 +1,7 @@
 package app.netlify.clementgombauld.banking.core.usecases;
 
 import app.netlify.clementgombauld.banking.core.domain.*;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.ExchangeRateNotFound;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.InvalidBicException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.CurrencyNotFoundException;
-import app.netlify.clementgombauld.banking.core.domain.exceptions.SameBankException;
+import app.netlify.clementgombauld.banking.core.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.core.infra.inMemory.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -213,6 +210,21 @@ class ReceiveMoneyFromExternalBankTest {
                 .isInstanceOf(SameBankException.class)
                 .hasMessage("Your account does not belong to an external bank.");
 
+    }
+
+    @Test
+    void shouldThrowAnExceptionWhenThereIsNoReceiverAccount() {
+        String receiverAccountIban = "FR1420041010050500013M02606";
+        String senderAccountABARoutingNumber = "123456789";
+        String senderAccountName = "John Smith Junior";
+        BigDecimal transactionAmount = new BigDecimal(5);
+        String senderAccountBic = "DEUTDEFF";
+        String bic = "AGRIFRPP989";
+
+        ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank = buildReceiveMoneyFromExternalBank(Map.of(), Map.of(), Map.of());
+        assertThatThrownBy(() -> receiveMoneyFromExternalBank.handle(receiverAccountIban, senderAccountABARoutingNumber, senderAccountBic, senderAccountName, transactionAmount, bic))
+                .isInstanceOf(UnknownAccountWithIbanException.class)
+                .hasMessage("There is no account with the accountIdentifier: " + receiverAccountIban);
     }
 
     @Test
