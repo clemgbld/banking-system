@@ -6,9 +6,7 @@ import app.netlify.clementgombauld.banking.account.infra.countrygateway.RestCoun
 import app.netlify.clementgombauld.banking.account.infra.exceptions.TechnicalException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.iban4j.CountryCode;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
