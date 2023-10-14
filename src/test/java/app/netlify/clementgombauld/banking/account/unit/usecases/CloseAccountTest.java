@@ -2,7 +2,6 @@ package app.netlify.clementgombauld.banking.account.unit.usecases;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
-import app.netlify.clementgombauld.banking.account.infra.inMemory.*;
 import app.netlify.clementgombauld.banking.account.unit.usecases.inMemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.CloseAccount;
 import org.junit.jupiter.api.BeforeEach;
