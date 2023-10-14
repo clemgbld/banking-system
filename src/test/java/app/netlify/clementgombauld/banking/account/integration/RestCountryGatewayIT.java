@@ -19,18 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class RestCountriesGatewayIT {
-
-    private WireMockServer wireMockServer;
-
+public class RestCountryGatewayIT extends WireMockTestClass {
     private CountryGateway countryGateway;
-
-    @BeforeAll
-    void setUpServer() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
-        wireMockServer.start();
-    }
 
     @BeforeEach
     void setUp() {
@@ -39,11 +29,6 @@ public class RestCountriesGatewayIT {
         countryGateway = new RestCountryGateway(wireMockServer.baseUrl(), new RestTemplate(), objectMapper);
     }
 
-
-    @AfterAll
-    void cleanUp() {
-        wireMockServer.stop();
-    }
 
     @Test
     void shouldRetrieveTheExpectedCurrency() {
@@ -78,6 +63,5 @@ public class RestCountriesGatewayIT {
 
 
     }
-
 
 }
