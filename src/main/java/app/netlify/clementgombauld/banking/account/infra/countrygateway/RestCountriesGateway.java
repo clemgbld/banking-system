@@ -4,7 +4,6 @@ import app.netlify.clementgombauld.banking.account.domain.CountryGateway;
 import app.netlify.clementgombauld.banking.account.domain.Currency;
 import org.iban4j.CountryCode;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
