@@ -2,21 +2,21 @@ package app.netlify.clementgombauld.banking.account.integration;
 
 import app.netlify.clementgombauld.banking.account.domain.CountryGateway;
 import app.netlify.clementgombauld.banking.account.domain.Currency;
-import app.netlify.clementgombauld.banking.account.infra.countrygateway.RestCountriesGateway;
+import app.netlify.clementgombauld.banking.account.infra.countrygateway.RestCountryGateway;
+import app.netlify.clementgombauld.banking.account.infra.exceptions.TechnicalException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.iban4j.CountryCode;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.web.client.RestTemplate;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -24,11 +24,21 @@ public class RestCountriesGatewayIT {
 
     private WireMockServer wireMockServer;
 
+    private CountryGateway countryGateway;
+
     @BeforeAll
-    void setUp() {
+    void setUpServer() {
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
         wireMockServer.start();
     }
+
+    @BeforeEach
+    void setUp() {
+        var objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        countryGateway = new RestCountryGateway(wireMockServer.baseUrl(), new RestTemplate(), objectMapper);
+    }
+
 
     @AfterAll
     void cleanUp() {
@@ -45,13 +55,29 @@ public class RestCountriesGatewayIT {
 
         );
 
-        CountryGateway countryGateway = new RestCountriesGateway(wireMockServer.baseUrl());
-
         var actualCurrency = countryGateway.retrieveCurrencyByCountryCode(CountryCode.FR);
 
         assertThat(actualCurrency.isPresent()).isTrue();
         assertThat(actualCurrency.get()).isEqualTo(new Currency("EUR"));
+    }
+
+    @Test
+    void shouldThrowATechnicalExceptionWhenTheJsonParsingFail() {
+        wireMockServer.stubFor(
+                WireMock.get("/alpha/FR")
+                        .willReturn(WireMock.aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody("["))
+
+        );
+
+        assertThatThrownBy(() -> countryGateway.retrieveCurrencyByCountryCode(CountryCode.FR))
+                .isInstanceOf(TechnicalException.class)
+                .hasMessage("Failed to parse JSON response.");
 
 
     }
+
+
 }
