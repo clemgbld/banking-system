@@ -3,9 +3,11 @@ package app.netlify.clementgombauld.banking.account.infra.currencygateway;
 import app.netlify.clementgombauld.banking.account.domain.BankInfoType;
 import app.netlify.clementgombauld.banking.account.domain.Currency;
 import app.netlify.clementgombauld.banking.account.domain.CurrencyGateway;
+import app.netlify.clementgombauld.banking.account.infra.exceptions.TechnicalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -36,9 +38,13 @@ public class RestCurrencyGateway implements CurrencyGateway {
                 .queryParam(APP_ID, currencyApiKey)
                 .queryParam(BASE, initialCurrency.value());
 
-        ResponseEntity<ExchangeRates> exchangeRates = restTemplate.getForEntity(uriBuilder.toUriString(), ExchangeRates.class);
+        try {
+            ResponseEntity<ExchangeRates> exchangeRates = restTemplate.getForEntity(uriBuilder.toUriString(), ExchangeRates.class);
+            return translateToExchangeRate(targetCurrency, exchangeRates);
 
-        return translateToExchangeRate(targetCurrency, exchangeRates);
+        } catch (RestClientException ex) {
+            throw new TechnicalException("Failed to parse JSON response.", ex);
+        }
     }
 
     private static Optional<BigDecimal> translateToExchangeRate(BankInfoType targetCurrency, ResponseEntity<ExchangeRates> exchangeRates) {

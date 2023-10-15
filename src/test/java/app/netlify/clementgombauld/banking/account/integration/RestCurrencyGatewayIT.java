@@ -4,10 +4,12 @@ import app.netlify.clementgombauld.banking.account.domain.BankInfoType;
 import app.netlify.clementgombauld.banking.account.domain.Currency;
 import app.netlify.clementgombauld.banking.account.domain.CurrencyGateway;
 import app.netlify.clementgombauld.banking.account.infra.currencygateway.RestCurrencyGateway;
+import app.netlify.clementgombauld.banking.account.infra.exceptions.TechnicalException;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -225,6 +227,23 @@ public class RestCurrencyGatewayIT extends WireMockTestClass {
 
         assertThat(actualExchangeRate).isPresent();
         assertThat(actualExchangeRate.get()).isEqualTo(expectedExchangeRate);
+    }
+
+    @Test
+    void shouldThrowATechnicalExceptionWhenTheJsonParsingFail() {
+        wireMockServer.stubFor(
+                WireMock.get("/latest.json?app_id=" + FAKE_API_KEY + "&base=USD")
+                        .willReturn(WireMock.aResponse()
+                                .withHeader("Content-type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody("[]")
+                        ));
+
+        Currency initialCurrency = new Currency("USD");
+        BankInfoType targetCurrency = BankInfoType.CURRENCY;
+
+        assertThatThrownBy(() -> currencyGateway.retrieveExchangeRate(initialCurrency, targetCurrency)).isInstanceOf(TechnicalException.class)
+                .hasMessage("Failed to parse JSON response.")
+                .hasCauseInstanceOf(RestClientException.class);
     }
 
 

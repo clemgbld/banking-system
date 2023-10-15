@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.account.domain.CountryGateway;
 import app.netlify.clementgombauld.banking.account.domain.Currency;
 import app.netlify.clementgombauld.banking.account.infra.countrygateway.RestCountryGateway;
 import app.netlify.clementgombauld.banking.account.infra.exceptions.TechnicalException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -57,7 +58,8 @@ public class RestCountryGatewayIT extends WireMockTestClass {
 
         assertThatThrownBy(() -> countryGateway.retrieveCurrencyByCountryCode(CountryCode.FR))
                 .isInstanceOf(TechnicalException.class)
-                .hasMessage("Failed to parse JSON response.");
+                .hasMessage("Failed to parse JSON response.")
+                .hasCauseInstanceOf(JsonProcessingException.class);
 
 
     }
