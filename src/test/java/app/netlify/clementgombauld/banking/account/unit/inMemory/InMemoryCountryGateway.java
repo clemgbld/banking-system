@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account.unit.usecases.inMemory;
+package app.netlify.clementgombauld.banking.account.unit.inMemory;
 
 import app.netlify.clementgombauld.banking.account.domain.CountryGateway;
 import app.netlify.clementgombauld.banking.account.domain.Currency;

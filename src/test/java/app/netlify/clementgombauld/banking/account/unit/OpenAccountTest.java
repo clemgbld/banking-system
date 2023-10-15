@@ -1,9 +1,9 @@
-package app.netlify.clementgombauld.banking.account.unit.usecases;
+package app.netlify.clementgombauld.banking.account.unit;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.AccountAlreadyOpenedException;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.account.unit.usecases.inMemory.*;
+import app.netlify.clementgombauld.banking.account.unit.inMemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

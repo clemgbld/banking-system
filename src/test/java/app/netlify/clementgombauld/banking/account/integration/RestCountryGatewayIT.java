@@ -60,8 +60,6 @@ public class RestCountryGatewayIT extends WireMockTestClass {
                 .isInstanceOf(TechnicalException.class)
                 .hasMessage("Failed to parse JSON response.")
                 .hasCauseInstanceOf(JsonProcessingException.class);
-
-
     }
 
 }
