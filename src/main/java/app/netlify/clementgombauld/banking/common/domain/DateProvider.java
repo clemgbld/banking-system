@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account.domain;
+package app.netlify.clementgombauld.banking.common.domain;
 
 import java.time.Instant;
 

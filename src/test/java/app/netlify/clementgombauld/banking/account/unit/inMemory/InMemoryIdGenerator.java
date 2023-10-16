@@ -1,6 +1,6 @@
 package app.netlify.clementgombauld.banking.account.unit.inMemory;
 
-import app.netlify.clementgombauld.banking.account.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 
 import java.util.List;
 

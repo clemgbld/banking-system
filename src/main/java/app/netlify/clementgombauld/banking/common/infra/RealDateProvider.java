@@ -1,6 +1,6 @@
-package app.netlify.clementgombauld.banking.account.infra;
+package app.netlify.clementgombauld.banking.common.infra;
 
-import app.netlify.clementgombauld.banking.account.domain.DateProvider;
+import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

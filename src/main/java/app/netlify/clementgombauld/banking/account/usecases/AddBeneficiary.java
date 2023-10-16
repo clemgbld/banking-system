@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.account.usecases;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 
 
 import java.util.Optional;

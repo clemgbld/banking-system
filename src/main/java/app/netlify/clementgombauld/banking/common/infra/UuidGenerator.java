@@ -1,6 +1,6 @@
-package app.netlify.clementgombauld.banking.account.infra;
+package app.netlify.clementgombauld.banking.common.infra;
 
-import app.netlify.clementgombauld.banking.account.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

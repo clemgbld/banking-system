@@ -7,6 +7,7 @@ import app.netlify.clementgombauld.banking.account.unit.inMemory.InMemoryBenefic
 import app.netlify.clementgombauld.banking.account.unit.inMemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.unit.inMemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.account.usecases.AddBeneficiary;
+import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

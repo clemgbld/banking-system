@@ -4,6 +4,8 @@ import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.account.unit.inMemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.CloseAccount;
+import app.netlify.clementgombauld.banking.common.domain.DateProvider;
+import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
