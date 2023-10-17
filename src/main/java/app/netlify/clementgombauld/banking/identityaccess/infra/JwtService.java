@@ -1,7 +1,5 @@
 package app.netlify.clementgombauld.banking.identityaccess.infra;
 
-import app.netlify.clementgombauld.banking.identityaccess.domain.TokenService;
-import app.netlify.clementgombauld.banking.identityaccess.domain.User;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -19,7 +18,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @Service
-public class JwtService implements TokenService {
+public class JwtService {
 
     private final String jwtSecret;
 
@@ -30,27 +29,26 @@ public class JwtService implements TokenService {
         this.dateProvider = dateProvider;
     }
 
-    @Override
+
     public Optional<String> extractUserName(String token) {
         return Optional.ofNullable(extractClaim(token, Claims::getSubject));
     }
 
 
-    @Override
-    public String generateToken(Map<String, Object> extraClaims, User user) {
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(user.getEmail())
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(dateProvider.now()))
                 .setExpiration(getExpirationDate(dateProvider.now()))
                 .signWith(getSignInKey(), SignatureAlgorithm.ES256)
                 .compact();
     }
 
-    @Override
-    public boolean isTokenValid(String token, User user) {
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractNonNullableUserName(token);
-        return (userName.equals(user.getEmail()) && !isTokenExpired(token));
+        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
