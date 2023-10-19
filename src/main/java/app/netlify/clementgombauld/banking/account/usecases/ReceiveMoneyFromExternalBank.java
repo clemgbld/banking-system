@@ -51,7 +51,7 @@ public class ReceiveMoneyFromExternalBank {
                     .findByAccountIdAndIban(receiverAccount.getId(), senderAccountIdentifier)
                     .map(Beneficiary::getName)
                     .orElse(senderAccountName);
-            transactionRepository.insert(receiverAccount.getId(), new Transaction(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic, accountName));
+            transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(transactionId, currentDate, transactionAmount, senderAccountIdentifier, validSenderAccountBic, accountName));
             return;
         }
 

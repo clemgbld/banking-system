@@ -47,7 +47,7 @@ public class TransferMoney {
         senderAccount.withdraw(transactionAmount);
         Beneficiary beneficiary = beneficiaryRepository.findByAccountIdAndIban(senderAccount.getId(), receiverAccountIdentifier)
                 .orElseThrow(() -> new UnknownBeneficiaryException(receiverAccountIdentifier));
-        transactionRepository.insert(senderAccount.getId(), new Transaction(senderTransactionId, creationDate, transactionAmount.negate(), receiverAccountIdentifier, beneficiary.getBic(), beneficiary.getName()));
+        transactionRepository.insert(senderAccount.getId(), senderAccount.recordWithdrawalTransaction(senderTransactionId, creationDate, transactionAmount, receiverAccountIdentifier, new Bic(beneficiary.getBic()), beneficiary.getName()));
 
         if (beneficiary.isInDifferentBank(bankBic)) {
             accountRepository.update(senderAccount);
@@ -60,7 +60,7 @@ public class TransferMoney {
 
         receiverAccount.deposit(transactionAmount);
         accountRepository.update(senderAccount, receiverAccount);
-        transactionRepository.insert(receiverAccount.getId(), new Transaction(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic.value(), currentCustomer.fullName()));
+        transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(receiverTransactionId, creationDate, transactionAmount, senderAccount.getIban(), bankBic, currentCustomer.fullName()));
     }
 
     private Supplier<UnknownAccountWithIbanException> throwUnknownAccountException(String iban) {

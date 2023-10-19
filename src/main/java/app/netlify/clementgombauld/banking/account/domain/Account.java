@@ -82,6 +82,14 @@ public class Account {
         deposit(transactionAmount.negate());
     }
 
+    public Transaction recordDepositTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String senderAccountIdentifier, Bic senderAccountBic, String accountName) {
+        return new Transaction(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic.value(), accountName);
+    }
+
+    public Transaction recordWithdrawalTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String receiverAccountIdentifier, Bic receiverAccountBic, String accountName) {
+        return new Transaction(transactionId, currentDate, transactionAmount.negate(), receiverAccountIdentifier, receiverAccountBic.value(), accountName);
+    }
+
     public void clearBalance() {
         this.balance = new Balance(new BigDecimal(INITIAL_BALANCE));
     }
