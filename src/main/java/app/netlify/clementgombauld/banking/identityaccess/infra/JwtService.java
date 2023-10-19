@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -29,6 +28,13 @@ public class JwtService {
         this.dateProvider = dateProvider;
     }
 
+    public boolean hasJwt(String authHeader) {
+        return authHeader == null || !authHeader.startsWith("Bearer ");
+    }
+
+    public String extractJwt(String authHeader) {
+        return authHeader.substring(7);
+    }
 
     public Optional<String> extractUserName(String token) {
         return Optional.ofNullable(extractClaim(token, Claims::getSubject));
