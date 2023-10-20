@@ -28,7 +28,7 @@ class CloseAccountTest {
     public static final String TRANSACTION_ID2 = "FQE45A345";
 
     public static final String ACCOUNT_NAME = "John Doe";
-    private AuthenticationGateway authenticationGateway;
+
 
     private AccountRepository accountRepository;
 
@@ -53,7 +53,6 @@ class CloseAccountTest {
 
     @BeforeEach
     void setUp() {
-        authenticationGateway = new InMemoryAuthenticationGateway();
         accountStore = new HashMap<>();
         accountRepository = new InMemoryAccountRepository(accountStore);
         dateProvider = new InMemoryDateProvider(CURRENT_DATE_IN_MS);
@@ -83,9 +82,7 @@ class CloseAccountTest {
         accountStore.put(customerId, accountToDelete);
         accountStore.put(ACCOUNT_ID, accountToDelete);
 
-        authenticationGateway.authenticate(customer);
-
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
 
         closeAccount.handle(null, null, null, null);
 
@@ -115,9 +112,7 @@ class CloseAccountTest {
         accountStore.put(ACCOUNT_ID, accountToDelete);
         accountStore.put(accountIban, accountToDelete);
 
-        authenticationGateway.authenticate(customer);
-
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
 
         closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME);
 
@@ -139,7 +134,7 @@ class CloseAccountTest {
 
     @Test
     void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer() {
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(null);
         assertThatThrownBy(() -> closeAccount.handle(null, null, null, ACCOUNT_NAME))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
@@ -151,9 +146,8 @@ class CloseAccountTest {
         String firstName = "John";
         String lastName = "Smith";
         Customer customer = new Customer(customerId, firstName, lastName);
-        authenticationGateway.authenticate(customer);
 
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
         assertThatThrownBy(() -> closeAccount.handle(null, null, null, ACCOUNT_NAME))
                 .isInstanceOf(UnknownAccountWithCustomerId.class)
                 .hasMessage("There is no account with the customerId: " + customerId);
@@ -176,9 +170,7 @@ class CloseAccountTest {
                 .withBalance(new BigDecimal(10))
                 .build());
 
-        authenticationGateway.authenticate(customer);
-
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
 
         assertThatThrownBy(() -> closeAccount.handle(null, externalBic, bic, ACCOUNT_NAME))
                 .isInstanceOf(NoIbanException.class)
@@ -204,9 +196,8 @@ class CloseAccountTest {
                 .withBalance(new BigDecimal(10))
                 .build());
 
-        authenticationGateway.authenticate(customer);
 
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
 
         assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME))
                 .isInstanceOf(InvalidIbanException.class)
@@ -230,9 +221,8 @@ class CloseAccountTest {
                 .withBalance(new BigDecimal(10))
                 .build());
 
-        authenticationGateway.authenticate(customer);
 
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
 
         assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, null, bic, ACCOUNT_NAME))
                 .isInstanceOf(NoBicException.class)
@@ -257,9 +247,7 @@ class CloseAccountTest {
                 .withBalance(new BigDecimal(10))
                 .build());
 
-        authenticationGateway.authenticate(customer);
-
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
 
         assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME))
                 .isInstanceOf(InvalidBicException.class)
@@ -284,16 +272,16 @@ class CloseAccountTest {
                 .withBalance(new BigDecimal(10))
                 .build());
 
-        authenticationGateway.authenticate(customer);
 
-        CloseAccount closeAccount = buildCloseAccount();
+        CloseAccount closeAccount = buildCloseAccount(customer);
 
         assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + bic + " is invalid.");
     }
 
-    private CloseAccount buildCloseAccount() {
+    private CloseAccount buildCloseAccount(Customer customer) {
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(customer);
         return new CloseAccount(accountRepository, authenticationGateway, externalBankTransactionsGateway, dateProvider, idGenerator, transactionRepository);
     }
 
