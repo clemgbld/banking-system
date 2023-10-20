@@ -5,10 +5,11 @@ import app.netlify.clementgombauld.banking.account.domain.Customer;
 import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class SpringSecurityAuthenticationGateway implements AuthenticationGateway {
     @Override
     public Optional<Customer> currentCustomer() {
