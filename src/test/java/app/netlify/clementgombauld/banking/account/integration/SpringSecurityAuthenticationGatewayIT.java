@@ -2,7 +2,7 @@ package app.netlify.clementgombauld.banking.account.integration;
 
 import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.domain.Customer;
-import app.netlify.clementgombauld.banking.account.infra.authenticationGateway.SpringSecurityAuthenticationGateway;
+import app.netlify.clementgombauld.banking.account.infra.SpringSecurityAuthenticationGateway;
 import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
 import app.netlify.clementgombauld.banking.identityaccess.infra.entity.Role;
 import org.junit.jupiter.api.AfterEach;
