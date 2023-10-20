@@ -24,13 +24,11 @@ class OpenAccountTest {
     public static final long CURRENT_DATE_IN_MS = 2534543253252L;
     public static final Instant CURRENT_DATE = Instant.ofEpochMilli(2534543253252L);
 
-    private AuthenticationGateway authenticationGateway;
 
     private DateProvider dateProvider;
 
     @BeforeEach
     void setUp() {
-        authenticationGateway = new InMemoryAuthenticationGateway();
         dateProvider = new InMemoryDateProvider(CURRENT_DATE_IN_MS);
     }
 
@@ -46,9 +44,8 @@ class OpenAccountTest {
 
         Map<String, Account> accountStore = new HashMap<>();
 
-        authenticationGateway.authenticate(customer);
 
-        OpenAccount openAccount = buildOpenAccount(accountStore, generatedIban, List.of(accountId));
+        OpenAccount openAccount = buildOpenAccount(accountStore, generatedIban, List.of(accountId), customer);
 
         openAccount.handle();
 
@@ -81,9 +78,8 @@ class OpenAccountTest {
                 .withIban(new Iban(generatedIban))
                 .build());
 
-        authenticationGateway.authenticate(customer);
 
-        OpenAccount openAccount = buildOpenAccount(accountStore, generatedIban, List.of(accountId));
+        OpenAccount openAccount = buildOpenAccount(accountStore, generatedIban, List.of(accountId), customer);
 
         assertThatThrownBy(openAccount::handle)
                 .isInstanceOf(AccountAlreadyOpenedException.class)
@@ -95,15 +91,15 @@ class OpenAccountTest {
     void shouldThrowAnExceptionWhenThereIsNoAuthenticatedCustomer() {
         String accountId = "1";
         String generatedIban = "FR1420041010050500013M02606";
-        OpenAccount openAccount = buildOpenAccount(new HashMap<>(), generatedIban, List.of(accountId));
+        OpenAccount openAccount = buildOpenAccount(new HashMap<>(), generatedIban, List.of(accountId), null);
         assertThatThrownBy(openAccount::handle)
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
 
     }
 
-    private OpenAccount buildOpenAccount(Map<String, Account> accountStore, String generatedIban, List<String> ids) {
-
+    private OpenAccount buildOpenAccount(Map<String, Account> accountStore, String generatedIban, List<String> ids, Customer customer) {
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(customer);
         IbanGenerator ibanGenerator = new InMemoryIbanGenerator(generatedIban);
         AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
