@@ -9,6 +9,13 @@ public class InMemoryAuthenticationGateway implements AuthenticationGateway {
 
     private Customer customer;
 
+    public InMemoryAuthenticationGateway() {
+    }
+
+    public InMemoryAuthenticationGateway(Customer customer) {
+        this.customer = customer;
+    }
+
     @Override
     public void authenticate(Customer customer) {
         this.customer = customer;

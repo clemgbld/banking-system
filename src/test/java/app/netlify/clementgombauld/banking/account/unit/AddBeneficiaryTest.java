@@ -11,6 +11,7 @@ import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AddBeneficiaryTest {
 
-    private AuthenticationGateway authenticationGateway;
 
     private BeneficiaryRepository beneficiaryRepository;
 
     @BeforeEach
     void setUp() {
-        authenticationGateway = new InMemoryAuthenticationGateway();
         beneficiaryRepository = new InMemoryBeneficiaryRepository();
     }
 
@@ -56,10 +55,8 @@ class AddBeneficiaryTest {
 
         accountStore.put(customerId, existingSenderAccount);
 
-        authenticationGateway.authenticate(currentCustomer);
 
-
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
         String expectedId = addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName);
 
@@ -99,9 +96,7 @@ class AddBeneficiaryTest {
         accountStore.put(customerId, existingAccount);
 
 
-        authenticationGateway.authenticate(currentCustomer);
-
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(DuplicatedBeneficiaryException.class)
@@ -131,10 +126,8 @@ class AddBeneficiaryTest {
                 .build();
         accountStore.put(customerId, existingAccount);
 
-        authenticationGateway.authenticate(currentCustomer);
 
-
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(InvalidIbanException.class)
@@ -147,7 +140,7 @@ class AddBeneficiaryTest {
         String beneficiaryIban = "FR6300000070000";
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName = "Bob Dylan";
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId), null);
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
@@ -179,9 +172,7 @@ class AddBeneficiaryTest {
         accountStore.put(customerId, existingSenderAccount);
 
 
-        authenticationGateway.authenticate(currentCustomer);
-
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(InvalidBicException.class)
@@ -200,9 +191,7 @@ class AddBeneficiaryTest {
 
         Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
 
-        authenticationGateway.authenticate(currentCustomer);
-
-        AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId));
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId), currentCustomer);
 
         assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
                 .isInstanceOf(UnknownAccountWithCustomerId.class)
@@ -210,9 +199,10 @@ class AddBeneficiaryTest {
     }
 
 
-    private AddBeneficiary buildAddBeneficiary(Map<String, Account> accountStore, List<String> ids) {
+    private AddBeneficiary buildAddBeneficiary(Map<String, Account> accountStore, List<String> ids, Customer customer) {
         IdGenerator idGenerator = new InMemoryIdGenerator(ids);
         AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(customer);
         return new AddBeneficiary(beneficiaryRepository, idGenerator, authenticationGateway, accountRepository);
     }
 
