@@ -1,6 +1,6 @@
 package app.netlify.clementgombauld.banking.identityaccess.configuration;
 
-import app.netlify.clementgombauld.banking.identityaccess.infra.UserRepository;
+import app.netlify.clementgombauld.banking.identityaccess.infra.JpaUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,16 +16,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class IdentityAccessConfiguration {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
 
     @Autowired
-    public IdentityAccessConfiguration(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public IdentityAccessConfiguration(JpaUserRepository jpaUserRepository) {
+        this.jpaUserRepository = jpaUserRepository;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+        return username -> jpaUserRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
     }
 

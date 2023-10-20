@@ -10,12 +10,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User implements UserDetails {
+public class JpaUserEntity implements UserDetails {
 
-    public User() {
+    public JpaUserEntity() {
     }
 
-    public User(String id, String firstName, String lastName, String email, String password, Role role) {
+    public JpaUserEntity(String id, String firstName, String lastName, String email, String password, Role role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

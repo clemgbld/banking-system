@@ -1,8 +1,8 @@
 package app.netlify.clementgombauld.banking.identityaccess.infra;
 
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
 import app.netlify.clementgombauld.banking.identityaccess.infra.entity.Role;
-import app.netlify.clementgombauld.banking.identityaccess.infra.entity.User;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.AuthenticateRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.RegisterRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.out.AuthenticationResponse;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
 
     private final IdGenerator idGenerator;
 
@@ -27,8 +27,8 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, IdGenerator idGenerator, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
-        this.userRepository = userRepository;
+    public AuthenticationService(JpaUserRepository jpaUserRepository, IdGenerator idGenerator, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+        this.jpaUserRepository = jpaUserRepository;
         this.idGenerator = idGenerator;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -36,7 +36,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse register(RegisterRequest request) {
-        User user = new User(
+        JpaUserEntity jpaUserEntity = new JpaUserEntity(
                 idGenerator.generate(),
                 request.firstName(),
                 request.lastName(),
@@ -45,9 +45,9 @@ public class AuthenticationService {
                 Role.USER
         );
 
-        userRepository.save(user);
+        jpaUserRepository.save(jpaUserEntity);
 
-        return new AuthenticationResponse(jwtService.generateToken(user));
+        return new AuthenticationResponse(jwtService.generateToken(jpaUserEntity));
     }
 
     public AuthenticationResponse authenticate(AuthenticateRequest request) {
@@ -58,9 +58,9 @@ public class AuthenticationService {
                 )
         );
 
-        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new UsernameNotFoundException("User not found."));
+        JpaUserEntity jpaUserEntity = jpaUserRepository.findByEmail(request.email()).orElseThrow(() -> new UsernameNotFoundException("User not found."));
 
-        return new AuthenticationResponse(jwtService.generateToken(user));
+        return new AuthenticationResponse(jwtService.generateToken(jpaUserEntity));
     }
 }
 
