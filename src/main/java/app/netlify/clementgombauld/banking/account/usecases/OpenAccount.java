@@ -41,7 +41,7 @@ public class OpenAccount {
         accountRepository.insert(new Account.Builder()
                 .withId(accountId)
                 .withIban(iban)
-                .withCustomer(currentCustomer)
+                .withCustomerId(currentCustomer.getId())
                 .withCreatedOn(currentDate)
                 .build());
 

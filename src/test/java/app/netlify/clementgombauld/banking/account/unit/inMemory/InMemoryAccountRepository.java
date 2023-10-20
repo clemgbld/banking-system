@@ -55,6 +55,7 @@ public class InMemoryAccountRepository implements AccountRepository {
                 .withIban(new Iban(nullableAccount.getIban()))
                 .withBalance(nullableAccount.getBalance())
                 .withCreatedOn(nullableAccount.getCreationDate())
+                .withCustomerId(nullableAccount.getCustomerId())
                 .build());
     }
 }

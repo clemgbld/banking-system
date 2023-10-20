@@ -54,10 +54,11 @@ class OpenAccountTest {
         assertThat(createdAccount).isEqualTo(
                 new Account.Builder().withId(accountId)
                         .withIban(new Iban(generatedIban))
-                        .withCustomer(customer)
+                        .withCustomerId(customerId)
                         .withCreatedOn(CURRENT_DATE)
                         .build()
         );
+        
 
     }
 
