@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.identityaccess.application;
 
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.identityaccess.application.commands.LoginCommand;
 import app.netlify.clementgombauld.banking.identityaccess.application.commands.RegisterCommand;
 import app.netlify.clementgombauld.banking.identityaccess.domain.*;
 import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.EmailAlreadyExistsException;
@@ -16,11 +17,14 @@ public class AuthenticationApplicationService {
 
     private final IdGenerator idGenerator;
 
-    public AuthenticationApplicationService(TokenGenerator tokenGenerator, EncryptionService encryptionService, UserRepository userRepository, IdGenerator idGenerator) {
+    private final Authenticator authenticator;
+
+    public AuthenticationApplicationService(TokenGenerator tokenGenerator, EncryptionService encryptionService, UserRepository userRepository, IdGenerator idGenerator, Authenticator authenticator) {
         this.tokenGenerator = tokenGenerator;
         this.encryptionService = encryptionService;
         this.userRepository = userRepository;
         this.idGenerator = idGenerator;
+        this.authenticator = authenticator;
     }
 
     public String register(RegisterCommand registerCommand) {
@@ -43,5 +47,10 @@ public class AuthenticationApplicationService {
         );
 
         return tokenGenerator.generate(registerCommand.email());
+    }
+
+    public String login(LoginCommand loginCommand) {
+        authenticator.authenticate(loginCommand);
+        return tokenGenerator.generate(loginCommand.email());
     }
 }

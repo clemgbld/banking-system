@@ -3,12 +3,11 @@ package app.netlify.clementgombauld.banking.indentityaccess.unit.application;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.application.AuthenticationApplicationService;
+import app.netlify.clementgombauld.banking.identityaccess.application.commands.LoginCommand;
 import app.netlify.clementgombauld.banking.identityaccess.application.commands.RegisterCommand;
-import app.netlify.clementgombauld.banking.identityaccess.domain.EncryptionService;
-import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
-import app.netlify.clementgombauld.banking.identityaccess.domain.TokenGenerator;
-import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
+import app.netlify.clementgombauld.banking.identityaccess.domain.*;
 import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.*;
+import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryAuthenticator;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryEncryptionService;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryTokenGenerator;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryUserRepository;
@@ -162,10 +161,34 @@ public class AuthenticationApplicationServiceTest {
 
     }
 
+    @Test
+    void shouldSuccessfullyLoginTheUser() {
+        String email = "jeanPaul@gmail.com";
+        String password = "Dqflkjqm2433@";
+        String expectedToken = "token";
+
+        AuthenticationApplicationService authenticationApplicationService = buildAuthenticationApplicationService(email, expectedToken);
+
+        assertThat(authenticationApplicationService.login(new LoginCommand(email, password))).isEqualTo(expectedToken);
+    }
+
+    @Test
+    void shouldNotLogin() {
+        String email = "jeanPaul@gmail.com";
+        String password = "Dqflkjqm2433@";
+        AuthenticationApplicationService authenticationApplicationService = buildAuthenticationApplicationService(email, "token", false);
+        assertThatThrownBy(() -> authenticationApplicationService.login(new LoginCommand(email, password)));
+    }
+
+
+    private AuthenticationApplicationService buildAuthenticationApplicationService(String email, String token, boolean shouldAuthenticate) {
+        TokenGenerator tokenGenerator = new InMemoryTokenGenerator(email, token);
+        Authenticator authenticator = new InMemoryAuthenticator(shouldAuthenticate);
+        return new AuthenticationApplicationService(tokenGenerator, encryptionService, userRepository, idGenerator, authenticator);
+    }
 
     private AuthenticationApplicationService buildAuthenticationApplicationService(String email, String token) {
-        TokenGenerator tokenGenerator = new InMemoryTokenGenerator(email, token);
-        return new AuthenticationApplicationService(tokenGenerator, encryptionService, userRepository, idGenerator);
+        return buildAuthenticationApplicationService(email, token, true);
     }
 
 }
