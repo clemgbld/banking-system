@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account.unit.inMemory;
+package app.netlify.clementgombauld.banking.account.unit.inmemory;
 
 import app.netlify.clementgombauld.banking.account.domain.BankInfoType;
 import app.netlify.clementgombauld.banking.account.domain.Currency;

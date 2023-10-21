@@ -2,10 +2,12 @@ package app.netlify.clementgombauld.banking.account.unit;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
-import app.netlify.clementgombauld.banking.account.unit.inMemory.*;
+import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.ReceiveMoneyFromExternalBank;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
+import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +36,7 @@ class ReceiveMoneyFromExternalBankTest {
     @BeforeEach
     void setUp() {
         idGenerator = new InMemoryIdGenerator(List.of(TRANSACTION_ID));
-        dateProvider = new InMemoryDateProvider(CURRENT_DATE_IN_MS);
+        dateProvider = new DeterministicDateProvider(CURRENT_DATE_IN_MS);
         accountRepository = new InMemoryAccountRepository();
         beneficiaryRepository = new InMemoryBeneficiaryRepository();
     }

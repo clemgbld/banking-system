@@ -2,7 +2,7 @@ package app.netlify.clementgombauld.banking.identityaccess.infra;
 
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
-import app.netlify.clementgombauld.banking.identityaccess.infra.entity.Role;
+import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.AuthenticateRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.RegisterRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.out.AuthenticationResponse;

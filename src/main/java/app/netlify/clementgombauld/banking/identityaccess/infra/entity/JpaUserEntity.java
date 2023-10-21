@@ -1,5 +1,6 @@
 package app.netlify.clementgombauld.banking.identityaccess.infra.entity;
 
+import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

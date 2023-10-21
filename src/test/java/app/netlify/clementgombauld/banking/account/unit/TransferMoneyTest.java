@@ -2,10 +2,12 @@ package app.netlify.clementgombauld.banking.account.unit;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
-import app.netlify.clementgombauld.banking.account.unit.inMemory.*;
+import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.TransferMoney;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
+import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +34,7 @@ class TransferMoneyTest {
     @BeforeEach
     void setUp() {
         this.beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        this.dateProvider = new InMemoryDateProvider(1631000000000L);
+        this.dateProvider = new DeterministicDateProvider(1631000000000L);
     }
 
     @Test

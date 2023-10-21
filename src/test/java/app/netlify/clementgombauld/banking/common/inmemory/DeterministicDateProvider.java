@@ -1,13 +1,13 @@
-package app.netlify.clementgombauld.banking.account.unit.inMemory;
+package app.netlify.clementgombauld.banking.common.inmemory;
 
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 
 import java.time.Instant;
 
-public class InMemoryDateProvider implements DateProvider {
+public class DeterministicDateProvider implements DateProvider {
     private final long msSinceEpoch;
 
-    public InMemoryDateProvider(long msSinceEpoch) {
+    public DeterministicDateProvider(long msSinceEpoch) {
         this.msSinceEpoch = msSinceEpoch;
     }
 

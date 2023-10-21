@@ -3,10 +3,12 @@ package app.netlify.clementgombauld.banking.account.unit;
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.AccountAlreadyOpenedException;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
-import app.netlify.clementgombauld.banking.account.unit.inMemory.*;
+import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
+import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +31,7 @@ class OpenAccountTest {
 
     @BeforeEach
     void setUp() {
-        dateProvider = new InMemoryDateProvider(CURRENT_DATE_IN_MS);
+        dateProvider = new DeterministicDateProvider(CURRENT_DATE_IN_MS);
     }
 
     @Test
@@ -58,7 +60,7 @@ class OpenAccountTest {
                         .withCreatedOn(CURRENT_DATE)
                         .build()
         );
-        
+
 
     }
 
