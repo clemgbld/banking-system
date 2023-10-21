@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class InMemoryUserRepository implements UserRepository {
     private final List<Object> savedParams;
@@ -18,5 +19,12 @@ public class InMemoryUserRepository implements UserRepository {
         savedParams.add(registerCommand);
         savedParams.add(userId);
         savedParams.add(role);
+    }
+
+    @Override
+    public Optional<String> findEmail(String email) {
+        if (savedParams.size() == 0) return Optional.empty();
+        RegisterCommand registerCommand = (RegisterCommand) savedParams.get(0);
+        return Optional.of(registerCommand.email());
     }
 }

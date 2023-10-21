@@ -6,6 +6,8 @@ import app.netlify.clementgombauld.banking.identityaccess.domain.EncryptionServi
 import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import app.netlify.clementgombauld.banking.identityaccess.domain.TokenGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
+import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.EmailAlreadyExistsException;
+import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordTooShortException;
 
 public class AuthenticationApplicationService {
 
@@ -25,6 +27,14 @@ public class AuthenticationApplicationService {
     }
 
     public String register(RegisterCommand registerCommand) {
+
+        if (registerCommand.password().length() < 8) {
+            throw new PasswordTooShortException();
+        }
+
+        userRepository.findEmail(registerCommand.email()).ifPresent((email) -> {
+            throw new EmailAlreadyExistsException(email);
+        });
 
         userRepository.save(
                 new RegisterCommand(
