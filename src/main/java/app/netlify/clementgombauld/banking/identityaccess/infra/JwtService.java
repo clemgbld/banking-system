@@ -3,7 +3,6 @@ package app.netlify.clementgombauld.banking.identityaccess.infra;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.function.Function;
@@ -41,16 +39,6 @@ public class JwtService {
     }
 
 
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(dateProvider.now()))
-                .setExpiration(getExpirationDate(dateProvider.now()))
-                .signWith(getSignInKey(), SignatureAlgorithm.ES256)
-                .compact();
-    }
-
-
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractNonNullableUserName(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
@@ -68,11 +56,6 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-
-    private Date getExpirationDate(Instant instant) {
-        Instant expirationDate = instant.plusMillis(1000 * 60 * 24);
-        return Date.from(expirationDate);
-    }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
