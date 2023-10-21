@@ -1,5 +1,11 @@
 package app.netlify.clementgombauld.banking.identityaccess.configuration;
 
+import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import app.netlify.clementgombauld.banking.identityaccess.application.AuthenticationApplicationService;
+import app.netlify.clementgombauld.banking.identityaccess.domain.Authenticator;
+import app.netlify.clementgombauld.banking.identityaccess.domain.EncryptionService;
+import app.netlify.clementgombauld.banking.identityaccess.domain.TokenGenerator;
+import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JpaUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,5 +51,10 @@ public class IdentityAccessConfiguration {
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
+    }
+
+    @Bean
+    public AuthenticationApplicationService authenticationApplicationService(UserRepository userRepository, EncryptionService encryptionService, IdGenerator idGenerator, Authenticator authenticator, TokenGenerator tokenGenerator) {
+        return new AuthenticationApplicationService(tokenGenerator, encryptionService, userRepository, idGenerator, authenticator);
     }
 }
