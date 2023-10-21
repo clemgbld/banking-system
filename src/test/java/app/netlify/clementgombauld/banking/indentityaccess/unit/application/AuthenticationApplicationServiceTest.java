@@ -9,7 +9,9 @@ import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import app.netlify.clementgombauld.banking.identityaccess.domain.TokenGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
 import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.EmailAlreadyExistsException;
+import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordLowerCaseRequiredException;
 import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordTooShortException;
+import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordUpperCaseRequiredException;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryEncryptionService;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryTokenGenerator;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryUserRepository;
@@ -104,6 +106,34 @@ public class AuthenticationApplicationServiceTest {
         assertThatThrownBy(() -> authenticationApplicationService.register(new RegisterCommand(firstName, lastName, email, password)))
                 .isInstanceOf(PasswordTooShortException.class)
                 .hasMessage("Password must be at least 8 characters long");
+
+    }
+
+    @Test
+    void shouldThrowAnErrorWhenPasswordDoesNotContainsAtLeastOneLowerCaseLetter() {
+        String firstName = "Jean";
+        String lastName = "Paul";
+        String email = "jeanPaul@gmail.com";
+        String password = "DDFFGRETTGDS1@";
+
+        AuthenticationApplicationService authenticationApplicationService = buildAuthenticationApplicationService(email, "token");
+        assertThatThrownBy(() -> authenticationApplicationService.register(new RegisterCommand(firstName, lastName, email, password)))
+                .isInstanceOf(PasswordLowerCaseRequiredException.class)
+                .hasMessage("Password must at least have one lower case letter.");
+
+    }
+
+    @Test
+    void shouldThrowAnErrorWhenPasswordDoesNotContainsAtLeastOneUpperCaseLetter() {
+        String firstName = "Jean";
+        String lastName = "Paul";
+        String email = "jeanPaul@gmail.com";
+        String password = "fqsdfqsqsfqsfqsqs1@";
+
+        AuthenticationApplicationService authenticationApplicationService = buildAuthenticationApplicationService(email, "token");
+        assertThatThrownBy(() -> authenticationApplicationService.register(new RegisterCommand(firstName, lastName, email, password)))
+                .isInstanceOf(PasswordUpperCaseRequiredException.class)
+                .hasMessage("Password must at least have one upper case letter.");
 
     }
 

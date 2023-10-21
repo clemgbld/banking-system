@@ -4,7 +4,7 @@ import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.application.commands.RegisterCommand;
 import app.netlify.clementgombauld.banking.identityaccess.domain.*;
 import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.EmailAlreadyExistsException;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordTooShortException;
+
 
 public class AuthenticationApplicationService {
 
