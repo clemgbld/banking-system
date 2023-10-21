@@ -8,10 +8,7 @@ import app.netlify.clementgombauld.banking.identityaccess.domain.EncryptionServi
 import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import app.netlify.clementgombauld.banking.identityaccess.domain.TokenGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.EmailAlreadyExistsException;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordLowerCaseRequiredException;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordTooShortException;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordUpperCaseRequiredException;
+import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryEncryptionService;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryTokenGenerator;
 import app.netlify.clementgombauld.banking.indentityaccess.unit.inmemory.InMemoryUserRepository;
@@ -136,6 +133,21 @@ public class AuthenticationApplicationServiceTest {
                 .hasMessage("Password must at least have one upper case letter.");
 
     }
+
+    @Test
+    void shouldThrowAnErrorWhenPasswordDoesNotContainsAtLeastOneNumberCharacter() {
+        String firstName = "Jean";
+        String lastName = "Paul";
+        String email = "jeanPaul@gmail.com";
+        String password = "fqsdfqsqsfqsfqSqs@";
+
+        AuthenticationApplicationService authenticationApplicationService = buildAuthenticationApplicationService(email, "token");
+        assertThatThrownBy(() -> authenticationApplicationService.register(new RegisterCommand(firstName, lastName, email, password)))
+                .isInstanceOf(PasswordNumberRequiredException.class)
+                .hasMessage("Password must at least have one number.");
+
+    }
+
 
     private AuthenticationApplicationService buildAuthenticationApplicationService(String email, String token) {
         TokenGenerator tokenGenerator = new InMemoryTokenGenerator(email, token);
