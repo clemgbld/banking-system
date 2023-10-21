@@ -148,6 +148,20 @@ public class AuthenticationApplicationServiceTest {
 
     }
 
+    @Test
+    void shouldThrowAnErrorWhenPasswordDoesNotContainsAtLeastOneSpecialCharacter() {
+        String firstName = "Jean";
+        String lastName = "Paul";
+        String email = "jeanPaul@gmail.com";
+        String password = "fqsdfqsqsfqsfqSqs1";
+
+        AuthenticationApplicationService authenticationApplicationService = buildAuthenticationApplicationService(email, "token");
+        assertThatThrownBy(() -> authenticationApplicationService.register(new RegisterCommand(firstName, lastName, email, password)))
+                .isInstanceOf(PasswordSpecialCharacterRequiredException.class)
+                .hasMessage("Password must at least have one special character.");
+
+    }
+
 
     private AuthenticationApplicationService buildAuthenticationApplicationService(String email, String token) {
         TokenGenerator tokenGenerator = new InMemoryTokenGenerator(email, token);

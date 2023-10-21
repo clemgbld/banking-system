@@ -1,9 +1,6 @@
 package app.netlify.clementgombauld.banking.identityaccess.domain;
 
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordLowerCaseRequiredException;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordNumberRequiredException;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordTooShortException;
-import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.PasswordUpperCaseRequiredException;
+import app.netlify.clementgombauld.banking.identityaccess.domain.exceptions.*;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,6 +17,8 @@ public class Password {
 
     private static final String CONTAINS_NUMBER = ".*[0-9].*";
 
+    private static final String CONTAINS_SPECIAL_CHARACTER = ".*[^a-zA-Z0-9].*";
+
     private final ValidatorChain<String> passwordValidatorChain = new ValidatorChain<>(List.of(
             this::validateLength
             ,
@@ -31,6 +30,9 @@ public class Password {
             }),
             buildRegexValidator(CONTAINS_NUMBER, () -> {
                 throw new PasswordNumberRequiredException();
+            }),
+            buildRegexValidator(CONTAINS_SPECIAL_CHARACTER, () -> {
+                throw new PasswordSpecialCharacterRequiredException();
             })
     ));
 
