@@ -4,14 +4,17 @@ import app.netlify.clementgombauld.banking.account.domain.exceptions.Insufficien
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 
 public record Balance(BigDecimal value) {
 
-    public static final int COMPARATOR = 0;
-    public static final int ZERO_BALANCE = 0;
+    private static final int INITIAL_BALANCE = 0;
+
+    private static final int COMPARATOR = 0;
+    private static final int ZERO_BALANCE = 0;
 
     public Balance(BigDecimal value) {
-        this.value = checkBalanceSufficiency(value);
+        this.value = checkBalanceSufficiency(Optional.ofNullable(value).orElse(new BigDecimal(INITIAL_BALANCE)));
     }
 
     public Balance add(BigDecimal amount) {
@@ -41,6 +44,10 @@ public record Balance(BigDecimal value) {
             throw new InsufficientBalanceException();
         }
         return amount;
+    }
+
+    public static Balance initalBalance() {
+        return new Balance(new BigDecimal(INITIAL_BALANCE));
     }
 
     @Override

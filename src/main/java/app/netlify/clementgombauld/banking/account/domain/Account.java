@@ -8,7 +8,6 @@ import java.util.Optional;
 
 
 public class Account {
-    public static final int INITIAL_BALANCE = 0;
     private final String id;
 
     private final String customerId;
@@ -24,7 +23,7 @@ public class Account {
         this.id = builder.id;
         this.customerId = builder.customerId;
         this.iban = builder.iban;
-        this.balance = initBalance(builder.balance);
+        this.balance = new Balance(builder.balance);
         this.createdOn = builder.createdOn;
 
     }
@@ -94,7 +93,7 @@ public class Account {
     }
 
     public void clearBalance() {
-        this.balance = new Balance(new BigDecimal(INITIAL_BALANCE));
+        this.balance = Balance.initalBalance();
     }
 
     public boolean hasEmptyBalance() {
@@ -149,10 +148,5 @@ public class Account {
                 ", balance=" + balance +
                 ", createdOn=" + createdOn +
                 '}';
-    }
-
-    private Balance initBalance(BigDecimal balance) {
-        if (balance == null) return new Balance(new BigDecimal(INITIAL_BALANCE));
-        return new Balance(balance);
     }
 }
