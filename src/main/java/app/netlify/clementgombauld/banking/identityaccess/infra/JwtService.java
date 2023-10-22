@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -21,12 +22,15 @@ public class JwtService {
 
     private final DateProvider dateProvider;
 
-    public JwtService(@Value("${jwt_secret}") String jwtSecret, DateProvider dateProvider) {
+    private final UserDetailsService userDetailsService;
+
+    public JwtService(@Value("${jwt_secret}") String jwtSecret, DateProvider dateProvider, UserDetailsService userDetailsService) {
         this.jwtSecret = jwtSecret;
         this.dateProvider = dateProvider;
+        this.userDetailsService = userDetailsService;
     }
 
-    public boolean hasJwt(String authHeader) {
+    public boolean hasNoToken(String authHeader) {
         return authHeader == null || !authHeader.startsWith("Bearer ");
     }
 

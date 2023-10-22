@@ -84,6 +84,10 @@ public class Account {
         balance = balance.subtract(transactionAmount);
     }
 
+    public void clearBalance() {
+        this.balance = Balance.initalBalance();
+    }
+
     public Transaction recordDepositTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String senderAccountIdentifier, Bic senderAccountBic, String accountName) {
         return new Transaction(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic.value(), accountName);
     }
@@ -92,9 +96,6 @@ public class Account {
         return new Transaction(transactionId, currentDate, transactionAmount.negate(), receiverAccountIdentifier, receiverAccountBic.value(), accountName);
     }
 
-    public void clearBalance() {
-        this.balance = Balance.initalBalance();
-    }
 
     public boolean hasEmptyBalance() {
         return balance.isEmpty();
