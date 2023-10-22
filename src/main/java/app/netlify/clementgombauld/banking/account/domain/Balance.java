@@ -10,15 +10,19 @@ public record Balance(BigDecimal value) {
     public static final int COMPARATOR = 0;
     public static final int ZERO_BALANCE = 0;
 
-    Balance add(BigDecimal amount) {
+    public Balance(BigDecimal value) {
+        this.value = checkBalanceSufficiency(value);
+    }
+
+    public Balance add(BigDecimal amount) {
         return new Balance(value.add(amount));
     }
 
-    public void checkBalanceSufficiency(BigDecimal amount) {
-        if (isBalanceInsufficient(amount)) {
-            throw new InsufficientBalanceException();
-        }
+    public Balance subtract(BigDecimal amount) {
+
+        return new Balance(value.subtract(amount));
     }
+
 
     public boolean isEmpty() {
         return this.value.compareTo(new BigDecimal(0)) == COMPARATOR;
@@ -29,7 +33,14 @@ public record Balance(BigDecimal value) {
     }
 
     private boolean isBalanceInsufficient(BigDecimal amount) {
-        return value.subtract(amount).compareTo(new BigDecimal(ZERO_BALANCE)) < COMPARATOR;
+        return amount.compareTo(new BigDecimal(ZERO_BALANCE)) < COMPARATOR;
+    }
+
+    private BigDecimal checkBalanceSufficiency(BigDecimal amount) {
+        if (isBalanceInsufficient(amount)) {
+            throw new InsufficientBalanceException();
+        }
+        return amount;
     }
 
     @Override

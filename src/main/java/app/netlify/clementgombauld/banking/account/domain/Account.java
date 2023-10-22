@@ -82,8 +82,7 @@ public class Account {
     }
 
     public void withdraw(BigDecimal transactionAmount) {
-        balance.checkBalanceSufficiency(transactionAmount);
-        deposit(transactionAmount.negate());
+        balance = balance.subtract(transactionAmount);
     }
 
     public Transaction recordDepositTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String senderAccountIdentifier, Bic senderAccountBic, String accountName) {
@@ -153,7 +152,7 @@ public class Account {
     }
 
     private Balance initBalance(BigDecimal balance) {
-        BigDecimal initialBalance = Optional.ofNullable(balance).orElse(new BigDecimal(INITIAL_BALANCE));
-        return new Balance(initialBalance);
+        if (balance == null) return new Balance(new BigDecimal(INITIAL_BALANCE));
+        return new Balance(balance);
     }
 }
