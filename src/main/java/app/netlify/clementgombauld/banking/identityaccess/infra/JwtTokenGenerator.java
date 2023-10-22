@@ -30,10 +30,10 @@ public class JwtTokenGenerator implements TokenGenerator {
     @Override
     public String generate(String email) {
         return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(Date.from(dateProvider.now()))
-                .setExpiration(getExpirationDate(dateProvider.now()))
-                .signWith(getSignInKey(), SignatureAlgorithm.ES256)
+                .subject(email)
+                .issuedAt(Date.from(dateProvider.now()))
+                .expiration(getExpirationDate(dateProvider.now()))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -43,7 +43,11 @@ public class JwtTokenGenerator implements TokenGenerator {
     }
 
     private Date getExpirationDate(Instant instant) {
-        Instant expirationDate = instant.plusMillis(1000 * 60 * 24);
+        Instant expirationDate = instant.plusMillis(getMillisToAdd());
         return Date.from(expirationDate);
+    }
+
+    private int getMillisToAdd() {
+        return 1000 * 60 * 24;
     }
 }

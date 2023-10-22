@@ -5,9 +5,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -18,6 +22,9 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
+    public static final int TOKEN_BEGIN_INDEX = 7;
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer ";
     private final String jwtSecret;
 
     private final DateProvider dateProvider;
@@ -30,30 +37,56 @@ public class JwtService {
         this.userDetailsService = userDetailsService;
     }
 
-    public boolean hasNoToken(String authHeader) {
-        return authHeader == null || !authHeader.startsWith("Bearer ");
+
+    public void authenticate(HttpServletRequest request) {
+        final String authHeader = request.getHeader("Authorization");
+        if (SecurityContextHolder.getContext().getAuthentication() != null) return;
+        final String token = extractJwt(authHeader);
+        extractUserName(token).ifPresent((userName) -> {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+            if (!isTokenValid(token, userDetails)) return;
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
+            authenticationToken.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request)
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        });
     }
 
-    public String extractJwt(String authHeader) {
-        return authHeader.substring(7);
+    public boolean hasNoToken(HttpServletRequest request) {
+        final String authHeader = request.getHeader(AUTHORIZATION);
+        return authHeader == null || !authHeader.startsWith(BEARER);
     }
 
-    public Optional<String> extractUserName(String token) {
+    private String extractJwt(String authHeader) {
+        return authHeader.substring(TOKEN_BEGIN_INDEX);
+    }
+
+    private Optional<String> extractUserName(String token) {
         return Optional.ofNullable(extractClaim(token, Claims::getSubject));
     }
 
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    private boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractNonNullableUserName(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(Date.from(dateProvider.now()));
+        return extractExpiration(token)
+                .map(tokenIssuedDate -> tokenIssuedDate.before(Date.from(dateProvider.now())))
+                .orElse(false);
     }
 
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+
+    private Optional<Date> extractExpiration(String token) {
+        return Optional.ofNullable(extractClaim(token, Claims::getExpiration));
     }
 
     private String extractNonNullableUserName(String token) {
@@ -77,4 +110,6 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+
 }
