@@ -131,7 +131,7 @@ public class JwtServiceIT {
 
 
     private JwtService buildJwtService() {
-        String jwtSecret = "MIIEpQIBAAKCAQEAlqZak6RpiMbIc2nUU1QEvfOLcn1+FTaYtGXqR9X24nX3O7Z0" +
+        final String jwtSecret = "MIIEpQIBAAKCAQEAlqZak6RpiMbIc2nUU1QEvfOLcn1+FTaYtGXqR9X24nX3O7Z0" +
                 "dvF3qbyCffZTIl2waCYo6O1+wp7H5vmqHtB+r+qWCzw/+1GMeKR3dKvMrUPwXIXG" +
                 "efBFzMWE8xJr4zOVERJihqoFfYgQ3Yd9FQXt1Cx4Q/M0ZhloRVULhr8e1HZWujxt" +
                 "3tleWEUf0IgvjDIk/87ex5Ds/4xfTSxja5RAj85NXFNVufQ5i4G4KPdQRT0rbS4w" +
