@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Objects;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +65,24 @@ public class IdentityAccessControllerIT {
 
         assertThat(content).isEqualTo(jsonMapper.writeValueAsString(new AuthenticationResponse("token")));
 
+    }
+
+    @Test
+    void shouldGetA404WhenPasswordIsNotCorrect() throws Exception {
+        String firstName = "John";
+        String lastName = "Smith";
+        String email = "John@hotmail.fr";
+        String password = "145312455fqsdkfjqm9@";
+
+        RegisterRequest registerRequest = new RegisterRequest(firstName, lastName, email, password);
+
+        ResultActions result = mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(registerRequest)));
+
+        String error = Objects.requireNonNull(result.andExpect(status().isBadRequest()).andReturn().getResolvedException()).getMessage();
+
+        assertThat(error).isEqualTo("Password must at least have one upper case letter.");
     }
 
 }
