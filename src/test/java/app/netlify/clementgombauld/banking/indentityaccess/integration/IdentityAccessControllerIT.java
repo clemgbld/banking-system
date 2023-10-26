@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.indentityaccess.integration;
 
 import app.netlify.clementgombauld.banking.identityaccess.rest.IdentityAccessController;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.AuthenticateRequest;
+import app.netlify.clementgombauld.banking.identityaccess.rest.in.RegisterRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.out.AuthenticationResponse;
 import app.netlify.clementgombauld.banking.indentityaccess.integration.configuration.IdentityAccessTestConfiguration;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -42,6 +43,26 @@ public class IdentityAccessControllerIT {
         String content = mvcResult.getResponse().getContentAsString();
 
         assertThat(content).isEqualTo(jsonMapper.writeValueAsString(new AuthenticationResponse("token")));
+    }
+
+    @Test
+    void shouldRegisterAndGetToken() throws Exception {
+        String firstName = "John";
+        String lastName = "Smith";
+        String email = "John@hotmail.fr";
+        String password = "145312455fqsdDkfjqm9@";
+        RegisterRequest registerRequest = new RegisterRequest(firstName, lastName, email, password);
+
+        ResultActions result = mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(registerRequest)));
+
+        MvcResult mvcResult = result.andExpect(status().isOk()).andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        assertThat(content).isEqualTo(jsonMapper.writeValueAsString(new AuthenticationResponse("token")));
+
     }
 
 }
