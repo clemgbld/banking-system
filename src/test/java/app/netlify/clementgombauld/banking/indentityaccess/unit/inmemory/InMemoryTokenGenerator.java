@@ -7,8 +7,8 @@ import java.util.Map;
 public class InMemoryTokenGenerator implements TokenGenerator {
     private final Map<String, String> tokenGeneratorMap;
 
-    public InMemoryTokenGenerator(String email, String password) {
-        this.tokenGeneratorMap = Map.of(email, password);
+    public InMemoryTokenGenerator(String email, String token) {
+        this.tokenGeneratorMap = Map.of(email, token);
     }
 
     @Override

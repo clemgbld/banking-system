@@ -24,10 +24,12 @@ public class IdentityAccessConfiguration {
 
     private final JpaUserRepository jpaUserRepository;
 
+
     @Autowired
     public IdentityAccessConfiguration(JpaUserRepository jpaUserRepository) {
         this.jpaUserRepository = jpaUserRepository;
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {
