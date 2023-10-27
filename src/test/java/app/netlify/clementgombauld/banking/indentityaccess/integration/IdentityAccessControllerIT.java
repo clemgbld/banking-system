@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.indentityaccess.integration;
 
 import app.netlify.clementgombauld.banking.identityaccess.rest.IdentityAccessController;
+import app.netlify.clementgombauld.banking.identityaccess.rest.error.ErrorResponse;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.AuthenticateRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.RegisterRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.out.AuthenticationResponse;
@@ -10,12 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Objects;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -80,9 +81,13 @@ public class IdentityAccessControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonMapper.writeValueAsString(registerRequest)));
 
-        String error = Objects.requireNonNull(result.andExpect(status().isBadRequest()).andReturn().getResolvedException()).getMessage();
 
-        assertThat(error).isEqualTo("Password must at least have one upper case letter.");
+        MvcResult error = result.andExpect(status().isBadRequest()).andReturn();
+        assertThat(jsonMapper.readValue(error.getResponse().getContentAsString(), ErrorResponse.class)).isEqualTo(
+                new ErrorResponse("Password must at least have one upper case letter.", HttpStatus.BAD_REQUEST.value())
+        );
+
+
     }
 
 }
