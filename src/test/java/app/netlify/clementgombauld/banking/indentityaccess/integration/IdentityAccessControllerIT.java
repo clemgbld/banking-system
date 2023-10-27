@@ -31,6 +31,7 @@ public class IdentityAccessControllerIT {
     @Autowired
     MockMvc mockMvc;
 
+
     @Test
     void shouldLoginAndGetToken() throws Exception {
         String email = "John@hotmail.fr";
@@ -69,7 +70,7 @@ public class IdentityAccessControllerIT {
     }
 
     @Test
-    void shouldGetA404WhenPasswordIsNotCorrect() throws Exception {
+    void shouldGetA400ErrorWhenPasswordIsNotCorrect() throws Exception {
         String firstName = "John";
         String lastName = "Smith";
         String email = "John@hotmail.fr";
@@ -87,7 +88,7 @@ public class IdentityAccessControllerIT {
                 new ErrorResponse("Password must at least have one upper case letter.", HttpStatus.BAD_REQUEST.value())
         );
 
-
     }
+
 
 }
