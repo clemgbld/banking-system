@@ -20,11 +20,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Testcontainers
 public class MySqlUserRepositoryIT {
+
     @Autowired
     private UserRepository userRepository;
 
     @Container
-    private static MySQLContainer container = new MySQLContainer("mysql:8.0.26")
+    private static MySQLContainer<?> container = new MySQLContainer<>("mysql:8.0.26")
             .withDatabaseName("somedatabase")
             .withUsername("root")
             .withPassword("password");
