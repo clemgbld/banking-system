@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.usecases;
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.SameBankException;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownAccountWithIbanException;
+import app.netlify.clementgombauld.banking.account.usecases.commands.ReceiveMoneyFromExternalBankCommand;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 
@@ -34,31 +35,31 @@ public class ReceiveMoneyFromExternalBank {
     }
 
 
-    public void handle(String receiverAccountIban, String senderAccountIdentifier, String senderAccountBic, String senderAccountName, BigDecimal transactionAmount, String bic) {
-        Bic validSenderAccountBic = new Bic(senderAccountBic);
-        Bic bankBic = new Bic(bic);
+    public void handle(ReceiveMoneyFromExternalBankCommand command) {
+        Bic validSenderAccountBic = new Bic(command.senderAccountBic());
+        Bic bankBic = new Bic(command.bic());
         if (bankBic.equals(validSenderAccountBic)) {
             throw new SameBankException();
         }
-        Account receiverAccount = accountRepository.findByIban(receiverAccountIban)
-                .orElseThrow(() -> new UnknownAccountWithIbanException(receiverAccountIban));
+        Account receiverAccount = accountRepository.findByIban(command.receiverAccountIban())
+                .orElseThrow(() -> new UnknownAccountWithIbanException(command.receiverAccountIban()));
         String transactionId = idGenerator.generate();
         Instant currentDate = dateProvider.now();
         if (validSenderAccountBic.isBankCountry()) {
-            receiverAccount.deposit(transactionAmount);
+            receiverAccount.deposit(command.transactionAmount());
             accountRepository.update(receiverAccount);
             String accountName = beneficiaryRepository
-                    .findByAccountIdAndIban(receiverAccount.getId(), senderAccountIdentifier)
+                    .findByAccountIdAndIban(receiverAccount.getId(), command.senderAccountIdentifier())
                     .map(Beneficiary::getName)
-                    .orElse(senderAccountName);
-            transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(transactionId, currentDate, transactionAmount, senderAccountIdentifier, validSenderAccountBic, accountName));
+                    .orElse(command.senderAccountName());
+            transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(transactionId, currentDate, command.transactionAmount(), command.senderAccountIdentifier(), validSenderAccountBic, accountName));
             return;
         }
 
-        BigDecimal convertedAmount = currencyConverter.convert(validSenderAccountBic, transactionAmount);
+        BigDecimal convertedAmount = currencyConverter.convert(validSenderAccountBic, command.transactionAmount());
         receiverAccount.deposit(convertedAmount);
         accountRepository.update(receiverAccount);
-        transactionRepository.insert(receiverAccount.getId(), new Transaction(transactionId, currentDate, convertedAmount, senderAccountIdentifier, senderAccountBic, senderAccountName));
+        transactionRepository.insert(receiverAccount.getId(), new Transaction(transactionId, currentDate, convertedAmount, command.senderAccountIdentifier(), command.senderAccountBic(), command.senderAccountName()));
 
     }
 }

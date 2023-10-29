@@ -31,15 +31,15 @@ public class CloseAccount {
         this.customerAccountFinder = new CustomerAccountFinder(authenticationGateway, accountRepository);
     }
 
-    public void handle(CloseAccountCommand closeAccountCommand) {
+    public void handle(CloseAccountCommand command) {
         Account account = customerAccountFinder.findAccount();
         if (account.hasEmptyBalance()) {
             accountRepository.deleteById(account.getId());
             return;
         }
-        Iban validExternalIban = new Iban(closeAccountCommand.externalAccountIban());
-        Bic validExternalBic = new Bic(closeAccountCommand.externalBic());
-        Bic validBankBic = new Bic(closeAccountCommand.bic());
+        Iban validExternalIban = new Iban(command.externalAccountIban());
+        Bic validExternalBic = new Bic(command.externalBic());
+        Bic validBankBic = new Bic(command.bic());
         Instant currentDate = dateProvider.now();
         String externalTransactionId = idGenerator.generate();
         String transactionId = idGenerator.generate();
@@ -50,7 +50,7 @@ public class CloseAccount {
                 validExternalBic.value());
 
         transactionRepository.insert(account.getId(),
-                new Transaction(transactionId, currentDate, account.negativeBalance(), validExternalIban.value(), validExternalBic.value(), closeAccountCommand.accountName()));
+                new Transaction(transactionId, currentDate, account.negativeBalance(), validExternalIban.value(), validExternalBic.value(), command.accountName()));
 
         account.clearBalance();
         accountRepository.update(account);

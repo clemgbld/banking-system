@@ -22,14 +22,14 @@ public class AddBeneficiary {
         this.customerAccountFinder = new CustomerAccountFinder(authenticationGateway, accountRepository);
     }
 
-    public String handle(AddBeneficiaryCommand addBeneficiaryCommand) {
+    public String handle(AddBeneficiaryCommand command) {
         Account account = customerAccountFinder.findAccount();
-        Optional<Beneficiary> potentialDuplicatedBeneficiary = beneficiaryRepository.findByAccountIdAndIban(account.getId(), addBeneficiaryCommand.beneficiaryIban());
+        Optional<Beneficiary> potentialDuplicatedBeneficiary = beneficiaryRepository.findByAccountIdAndIban(account.getId(), command.beneficiaryIban());
         potentialDuplicatedBeneficiary.ifPresent((beneficiary) -> {
-            throw new DuplicatedBeneficiaryException(addBeneficiaryCommand.beneficiaryIban(), account.getId());
+            throw new DuplicatedBeneficiaryException(command.beneficiaryIban(), account.getId());
         });
         String beneficiaryId = idGenerator.generate();
-        beneficiaryRepository.insert(account.getId(), new Beneficiary(beneficiaryId, new Iban(addBeneficiaryCommand.beneficiaryIban()), new Bic(addBeneficiaryCommand.beneficiaryBic()), addBeneficiaryCommand.beneficiaryName()));
+        beneficiaryRepository.insert(account.getId(), new Beneficiary(beneficiaryId, new Iban(command.beneficiaryIban()), new Bic(command.beneficiaryBic()), command.beneficiaryName()));
         return beneficiaryId;
     }
 }
