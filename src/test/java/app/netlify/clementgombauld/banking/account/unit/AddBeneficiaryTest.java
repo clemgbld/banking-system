@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryBeneficiaryRepository;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAuthenticationGateway;
+import app.netlify.clementgombauld.banking.account.usecases.commands.AddBeneficiaryCommand;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.account.usecases.AddBeneficiary;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
@@ -58,7 +59,7 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
-        String expectedId = addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName);
+        String expectedId = addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName));
 
         assertThat(beneficiaryRepository.findByAccountIdAndIban(accountId, beneficiaryIban).orElseThrow())
                 .isEqualTo(new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName));
@@ -98,7 +99,7 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
-        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+        assertThatThrownBy(() -> addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName)))
                 .isInstanceOf(DuplicatedBeneficiaryException.class)
                 .hasMessage("The beneficiary with the accountIdentifier : " + beneficiaryIban + " is already a beneficiary of the account " + accountId);
     }
@@ -129,7 +130,7 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
-        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+        assertThatThrownBy(() -> addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName)))
                 .isInstanceOf(InvalidIbanException.class)
                 .hasMessage("accountIdentifier: " + beneficiaryIban + " is invalid.");
     }
@@ -141,7 +142,7 @@ class AddBeneficiaryTest {
         String beneficiaryBic = "BNPAFRPP123";
         String beneficiaryName = "Bob Dylan";
         AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId), null);
-        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+        assertThatThrownBy(() -> addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName)))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
     }
@@ -174,7 +175,7 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
 
-        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+        assertThatThrownBy(() -> addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName)))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + beneficiaryBic + " is invalid.");
     }
@@ -193,7 +194,7 @@ class AddBeneficiaryTest {
 
         AddBeneficiary addBeneficiary = buildAddBeneficiary(new HashMap<>(), List.of(beneficiaryId), currentCustomer);
 
-        assertThatThrownBy(() -> addBeneficiary.handle(beneficiaryIban, beneficiaryBic, beneficiaryName))
+        assertThatThrownBy(() -> addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName)))
                 .isInstanceOf(UnknownAccountWithCustomerId.class)
                 .hasMessage("There is no account with the customerId: " + customerId);
     }

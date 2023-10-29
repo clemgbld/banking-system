@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.account.usecases;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.DuplicatedBeneficiaryException;
+import app.netlify.clementgombauld.banking.account.usecases.commands.AddBeneficiaryCommand;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 
 
@@ -21,14 +22,14 @@ public class AddBeneficiary {
         this.customerAccountFinder = new CustomerAccountFinder(authenticationGateway, accountRepository);
     }
 
-    public String handle(String beneficiaryIban, String beneficiaryBic, String beneficiaryName) {
+    public String handle(AddBeneficiaryCommand addBeneficiaryCommand) {
         Account account = customerAccountFinder.findAccount();
-        Optional<Beneficiary> potentialDuplicatedBeneficiary = beneficiaryRepository.findByAccountIdAndIban(account.getId(), beneficiaryIban);
+        Optional<Beneficiary> potentialDuplicatedBeneficiary = beneficiaryRepository.findByAccountIdAndIban(account.getId(), addBeneficiaryCommand.beneficiaryIban());
         potentialDuplicatedBeneficiary.ifPresent((beneficiary) -> {
-            throw new DuplicatedBeneficiaryException(beneficiaryIban, account.getId());
+            throw new DuplicatedBeneficiaryException(addBeneficiaryCommand.beneficiaryIban(), account.getId());
         });
         String beneficiaryId = idGenerator.generate();
-        beneficiaryRepository.insert(account.getId(), new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName));
+        beneficiaryRepository.insert(account.getId(), new Beneficiary(beneficiaryId, new Iban(addBeneficiaryCommand.beneficiaryIban()), new Bic(addBeneficiaryCommand.beneficiaryBic()), addBeneficiaryCommand.beneficiaryName()));
         return beneficiaryId;
     }
 }
