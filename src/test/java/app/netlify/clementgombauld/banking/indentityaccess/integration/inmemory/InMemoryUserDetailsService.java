@@ -1,6 +1,5 @@
 package app.netlify.clementgombauld.banking.indentityaccess.integration.inmemory;
 
-import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

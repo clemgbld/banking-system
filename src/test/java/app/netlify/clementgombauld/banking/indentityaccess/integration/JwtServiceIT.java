@@ -4,7 +4,7 @@ import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;
-import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
+import app.netlify.clementgombauld.banking.identityaccess.infra.db.entity.JpaUserEntity;
 import app.netlify.clementgombauld.banking.indentityaccess.integration.inmemory.InMemoryUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.*;

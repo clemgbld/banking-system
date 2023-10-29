@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.identityaccess.infra.entity;
+package app.netlify.clementgombauld.banking.identityaccess.infra.db.entity;
 
 import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import jakarta.persistence.*;

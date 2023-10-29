@@ -2,7 +2,7 @@ package app.netlify.clementgombauld.banking.account.infra;
 
 import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.domain.Customer;
-import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
+import app.netlify.clementgombauld.banking.identityaccess.infra.db.entity.JpaUserEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

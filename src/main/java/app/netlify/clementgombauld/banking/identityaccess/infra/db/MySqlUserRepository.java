@@ -1,9 +1,9 @@
-package app.netlify.clementgombauld.banking.identityaccess.infra;
+package app.netlify.clementgombauld.banking.identityaccess.infra.db;
 
 import app.netlify.clementgombauld.banking.identityaccess.application.commands.RegisterCommand;
 import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
-import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
+import app.netlify.clementgombauld.banking.identityaccess.infra.db.entity.JpaUserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

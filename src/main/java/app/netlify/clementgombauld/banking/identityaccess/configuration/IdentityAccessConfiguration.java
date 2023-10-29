@@ -6,7 +6,7 @@ import app.netlify.clementgombauld.banking.identityaccess.domain.Authenticator;
 import app.netlify.clementgombauld.banking.identityaccess.domain.EncryptionService;
 import app.netlify.clementgombauld.banking.identityaccess.domain.TokenGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.domain.UserRepository;
-import app.netlify.clementgombauld.banking.identityaccess.infra.JpaUserRepository;
+import app.netlify.clementgombauld.banking.identityaccess.infra.db.JpaUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

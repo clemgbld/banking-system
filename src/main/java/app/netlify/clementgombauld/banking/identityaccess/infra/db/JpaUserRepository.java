@@ -1,6 +1,6 @@
-package app.netlify.clementgombauld.banking.identityaccess.infra;
+package app.netlify.clementgombauld.banking.identityaccess.infra.db;
 
-import app.netlify.clementgombauld.banking.identityaccess.infra.entity.JpaUserEntity;
+import app.netlify.clementgombauld.banking.identityaccess.infra.db.entity.JpaUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
