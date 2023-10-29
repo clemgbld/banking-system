@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.CloseAccount;
+import app.netlify.clementgombauld.banking.account.usecases.commands.CloseAccountCommand;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
@@ -86,7 +87,7 @@ class CloseAccountTest {
 
         CloseAccount closeAccount = buildCloseAccount(customer);
 
-        closeAccount.handle(null, null, null, null);
+        closeAccount.handle(new CloseAccountCommand(null, null, null, null));
 
         assertThat(accountStore.get(ACCOUNT_ID)).isNull();
 
@@ -116,7 +117,7 @@ class CloseAccountTest {
 
         CloseAccount closeAccount = buildCloseAccount(customer);
 
-        closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME);
+        closeAccount.handle(new CloseAccountCommand(externalAccountIban, externalBic, bic, ACCOUNT_NAME));
 
         assertThat(accountStore.get(accountIban)).isEqualTo(
                 new Account.Builder()
@@ -137,7 +138,7 @@ class CloseAccountTest {
     @Test
     void shouldThrowAnExceptionWhenThereIsNoCurrentCustomer() {
         CloseAccount closeAccount = buildCloseAccount(null);
-        assertThatThrownBy(() -> closeAccount.handle(null, null, null, ACCOUNT_NAME))
+        assertThatThrownBy(() -> closeAccount.handle(new CloseAccountCommand(null, null, null, ACCOUNT_NAME)))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
     }
@@ -150,7 +151,7 @@ class CloseAccountTest {
         Customer customer = new Customer(customerId, firstName, lastName);
 
         CloseAccount closeAccount = buildCloseAccount(customer);
-        assertThatThrownBy(() -> closeAccount.handle(null, null, null, ACCOUNT_NAME))
+        assertThatThrownBy(() -> closeAccount.handle(new CloseAccountCommand(null, null, null, ACCOUNT_NAME)))
                 .isInstanceOf(UnknownAccountWithCustomerId.class)
                 .hasMessage("There is no account with the customerId: " + customerId);
     }
@@ -174,7 +175,7 @@ class CloseAccountTest {
 
         CloseAccount closeAccount = buildCloseAccount(customer);
 
-        assertThatThrownBy(() -> closeAccount.handle(null, externalBic, bic, ACCOUNT_NAME))
+        assertThatThrownBy(() -> closeAccount.handle(new CloseAccountCommand(null, externalBic, bic, ACCOUNT_NAME)))
                 .isInstanceOf(NoIbanException.class)
                 .hasMessage("No IBAN provided.");
 
@@ -201,7 +202,7 @@ class CloseAccountTest {
 
         CloseAccount closeAccount = buildCloseAccount(customer);
 
-        assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME))
+        assertThatThrownBy(() -> closeAccount.handle(new CloseAccountCommand(externalAccountIban, externalBic, bic, ACCOUNT_NAME)))
                 .isInstanceOf(InvalidIbanException.class)
                 .hasMessage("accountIdentifier: " + externalAccountIban + " is invalid.");
     }
@@ -226,7 +227,7 @@ class CloseAccountTest {
 
         CloseAccount closeAccount = buildCloseAccount(customer);
 
-        assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, null, bic, ACCOUNT_NAME))
+        assertThatThrownBy(() -> closeAccount.handle(new CloseAccountCommand(externalAccountIban, null, bic, ACCOUNT_NAME)))
                 .isInstanceOf(NoBicException.class)
                 .hasMessage("No BIC provided.");
     }
@@ -251,7 +252,7 @@ class CloseAccountTest {
 
         CloseAccount closeAccount = buildCloseAccount(customer);
 
-        assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME))
+        assertThatThrownBy(() -> closeAccount.handle(new CloseAccountCommand(externalAccountIban, externalBic, bic, ACCOUNT_NAME)))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + externalBic + " is invalid.");
     }
@@ -277,7 +278,7 @@ class CloseAccountTest {
 
         CloseAccount closeAccount = buildCloseAccount(customer);
 
-        assertThatThrownBy(() -> closeAccount.handle(externalAccountIban, externalBic, bic, ACCOUNT_NAME))
+        assertThatThrownBy(() -> closeAccount.handle(new CloseAccountCommand(externalAccountIban, externalBic, bic, ACCOUNT_NAME)))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + bic + " is invalid.");
     }
