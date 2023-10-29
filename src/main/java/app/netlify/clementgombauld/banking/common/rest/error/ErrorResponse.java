@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.identityaccess.rest.error;
+package app.netlify.clementgombauld.banking.common.rest.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;

@@ -1,7 +1,7 @@
 package app.netlify.clementgombauld.banking.indentityaccess.integration;
 
 import app.netlify.clementgombauld.banking.identityaccess.rest.IdentityAccessController;
-import app.netlify.clementgombauld.banking.identityaccess.rest.error.ErrorResponse;
+import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.AuthenticateRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.in.RegisterRequest;
 import app.netlify.clementgombauld.banking.identityaccess.rest.out.AuthenticationResponse;

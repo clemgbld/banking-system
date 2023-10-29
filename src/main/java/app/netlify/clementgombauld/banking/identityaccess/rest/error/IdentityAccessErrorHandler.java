@@ -1,5 +1,6 @@
 package app.netlify.clementgombauld.banking.identityaccess.rest.error;
 
+import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
 import app.netlify.clementgombauld.banking.identityaccess.rest.IdentityAccessController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
