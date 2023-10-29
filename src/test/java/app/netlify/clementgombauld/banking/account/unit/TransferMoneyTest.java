@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.TransferMoney;
+import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMoneyCommand;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
@@ -80,7 +81,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), transactionStore, currentCustomer);
 
-        transferMoney.handle(transactionAmount, receiverAccountIban, bic);
+        transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic));
 
         Account senderAccount = accountStore.get(senderAccountIban);
         Account receiverAccount = accountStore.get(receiverAccountIban);
@@ -147,7 +148,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), extraBankTransactions, extraBankAccountInfos, transactionStore, currentCustomer);
 
-        transferMoney.handle(transactionAmount, receiverAccountIban, bic);
+        transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic));
 
         Account senderAccount = accountStore.get(senderAccountIban);
 
@@ -202,7 +203,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), Map.of(), currentCustomer);
 
-        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(UnknownBeneficiaryException.class)
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic))).isInstanceOf(UnknownBeneficiaryException.class)
                 .hasMessage("Cannot find any account with the accountIdentifier: " + receiverAccountIban + " in your beneficiaries list.");
     }
 
@@ -213,7 +214,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(new HashMap<>(), List.of(), List.of(), List.of(), Map.of(), null);
 
-        assertThatThrownBy(() -> transferMoney.handle(new BigDecimal(100), receiverAccountIban, bic))
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(new BigDecimal(100), receiverAccountIban, bic)))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
     }
@@ -224,7 +225,7 @@ class TransferMoneyTest {
         String bic = "invalidBic";
 
         TransferMoney transferMoney = buildTransferMoney(new HashMap<>(), List.of(), List.of(), List.of(), Map.of(), null);
-        assertThatThrownBy(() -> transferMoney.handle(new BigDecimal(100), receiverAccountIban, bic))
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(new BigDecimal(100), receiverAccountIban, bic)))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + bic + " is invalid.");
     }
@@ -268,7 +269,8 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), Map.of(), currentCustomer);
 
-        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(InsufficientBalanceException.class);
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic)))
+                .isInstanceOf(InsufficientBalanceException.class);
     }
 
 
@@ -304,7 +306,8 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), new HashMap<>(), currentCustomer);
 
-        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(UnknownAccountWithIbanException.class)
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic)))
+                .isInstanceOf(UnknownAccountWithIbanException.class)
                 .hasMessage("There is no account with the accountIdentifier: " + receiverAccountIban);
     }
 
@@ -321,7 +324,7 @@ class TransferMoneyTest {
 
         Customer currentCustomer = new Customer(customerId, senderAccountFirstName, senderAccountLastName);
         TransferMoney transferMoney = buildTransferMoney(new HashMap<>(), List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), new HashMap<>(), currentCustomer);
-        assertThatThrownBy(() -> transferMoney.handle(transactionAmount, receiverAccountIban, bic)).isInstanceOf(UnknownAccountWithCustomerId.class)
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic))).isInstanceOf(UnknownAccountWithCustomerId.class)
                 .hasMessage("There is no account with the customerId: " + customerId);
 
     }
