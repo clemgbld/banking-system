@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAccount
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryBeneficiaryRepository;
 import app.netlify.clementgombauld.banking.account.usecases.AddBeneficiary;
+import app.netlify.clementgombauld.banking.account.usecases.DeleteBeneficiary;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;
@@ -24,25 +25,50 @@ import java.util.Map;
 @TestConfiguration
 public class AccountTestConfiguration {
 
+    private static final String CUSTOMER_ID = "1";
+    private static final String ACCOUNT_ID = "4";
+    private static final String BENEFICIARY_ID = "5";
+    private static final String BENEFICIARY_IBAN = "FR1420041010050500013M02606";
+    private static final String BENEFICIARY_NAME = "Arsene Lupin";
+    private static final String BENEFICIARY_BIC = "BNPAFRPP123";
+    private static final String ACCOUNT_IBAN = "FR5030004000700000157389538";
+
     @Bean
     AddBeneficiary addBeneficiary() {
-        String customerId = "1";
-        String accountId = "4";
-        String beneficiaryId = "5";
-        Iban beneficiaryIban = new Iban("FR1420041010050500013M02606");
+        Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        beneficiaryRepository.insert(accountId, new Beneficiary(beneficiaryId, beneficiaryIban, new Bic("BNPAFRPP123"), "Arsene Lupin"));
-        AccountRepository accountRepository = new InMemoryAccountRepository(Map.of(customerId, new Account.Builder()
-                .withCustomerId(customerId)
-                .withId(accountId)
-                .withIban(new Iban("FR5030004000700000157389538"))
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME));
+        AccountRepository accountRepository = new InMemoryAccountRepository(Map.of(CUSTOMER_ID, new Account.Builder()
+                .withCustomerId(CUSTOMER_ID)
+                .withId(ACCOUNT_ID)
+                .withIban(new Iban(ACCOUNT_IBAN))
                 .build()));
         AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(
-                new Customer(customerId, "Jean", "Charles")
+                new Customer(CUSTOMER_ID, "Jean", "Charles")
         );
         return new AddBeneficiary(
                 beneficiaryRepository,
                 new InMemoryIdGenerator(List.of("3")),
+                authenticationGateway,
+                accountRepository
+        );
+    }
+
+    @Bean
+    DeleteBeneficiary deleteBeneficiary() {
+        Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
+        BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME));
+        AccountRepository accountRepository = new InMemoryAccountRepository(Map.of(CUSTOMER_ID, new Account.Builder()
+                .withCustomerId(CUSTOMER_ID)
+                .withId(ACCOUNT_ID)
+                .withIban(new Iban(ACCOUNT_IBAN))
+                .build()));
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(
+                new Customer(CUSTOMER_ID, "Jean", "Charles")
+        );
+        return new DeleteBeneficiary(
+                beneficiaryRepository,
                 authenticationGateway,
                 accountRepository
         );

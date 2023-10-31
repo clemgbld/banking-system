@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.integration;
 import app.netlify.clementgombauld.banking.account.integration.configuration.AccountTestConfiguration;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.BeneficiaryController;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.in.AddBeneficiaryRequest;
+import app.netlify.clementgombauld.banking.account.rest.beneficiary.in.DeleteBeneficiaryRequest;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.AddBeneficiaryResponse;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,8 +74,18 @@ public class BeneficiaryControllerIT {
                 "The beneficiary with the accountIdentifier : FR1420041010050500013M02606 is already a beneficiary of the account 4",
                 HttpStatus.BAD_REQUEST.value()
         )));
-        
+    }
+
+    @Test
+    void shouldDeleteTheBeneficiary() throws Exception {
+        String beneficiaryIban = "FR1420041010050500013M02606";
+        ResultActions result = mockMvc.perform(delete("/api/v1/beneficiary")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(new DeleteBeneficiaryRequest(beneficiaryIban))));
+
+        result.andExpect(status().isNoContent());
 
     }
+
 
 }
