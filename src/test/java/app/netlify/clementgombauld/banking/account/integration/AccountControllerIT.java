@@ -2,7 +2,6 @@ package app.netlify.clementgombauld.banking.account.integration;
 
 import app.netlify.clementgombauld.banking.account.integration.configuration.AccountTestConfiguration;
 import app.netlify.clementgombauld.banking.account.rest.account.AccountController;
-import app.netlify.clementgombauld.banking.account.rest.beneficiary.in.AddBeneficiaryRequest;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,6 @@
 package app.netlify.clementgombauld.banking.account.rest.beneficiary.in;
 
-public record DeleteBeneficiaryRequest(String beneficiaryIban) {
+import jakarta.validation.constraints.NotBlank;
+
+public record DeleteBeneficiaryRequest(@NotBlank(message = "Beneficiary iban is required") String beneficiaryIban) {
 }
