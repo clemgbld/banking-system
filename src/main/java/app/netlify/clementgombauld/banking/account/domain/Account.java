@@ -88,12 +88,12 @@ public class Account {
         this.balance = Balance.initalBalance();
     }
 
-    public Transaction recordDepositTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String senderAccountIdentifier, Bic senderAccountBic, String accountName) {
-        return new Transaction(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic.value(), accountName);
+    public Transaction recordDepositTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String senderAccountIdentifier, Bic senderAccountBic, String accountName, String reason) {
+        return new Transaction(transactionId, currentDate, transactionAmount, senderAccountIdentifier, senderAccountBic.value(), accountName, reason);
     }
 
-    public Transaction recordWithdrawalTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String receiverAccountIdentifier, Bic receiverAccountBic, String accountName) {
-        return new Transaction(transactionId, currentDate, transactionAmount.negate(), receiverAccountIdentifier, receiverAccountBic.value(), accountName);
+    public Transaction recordWithdrawalTransaction(String transactionId, Instant currentDate, BigDecimal transactionAmount, String receiverAccountIdentifier, Bic receiverAccountBic, String accountName, String reason) {
+        return new Transaction(transactionId, currentDate, transactionAmount.negate(), receiverAccountIdentifier, receiverAccountBic.value(), accountName, reason);
     }
 
 

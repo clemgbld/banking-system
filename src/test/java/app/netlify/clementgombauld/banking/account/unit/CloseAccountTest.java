@@ -130,8 +130,8 @@ class CloseAccountTest {
         assertThat(accountStore.get(ACCOUNT_ID)).isNull();
 
         assertThat(bankInfos).isEqualTo(List.of(externalAccountIban, externalBic));
-        assertThat(transactions).isEqualTo(List.of(new Transaction(TRANSACTION_ID1, CURRENT_DATE, new BigDecimal(10), accountIban, bic, firstName + " " + lastName)));
-        assertThat(transactionStore.get(ACCOUNT_ID)).isEqualTo(new Transaction(TRANSACTION_ID2, CURRENT_DATE, new BigDecimal(-10), externalAccountIban, externalBic, ACCOUNT_NAME));
+        assertThat(transactions).isEqualTo(List.of(new Transaction(TRANSACTION_ID1, CURRENT_DATE, new BigDecimal(10), accountIban, bic, firstName + " " + lastName, "Close account withdrawal")));
+        assertThat(transactionStore.get(ACCOUNT_ID)).isEqualTo(new Transaction(TRANSACTION_ID2, CURRENT_DATE, new BigDecimal(-10), externalAccountIban, externalBic, ACCOUNT_NAME, "Close account withdrawal"));
 
     }
 

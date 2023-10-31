@@ -52,14 +52,14 @@ public class ReceiveMoneyFromExternalBank {
                     .findByAccountIdAndIban(receiverAccount.getId(), command.senderAccountIdentifier())
                     .map(Beneficiary::getName)
                     .orElse(command.senderAccountName());
-            transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(transactionId, currentDate, command.transactionAmount(), command.senderAccountIdentifier(), validSenderAccountBic, accountName));
+            transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(transactionId, currentDate, command.transactionAmount(), command.senderAccountIdentifier(), validSenderAccountBic, accountName, command.reason()));
             return;
         }
 
         BigDecimal convertedAmount = currencyConverter.convert(validSenderAccountBic, command.transactionAmount());
         receiverAccount.deposit(convertedAmount);
         accountRepository.update(receiverAccount);
-        transactionRepository.insert(receiverAccount.getId(), new Transaction(transactionId, currentDate, convertedAmount, command.senderAccountIdentifier(), command.senderAccountBic(), command.senderAccountName()));
+        transactionRepository.insert(receiverAccount.getId(), new Transaction(transactionId, currentDate, convertedAmount, command.senderAccountIdentifier(), command.senderAccountBic(), command.senderAccountName(), command.reason()));
 
     }
 }

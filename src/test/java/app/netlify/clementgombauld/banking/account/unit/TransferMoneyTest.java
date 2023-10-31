@@ -54,6 +54,7 @@ class TransferMoneyTest {
         String receiverAccountFirstName = "John";
         String receiverAccountLastName = "Smith";
         BigDecimal transactionAmount = new BigDecimal(5);
+        String reason = "a reason";
 
         Map<String, Account> accountStore = new HashMap<>();
         Customer currentCustomer = new Customer(customerId, senderAccountFirstName, senderAccountLastName);
@@ -81,7 +82,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), transactionStore, currentCustomer);
 
-        transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic));
+        transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic, reason));
 
         Account senderAccount = accountStore.get(senderAccountIban);
         Account receiverAccount = accountStore.get(receiverAccountIban);
@@ -92,7 +93,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(100))
                 .build());
 
-        assertThat(transactionStore.get(senderAccountId)).isEqualTo(new Transaction(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName));
+        assertThat(transactionStore.get(senderAccountId)).isEqualTo(new Transaction(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName, reason));
 
         assertThat(receiverAccount)
                 .isEqualTo(new Account.Builder()
@@ -101,7 +102,7 @@ class TransferMoneyTest {
                         .withBalance(new BigDecimal(105))
                         .build());
 
-        assertThat(transactionStore.get(receiverAccountId)).isEqualTo(new Transaction(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, bic, senderAccountFirstName + " " + senderAccountLastName));
+        assertThat(transactionStore.get(receiverAccountId)).isEqualTo(new Transaction(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, bic, senderAccountFirstName + " " + senderAccountLastName, reason));
 
     }
 
@@ -120,6 +121,7 @@ class TransferMoneyTest {
         String senderAccountLastName = "Duboit";
         String receiverAccountFirstName = "John";
         String receiverAccountLastName = "Smith";
+        String reason = "a reason";
 
 
         BigDecimal transactionAmount = new BigDecimal(5);
@@ -148,7 +150,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), extraBankTransactions, extraBankAccountInfos, transactionStore, currentCustomer);
 
-        transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic));
+        transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic, reason));
 
         Account senderAccount = accountStore.get(senderAccountIban);
 
@@ -160,9 +162,9 @@ class TransferMoneyTest {
                         .build());
 
         assertThat(transactionStore.get(senderAccountId))
-                .isEqualTo(new Transaction(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName));
+                .isEqualTo(new Transaction(senderTransactionId, currentInstant, new BigDecimal(-5), receiverAccountIban, receiverAccountBIC, receiverAccountFirstName + " " + receiverAccountLastName, reason));
 
-        assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new Transaction(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, bic, senderAccountFirstName + " " + senderAccountLastName)));
+        assertThat(extraBankTransactions).usingRecursiveComparison().isEqualTo(List.of(new Transaction(receiverTransactionId, currentInstant, new BigDecimal(5), senderAccountIban, bic, senderAccountFirstName + " " + senderAccountLastName, reason)));
         assertThat(extraBankAccountInfos).usingRecursiveComparison().isEqualTo(List.of(receiverAccountIban, receiverAccountBIC));
     }
 
@@ -203,7 +205,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), Map.of(), currentCustomer);
 
-        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic))).isInstanceOf(UnknownBeneficiaryException.class)
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic, null))).isInstanceOf(UnknownBeneficiaryException.class)
                 .hasMessage("Cannot find any account with the accountIdentifier: " + receiverAccountIban + " in your beneficiaries list.");
     }
 
@@ -214,7 +216,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(new HashMap<>(), List.of(), List.of(), List.of(), Map.of(), null);
 
-        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(new BigDecimal(100), receiverAccountIban, bic)))
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(new BigDecimal(100), receiverAccountIban, bic, null)))
                 .isInstanceOf(NoCurrentCustomerException.class)
                 .hasMessage("No current customer authenticated.");
     }
@@ -225,7 +227,7 @@ class TransferMoneyTest {
         String bic = "invalidBic";
 
         TransferMoney transferMoney = buildTransferMoney(new HashMap<>(), List.of(), List.of(), List.of(), Map.of(), null);
-        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(new BigDecimal(100), receiverAccountIban, bic)))
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(new BigDecimal(100), receiverAccountIban, bic, null)))
                 .isInstanceOf(InvalidBicException.class)
                 .hasMessage("bic: " + bic + " is invalid.");
     }
@@ -269,7 +271,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), Map.of(), currentCustomer);
 
-        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic)))
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic, null)))
                 .isInstanceOf(InsufficientBalanceException.class);
     }
 
@@ -306,7 +308,7 @@ class TransferMoneyTest {
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), new HashMap<>(), currentCustomer);
 
-        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic)))
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic, null)))
                 .isInstanceOf(UnknownAccountWithIbanException.class)
                 .hasMessage("There is no account with the accountIdentifier: " + receiverAccountIban);
     }
@@ -324,7 +326,8 @@ class TransferMoneyTest {
 
         Customer currentCustomer = new Customer(customerId, senderAccountFirstName, senderAccountLastName);
         TransferMoney transferMoney = buildTransferMoney(new HashMap<>(), List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), new HashMap<>(), currentCustomer);
-        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic))).isInstanceOf(UnknownAccountWithCustomerId.class)
+        assertThatThrownBy(() -> transferMoney.handle(new TransferMoneyCommand(transactionAmount, receiverAccountIban, bic, null)))
+                .isInstanceOf(UnknownAccountWithCustomerId.class)
                 .hasMessage("There is no account with the customerId: " + customerId);
 
     }

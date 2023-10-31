@@ -10,6 +10,8 @@ import java.time.Instant;
 
 public class CloseAccount {
 
+    private static final String CLOSE_ACCOUNT_REASON = "Close account withdrawal";
+
     private final AccountRepository accountRepository;
 
     private final CustomerAccountFinder customerAccountFinder;
@@ -45,12 +47,12 @@ public class CloseAccount {
         String transactionId = idGenerator.generate();
         Customer currentCustomer = customerAccountFinder.currentCustomer();
 
-        externalBankTransactionsGateway.transfer(new Transaction(externalTransactionId, currentDate, account.getBalance(), account.getIban(), validBankBic.value(), currentCustomer.fullName())
+        externalBankTransactionsGateway.transfer(new Transaction(externalTransactionId, currentDate, account.getBalance(), account.getIban(), validBankBic.value(), currentCustomer.fullName(), CLOSE_ACCOUNT_REASON)
                 , validExternalIban.value(),
                 validExternalBic.value());
 
         transactionRepository.insert(account.getId(),
-                new Transaction(transactionId, currentDate, account.negativeBalance(), validExternalIban.value(), validExternalBic.value(), command.accountName()));
+                new Transaction(transactionId, currentDate, account.negativeBalance(), validExternalIban.value(), validExternalBic.value(), command.accountName(), CLOSE_ACCOUNT_REASON));
 
         account.clearBalance();
         accountRepository.update(account);
