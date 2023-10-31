@@ -4,8 +4,10 @@ import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAccountRepository;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryBeneficiaryRepository;
+import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryIbanGenerator;
 import app.netlify.clementgombauld.banking.account.usecases.AddBeneficiary;
 import app.netlify.clementgombauld.banking.account.usecases.DeleteBeneficiary;
+import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;
@@ -32,6 +34,8 @@ public class AccountTestConfiguration {
     private static final String BENEFICIARY_NAME = "Arsene Lupin";
     private static final String BENEFICIARY_BIC = "BNPAFRPP123";
     private static final String ACCOUNT_IBAN = "FR5030004000700000157389538";
+
+    public static final long CURRENT_DATE_IN_MS = 2534543253252L;
 
     @Bean
     AddBeneficiary addBeneficiary() {
@@ -71,6 +75,20 @@ public class AccountTestConfiguration {
                 beneficiaryRepository,
                 authenticationGateway,
                 accountRepository
+        );
+    }
+
+    @Bean
+    OpenAccount openAccount() {
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(
+                new Customer(CUSTOMER_ID, "Jean", "Charles")
+        );
+        return new OpenAccount(
+                new InMemoryAccountRepository(),
+                new InMemoryIbanGenerator(ACCOUNT_IBAN),
+                new InMemoryIdGenerator(List.of(ACCOUNT_ID)),
+                authenticationGateway,
+                new DeterministicDateProvider(CURRENT_DATE_IN_MS)
         );
     }
 

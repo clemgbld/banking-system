@@ -87,5 +87,22 @@ public class BeneficiaryControllerIT {
 
     }
 
+    @Test
+    void shouldThrowABadRequestWhenTryingToDeleteANonExistingBeneficiary() throws Exception {
+        String beneficiaryIban = "FR5030004000700000157389538";
+        ResultActions result = mockMvc.perform(delete("/api/v1/beneficiary")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(new DeleteBeneficiaryRequest(beneficiaryIban))));
+
+        MvcResult mvcResult = result.andExpect(status().isBadRequest()).andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        assertThat(content).isEqualTo(jsonMapper.writeValueAsString(new ErrorResponse(
+                "Cannot find any account with the accountIdentifier: FR5030004000700000157389538 in your beneficiaries list.",
+                HttpStatus.BAD_REQUEST.value()
+        )));
+    }
+
 
 }
