@@ -2,10 +2,7 @@ package app.netlify.clementgombauld.banking.account.integration.configuration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
-import app.netlify.clementgombauld.banking.account.usecases.AddBeneficiary;
-import app.netlify.clementgombauld.banking.account.usecases.CloseAccount;
-import app.netlify.clementgombauld.banking.account.usecases.DeleteBeneficiary;
-import app.netlify.clementgombauld.banking.account.usecases.TransferMoney;
+import app.netlify.clementgombauld.banking.account.usecases.*;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;
@@ -128,6 +125,31 @@ public class AccountTestConfiguration {
                 new InMemoryIdGenerator(List.of("12434", "25342", "2453245", "253425")),
                 new InMemoryExternalBankTransactionsGateway(new ArrayList<>(), new ArrayList<>()),
                 authenticationGateway
+        );
+    }
+
+    @Bean
+    ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank() {
+        Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
+        BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic("AGRIFRPP989"), BENEFICIARY_NAME));
+        Map<String, Account> accountStore = new HashMap<>();
+        accountStore.put(CUSTOMER_ID, new Account.Builder()
+                .withCustomerId(CUSTOMER_ID)
+                .withId(ACCOUNT_ID)
+                .withIban(new Iban(ACCOUNT_IBAN))
+                .withBalance(new BigDecimal(6))
+                .build());
+        AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
+
+        return new ReceiveMoneyFromExternalBank(
+                accountRepository,
+                new InMemoryTransactionRepository(new HashMap<>()),
+                beneficiaryRepository,
+                new InMemoryIdGenerator(List.of("5435")),
+                new DeterministicDateProvider(CURRENT_DATE_IN_MS),
+                new InMemoryCountryGateway(Map.of("FR", "EUR")),
+                new InMemoryCurrencyGateway(Map.of("USD", Map.of("EUR", new BigDecimal(1))))
         );
     }
 

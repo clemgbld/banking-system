@@ -1,6 +1,7 @@
 package app.netlify.clementgombauld.banking.account.rest.account;
 
 import app.netlify.clementgombauld.banking.account.rest.account.in.CloseAccountRequest;
+import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyFromExternalBankRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
 import app.netlify.clementgombauld.banking.account.usecases.CloseAccount;
 import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
@@ -49,6 +50,11 @@ public class AccountController {
     public ResponseEntity<Void> transferMoney(@RequestBody TransferMoneyRequest request, @Value("${bic}") String bic) {
         TransferMoneyCommand command = new TransferMoneyCommand(request.transactionAmount(), request.receiverAccountIdentifier(), bic, request.reason());
         transferMoney.handle(command);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/receive")
+    public ResponseEntity<Void> receiveMoneyFromExternalBank(@RequestBody ReceiveMoneyFromExternalBankRequest request, @Value("${bic}") String bic) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

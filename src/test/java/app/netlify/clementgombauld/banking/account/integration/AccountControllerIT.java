@@ -3,9 +3,11 @@ package app.netlify.clementgombauld.banking.account.integration;
 import app.netlify.clementgombauld.banking.account.integration.configuration.AccountTestConfiguration;
 import app.netlify.clementgombauld.banking.account.rest.account.AccountController;
 import app.netlify.clementgombauld.banking.account.rest.account.in.CloseAccountRequest;
+import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyFromExternalBankRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
 import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -122,6 +124,24 @@ public class AccountControllerIT {
                 jsonMapper.writeValueAsString(new ErrorResponse("Cannot find any account with the accountIdentifier: FR1420041010050500013M02607 in your beneficiaries list.", HttpStatus.BAD_REQUEST.value()))
         );
 
+    }
+
+    @Test
+    void shouldReceiveMoneyFromExternalBank() throws Exception {
+        ResultActions result = mockMvc.perform(post("/api/v1/account/receive")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(
+                        new ReceiveMoneyFromExternalBankRequest(
+                                "FR5030004000700000157389538",
+                                "FR1420041010050500013M02607",
+                                "AGRIFRPP989",
+                                "Jean Louis",
+                                new BigDecimal(5),
+                                "shopping"
+                        )
+                )));
+
+        result.andExpect(status().isOk());
     }
 
 
