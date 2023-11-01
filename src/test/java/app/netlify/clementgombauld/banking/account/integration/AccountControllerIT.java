@@ -104,5 +104,25 @@ public class AccountControllerIT {
 
     }
 
+    @Test
+    void shouldBeABadRequestWhenTheBeneficiaryIsUnknown() throws Exception {
+        ResultActions result = mockMvc.perform(post("/api/v1/account/transfer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(
+                        new TransferMoneyRequest(
+                                new BigDecimal(5),
+                                "FR1420041010050500013M02607",
+                                "shopping"
+                        )
+                )));
+
+        String error = result.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
+
+        assertThat(error).isEqualTo(
+                jsonMapper.writeValueAsString(new ErrorResponse("Cannot find any account with the accountIdentifier: FR1420041010050500013M02607 in your beneficiaries list.", HttpStatus.BAD_REQUEST.value()))
+        );
+
+    }
+
 
 }

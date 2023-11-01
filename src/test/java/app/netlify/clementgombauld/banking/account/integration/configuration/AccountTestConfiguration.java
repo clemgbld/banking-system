@@ -108,7 +108,7 @@ public class AccountTestConfiguration {
     TransferMoney transferMoney() {
         Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME));
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic("AGRIFRPP989"), BENEFICIARY_NAME));
         Map<String, Account> accountStore = new HashMap<>();
         accountStore.put(CUSTOMER_ID, new Account.Builder()
                 .withCustomerId(CUSTOMER_ID)
@@ -125,7 +125,7 @@ public class AccountTestConfiguration {
                 beneficiaryRepository,
                 new InMemoryTransactionRepository(new HashMap<>()),
                 new DeterministicDateProvider(CURRENT_DATE_IN_MS),
-                new InMemoryIdGenerator(List.of("12434", "25342")),
+                new InMemoryIdGenerator(List.of("12434", "25342", "2453245", "253425")),
                 new InMemoryExternalBankTransactionsGateway(new ArrayList<>(), new ArrayList<>()),
                 authenticationGateway
         );

@@ -48,7 +48,6 @@ public class TransferMoney {
         Beneficiary beneficiary = beneficiaryRepository.findByAccountIdAndIban(senderAccount.getId(), command.receiverAccountIdentifier())
                 .orElseThrow(() -> new UnknownBeneficiaryException(command.receiverAccountIdentifier()));
         transactionRepository.insert(senderAccount.getId(), senderAccount.recordWithdrawalTransaction(senderTransactionId, creationDate, command.transactionAmount(), command.receiverAccountIdentifier(), new Bic(beneficiary.getBic()), beneficiary.getName(), command.reason()));
-
         if (beneficiary.isInDifferentBank(bankBic)) {
             accountRepository.update(senderAccount);
             Transaction transaction = new Transaction(receiverTransactionId, creationDate, command.transactionAmount(), senderAccount.getIban(), bankBic.value(), currentCustomer.fullName(), command.reason());

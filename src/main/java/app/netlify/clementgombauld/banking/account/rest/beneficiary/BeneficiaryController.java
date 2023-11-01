@@ -31,8 +31,8 @@ public class BeneficiaryController {
 
     @PostMapping
     public ResponseEntity<AddBeneficiaryResponse> addBeneficiary(@RequestBody AddBeneficiaryRequest request) {
-        AddBeneficiaryCommand addBeneficiaryCommand = objectMapper.convertValue(request, AddBeneficiaryCommand.class);
-        String beneficiaryId = addBeneficiary.handle(addBeneficiaryCommand);
+        AddBeneficiaryCommand command = objectMapper.convertValue(request, AddBeneficiaryCommand.class);
+        String beneficiaryId = addBeneficiary.handle(command);
         return new ResponseEntity<>(new AddBeneficiaryResponse(beneficiaryId), HttpStatus.CREATED);
     }
 
