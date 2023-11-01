@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.AddBeneficiary;
 import app.netlify.clementgombauld.banking.account.usecases.CloseAccount;
 import app.netlify.clementgombauld.banking.account.usecases.DeleteBeneficiary;
+import app.netlify.clementgombauld.banking.account.usecases.TransferMoney;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;
@@ -100,6 +101,33 @@ public class AccountTestConfiguration {
                 new DeterministicDateProvider(CURRENT_DATE_IN_MS),
                 new InMemoryIdGenerator(List.of("13544", "253425")),
                 new InMemoryTransactionRepository(new HashMap<>())
+        );
+    }
+
+    @Bean
+    TransferMoney transferMoney() {
+        Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
+        BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME));
+        Map<String, Account> accountStore = new HashMap<>();
+        accountStore.put(CUSTOMER_ID, new Account.Builder()
+                .withCustomerId(CUSTOMER_ID)
+                .withId(ACCOUNT_ID)
+                .withIban(new Iban(ACCOUNT_IBAN))
+                .withBalance(new BigDecimal(6))
+                .build());
+        AccountRepository accountRepository = new InMemoryAccountRepository(accountStore);
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(
+                new Customer(CUSTOMER_ID, "Jean", "Charles")
+        );
+        return new TransferMoney(
+                accountRepository,
+                beneficiaryRepository,
+                new InMemoryTransactionRepository(new HashMap<>()),
+                new DeterministicDateProvider(CURRENT_DATE_IN_MS),
+                new InMemoryIdGenerator(List.of("12434", "25342")),
+                new InMemoryExternalBankTransactionsGateway(new ArrayList<>(), new ArrayList<>()),
+                authenticationGateway
         );
     }
 

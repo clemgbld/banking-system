@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.integration;
 import app.netlify.clementgombauld.banking.account.integration.configuration.AccountTestConfiguration;
 import app.netlify.clementgombauld.banking.account.rest.account.AccountController;
 import app.netlify.clementgombauld.banking.account.rest.account.in.CloseAccountRequest;
+import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
 import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -18,6 +19,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.math.BigDecimal;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,5 +87,22 @@ public class AccountControllerIT {
         assertThat(error).isEqualTo(jsonMapper.writeValueAsString(new ErrorResponse("accountIdentifier: FR5030004000700000 is invalid.", HttpStatus.BAD_REQUEST.value())));
 
     }
+
+    @Test
+    void shouldTransferMoney() throws Exception {
+        ResultActions result = mockMvc.perform(post("/api/v1/account/transfer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(
+                        new TransferMoneyRequest(
+                                new BigDecimal(5),
+                                "FR1420041010050500013M02606",
+                                "shopping"
+                        )
+                )));
+
+        result.andExpect(status().isOk());
+
+    }
+
 
 }
