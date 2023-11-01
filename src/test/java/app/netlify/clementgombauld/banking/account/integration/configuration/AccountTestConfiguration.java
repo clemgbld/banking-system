@@ -78,20 +78,6 @@ public class AccountTestConfiguration {
         );
     }
 
-    @Bean
-    OpenAccount openAccount() {
-        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(
-                new Customer(CUSTOMER_ID, "Jean", "Charles")
-        );
-        return new OpenAccount(
-                new InMemoryAccountRepository(),
-                new InMemoryIbanGenerator(ACCOUNT_IBAN),
-                new InMemoryIdGenerator(List.of(ACCOUNT_ID)),
-                authenticationGateway,
-                new DeterministicDateProvider(CURRENT_DATE_IN_MS)
-        );
-    }
-
 
     @Bean
     public JwtService jwtService() {
