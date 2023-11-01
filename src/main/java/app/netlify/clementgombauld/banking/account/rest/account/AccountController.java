@@ -5,8 +5,10 @@ import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyF
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
 import app.netlify.clementgombauld.banking.account.usecases.CloseAccount;
 import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
+import app.netlify.clementgombauld.banking.account.usecases.ReceiveMoneyFromExternalBank;
 import app.netlify.clementgombauld.banking.account.usecases.TransferMoney;
 import app.netlify.clementgombauld.banking.account.usecases.commands.CloseAccountCommand;
+import app.netlify.clementgombauld.banking.account.usecases.commands.ReceiveMoneyFromExternalBankCommand;
 import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMoneyCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +28,14 @@ public class AccountController {
 
     private final TransferMoney transferMoney;
 
+    private final ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank;
+
     @Autowired
-    public AccountController(OpenAccount openAccount, CloseAccount closeAccount, TransferMoney transferMoney) {
+    public AccountController(OpenAccount openAccount, CloseAccount closeAccount, TransferMoney transferMoney, ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank) {
         this.openAccount = openAccount;
         this.closeAccount = closeAccount;
         this.transferMoney = transferMoney;
+        this.receiveMoneyFromExternalBank = receiveMoneyFromExternalBank;
     }
 
     @PostMapping("/open")
@@ -55,6 +60,8 @@ public class AccountController {
 
     @PostMapping("/receive")
     public ResponseEntity<Void> receiveMoneyFromExternalBank(@RequestBody ReceiveMoneyFromExternalBankRequest request, @Value("${bic}") String bic) {
+        ReceiveMoneyFromExternalBankCommand command = new ReceiveMoneyFromExternalBankCommand(request.receiverAccountIban(), request.senderAccountIdentifier(), request.senderAccountBic(), request.senderAccountName(), request.transactionAmount(), bic, request.reason());
+        receiveMoneyFromExternalBank.handle(command);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

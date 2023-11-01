@@ -7,7 +7,6 @@ import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyF
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
 import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -142,6 +141,29 @@ public class AccountControllerIT {
                 )));
 
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldBeABadRequestWhenTheSenderBicIsNotValid() throws Exception {
+        ResultActions result = mockMvc.perform(post("/api/v1/account/receive")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonMapper.writeValueAsString(
+                        new ReceiveMoneyFromExternalBankRequest(
+                                "FR5030004000700000157389538",
+                                "FR1420041010050500013M02607",
+                                "A",
+                                "Jean Louis",
+                                new BigDecimal(5),
+                                "shopping"
+                        )
+                )));
+
+        String error = result.andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(error).isEqualTo(jsonMapper.writeValueAsString(new ErrorResponse("bic: A is invalid.", HttpStatus.BAD_REQUEST.value())));
     }
 
 

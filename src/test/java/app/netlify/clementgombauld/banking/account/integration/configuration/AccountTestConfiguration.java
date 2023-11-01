@@ -134,7 +134,7 @@ public class AccountTestConfiguration {
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
         beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic("AGRIFRPP989"), BENEFICIARY_NAME));
         Map<String, Account> accountStore = new HashMap<>();
-        accountStore.put(CUSTOMER_ID, new Account.Builder()
+        accountStore.put(ACCOUNT_IBAN, new Account.Builder()
                 .withCustomerId(CUSTOMER_ID)
                 .withId(ACCOUNT_ID)
                 .withIban(new Iban(ACCOUNT_IBAN))
