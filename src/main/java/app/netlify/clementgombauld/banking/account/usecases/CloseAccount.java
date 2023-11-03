@@ -55,7 +55,7 @@ public class CloseAccount {
                 new Transaction(transactionId, currentDate, account.negativeBalance(), validExternalIban.value(), validExternalBic.value(), command.accountName(), CLOSE_ACCOUNT_REASON));
 
         account.clearBalance();
-        accountRepository.update(account);
+        accountRepository.save(account);
         accountRepository.deleteById(account.getId());
 
     }

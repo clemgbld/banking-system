@@ -7,11 +7,9 @@ public interface AccountRepository {
 
     Optional<Account> findByCustomerId(String customerId);
 
-    void insert(Account account);
+    void save(Account... account);
 
-    void update(Account... account);
-
-    void update(Account account);
+    void save(Account account);
 
     void deleteById(String id);
 }

@@ -38,7 +38,7 @@ public class OpenAccount {
                 .ifPresent((c) -> {
                     throw new AccountAlreadyOpenedException(currentCustomer.getId());
                 });
-        accountRepository.insert(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(iban)
                 .withCustomerId(currentCustomer.getId())

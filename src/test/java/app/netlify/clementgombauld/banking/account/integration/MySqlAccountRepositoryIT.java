@@ -59,7 +59,7 @@ public class MySqlAccountRepositoryIT {
         BigDecimal balance = new BigDecimal("7.00");
         Instant creationDate = Instant.ofEpochSecond(CURRENT_DATE_IN_S);
 
-        accountRepository.insert(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withCustomerId(customerId)
                 .withIban(new Iban(iban))

@@ -29,19 +29,15 @@ public class MySqlAccountRepository implements AccountRepository {
         return Optional.empty();
     }
 
+
     @Override
-    public void insert(Account account) {
+    public void save(Account... account) {
+        
+    }
+
+    @Override
+    public void save(Account account) {
         jpaAccountRepository.save(toJpa(account));
-    }
-
-    @Override
-    public void update(Account... account) {
-
-    }
-
-    @Override
-    public void update(Account account) {
-
     }
 
     @Override

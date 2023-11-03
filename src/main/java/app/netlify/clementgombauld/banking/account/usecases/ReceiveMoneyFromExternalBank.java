@@ -47,7 +47,7 @@ public class ReceiveMoneyFromExternalBank {
         Instant currentDate = dateProvider.now();
         if (validSenderAccountBic.isBankCountry()) {
             receiverAccount.deposit(command.transactionAmount());
-            accountRepository.update(receiverAccount);
+            accountRepository.save(receiverAccount);
             String accountName = beneficiaryRepository
                     .findByAccountIdAndIban(receiverAccount.getId(), command.senderAccountIdentifier())
                     .map(Beneficiary::getName)
@@ -58,7 +58,7 @@ public class ReceiveMoneyFromExternalBank {
 
         BigDecimal convertedAmount = currencyConverter.convert(validSenderAccountBic, command.transactionAmount());
         receiverAccount.deposit(convertedAmount);
-        accountRepository.update(receiverAccount);
+        accountRepository.save(receiverAccount);
         transactionRepository.insert(receiverAccount.getId(), new Transaction(transactionId, currentDate, convertedAmount, command.senderAccountIdentifier(), command.senderAccountBic(), command.senderAccountName(), command.reason()));
 
     }

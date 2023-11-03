@@ -49,7 +49,7 @@ public class TransferMoney {
                 .orElseThrow(() -> new UnknownBeneficiaryException(command.receiverAccountIdentifier()));
         transactionRepository.insert(senderAccount.getId(), senderAccount.recordWithdrawalTransaction(senderTransactionId, creationDate, command.transactionAmount(), command.receiverAccountIdentifier(), new Bic(beneficiary.getBic()), beneficiary.getName(), command.reason()));
         if (beneficiary.isInDifferentBank(bankBic)) {
-            accountRepository.update(senderAccount);
+            accountRepository.save(senderAccount);
             Transaction transaction = new Transaction(receiverTransactionId, creationDate, command.transactionAmount(), senderAccount.getIban(), bankBic.value(), currentCustomer.fullName(), command.reason());
             externalBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
             return;
@@ -58,7 +58,7 @@ public class TransferMoney {
                 .orElseThrow(throwUnknownAccountException(command.receiverAccountIdentifier()));
 
         receiverAccount.deposit(command.transactionAmount());
-        accountRepository.update(senderAccount, receiverAccount);
+        accountRepository.save(senderAccount, receiverAccount);
         transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(receiverTransactionId, creationDate, command.transactionAmount(), senderAccount.getIban(), bankBic, currentCustomer.fullName(), command.reason()));
     }
 

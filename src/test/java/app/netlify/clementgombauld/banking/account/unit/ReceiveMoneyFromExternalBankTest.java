@@ -56,7 +56,7 @@ class ReceiveMoneyFromExternalBankTest {
         String reason = "a reason";
 
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(receiverAccountIban))
                 .build()
@@ -98,7 +98,7 @@ class ReceiveMoneyFromExternalBankTest {
         String bic = "AGRIFRPP989";
         String reason = "a reason";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(receiverAccountIban))
                 .build()
@@ -138,7 +138,7 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountBic = "ACMEUS331";
         String bic = "AGRIFRPP989";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(receiverAccountIban))
                 .build()
@@ -162,7 +162,7 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountBic = "ACMEUS33123";
         String bic = "AGRIFRPP989";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(receiverAccountIban))
                 .build()
@@ -184,7 +184,7 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountBic = "ACMEUS33123";
         String bic = "AGRIFRPP989";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(receiverAccountIban))
                 .build()
@@ -207,7 +207,7 @@ class ReceiveMoneyFromExternalBankTest {
         String senderAccountBic = "AGRIFRPP989";
         String bic = "AGRIFRPP989";
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(receiverAccountIban))
                 .build()
@@ -247,7 +247,7 @@ class ReceiveMoneyFromExternalBankTest {
         String bic = "AGRIFRPP989";
 
 
-        accountRepository.update(new Account.Builder()
+        accountRepository.save(new Account.Builder()
                 .withId(accountId)
                 .withIban(new Iban(receiverAccountIban))
                 .build()
