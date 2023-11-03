@@ -21,13 +21,7 @@ public class MySqlAccountRepository implements AccountRepository {
 
     @Override
     public Optional<Account> findByIban(String iban) {
-        return jpaAccountRepository.findByIban(iban).map(a -> new Account.Builder()
-                .withId(a.getId())
-                .withCustomerId(a.getCustomerId())
-                .withBalance(a.getBalance())
-                .withCreatedOn(a.getCreatedOn())
-                .withIban(new Iban(a.getIban()))
-                .build());
+        return jpaAccountRepository.findByIban(iban).map(this::toDomain);
     }
 
     @Override
@@ -37,15 +31,7 @@ public class MySqlAccountRepository implements AccountRepository {
 
     @Override
     public void insert(Account account) {
-        jpaAccountRepository.save(
-                new JpaAccountEntity(
-                        account.getId(),
-                        account.getCustomerId(),
-                        account.getIban(),
-                        account.getBalance(),
-                        account.getCreationDate()
-                )
-        );
+        jpaAccountRepository.save(toJpa(account));
     }
 
     @Override
@@ -61,5 +47,25 @@ public class MySqlAccountRepository implements AccountRepository {
     @Override
     public void deleteById(String id) {
 
+    }
+
+    private JpaAccountEntity toJpa(Account account) {
+        return new JpaAccountEntity(
+                account.getId(),
+                account.getCustomerId(),
+                account.getIban(),
+                account.getBalance(),
+                account.getCreationDate()
+        );
+    }
+
+    private Account toDomain(JpaAccountEntity jpaAccountEntity) {
+        return new Account.Builder()
+                .withId(jpaAccountEntity.getId())
+                .withCustomerId(jpaAccountEntity.getCustomerId())
+                .withBalance(jpaAccountEntity.getBalance())
+                .withCreatedOn(jpaAccountEntity.getCreatedOn())
+                .withIban(new Iban(jpaAccountEntity.getIban()))
+                .build();
     }
 }
