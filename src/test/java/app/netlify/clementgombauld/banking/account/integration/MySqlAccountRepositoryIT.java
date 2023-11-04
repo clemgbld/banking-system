@@ -146,5 +146,35 @@ public class MySqlAccountRepositoryIT {
 
     }
 
+    @Test
+    void shouldBeAbleToFindAnAccountByCustomerId() {
+        String accountId = "9707";
+        String customerId = "24362346423";
+        String iban = "FR5030004000700000157389538";
+        BigDecimal balance = new BigDecimal("8.00");
+        Instant creationDate = Instant.ofEpochSecond(CURRENT_DATE_IN_S);
+
+        accountRepository.save(new Account.Builder()
+                .withId(accountId)
+                .withCustomerId(customerId)
+                .withIban(new Iban(iban))
+                .withCreatedOn(creationDate)
+                .withBalance(balance)
+                .build());
+
+        Optional<Account> account = accountRepository.findByCustomerId(customerId);
+
+        assertThat(account.isPresent()).isTrue();
+        assertThat(account.get()).isEqualTo(
+                new Account.Builder()
+                        .withId(accountId)
+                        .withCustomerId(customerId)
+                        .withIban(new Iban(iban))
+                        .withCreatedOn(creationDate)
+                        .withBalance(balance)
+                        .build());
+
+    }
+
 
 }

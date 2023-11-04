@@ -27,7 +27,7 @@ public class MySqlAccountRepository implements AccountRepository {
 
     @Override
     public Optional<Account> findByCustomerId(String customerId) {
-        return Optional.empty();
+        return jpaAccountRepository.findByCustomerId(customerId).map(this::toDomain);
     }
 
 

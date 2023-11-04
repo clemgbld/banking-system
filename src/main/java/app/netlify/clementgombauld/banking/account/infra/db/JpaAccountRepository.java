@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface JpaAccountRepository extends JpaRepository<JpaAccountEntity, String> {
     Optional<JpaAccountEntity> findByIban(String iban);
+
+    Optional<JpaAccountEntity> findByCustomerId(String customerId);
 }
