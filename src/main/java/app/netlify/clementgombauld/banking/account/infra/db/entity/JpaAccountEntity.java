@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "account")
@@ -24,6 +25,9 @@ public class JpaAccountEntity {
 
     @Column(name = "created_on", columnDefinition = "TIMESTAMP")
     private Instant createdOn;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<JpaBeneficiaryEntity> beneficiaries;
 
 
     public JpaAccountEntity(String id, String customerId, String iban, BigDecimal balance, Instant createdOn) {
@@ -56,5 +60,13 @@ public class JpaAccountEntity {
 
     public Instant getCreatedOn() {
         return createdOn;
+    }
+
+    public List<JpaBeneficiaryEntity> getBeneficiaries() {
+        return beneficiaries;
+    }
+
+    public void setBeneficiaries(List<JpaBeneficiaryEntity> beneficiaries) {
+        this.beneficiaries = beneficiaries;
     }
 }
