@@ -107,5 +107,30 @@ public class MySqlBeneficiaryRepositoryIT {
         );
     }
 
+    @Test
+    void shouldDeleteABeneficiaryByItsAccountIdAndIban() {
+        String accountId = "1";
+        String id = "235452";
+        Iban iban = new Iban("FR7630066100410001057380116");
+        Bic bic = new Bic("AGRIFRPP989");
+        String name = "Arsene Lupin";
+
+        beneficiaryRepository.insert(accountId, new Beneficiary(
+                id,
+                iban,
+                bic,
+                name
+        ));
+
+        beneficiaryRepository.delete(accountId, iban.value());
+
+        Optional<Beneficiary> beneficiary = beneficiaryRepository.findByAccountIdAndIban(accountId, iban.value());
+
+        assertThat(beneficiary.isEmpty()).isTrue();
+        assertThat(accountRepository.findByIban("FR1420041010050500013M02606").isPresent()).isTrue();
+
+
+    }
+
 
 }

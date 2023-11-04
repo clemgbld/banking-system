@@ -33,7 +33,7 @@ public class MySqlBeneficiaryRepository implements BeneficiaryRepository {
 
     @Override
     public void delete(String accountId, String iban) {
-
+        jpaBeneficiaryRepository.deleteByAccountIdAndIban(accountId, iban);
     }
 
     private Beneficiary toDomain(JpaBeneficiaryEntity jpaBeneficiaryEntity) {

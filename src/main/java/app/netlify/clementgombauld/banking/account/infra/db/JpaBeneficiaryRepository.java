@@ -25,4 +25,12 @@ public interface JpaBeneficiaryRepository extends JpaRepository<JpaBeneficiaryEn
 
     @Query("SELECT b FROM JpaBeneficiaryEntity b WHERE b.account.id = :accountId AND b.iban = :iban")
     Optional<JpaBeneficiaryEntity> findByAccountIdAndIban(@Param("accountId") String accountId, @Param("iban") String iban);
+
+    @Modifying
+    @Query("DELETE FROM JpaBeneficiaryEntity b WHERE b.account.id = :accountId AND b.iban = :iban")
+    @Transactional
+    void deleteByAccountIdAndIban(
+            @Param("accountId") String accountId,
+            @Param("iban") String iban
+    );
 }
