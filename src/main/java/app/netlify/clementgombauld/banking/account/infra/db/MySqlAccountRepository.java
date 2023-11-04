@@ -7,6 +7,7 @@ import app.netlify.clementgombauld.banking.account.infra.db.entity.JpaAccountEnt
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Repository
@@ -31,8 +32,10 @@ public class MySqlAccountRepository implements AccountRepository {
 
 
     @Override
-    public void save(Account... account) {
-        
+    public void save(Account... accounts) {
+        jpaAccountRepository.saveAll(Arrays.stream(accounts)
+                .map(this::toJpa)
+                .toList());
     }
 
     @Override
@@ -42,7 +45,7 @@ public class MySqlAccountRepository implements AccountRepository {
 
     @Override
     public void deleteById(String id) {
-
+        jpaAccountRepository.deleteById(id);
     }
 
     private JpaAccountEntity toJpa(Account account) {

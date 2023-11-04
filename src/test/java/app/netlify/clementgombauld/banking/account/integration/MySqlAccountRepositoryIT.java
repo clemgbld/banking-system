@@ -81,5 +81,70 @@ public class MySqlAccountRepositoryIT {
         );
     }
 
+    @Test
+    void shouldDeleteAnAccount() {
+        String accountId = "5";
+        String customerId = "6";
+        String iban = "FR5030004000700000157389538";
+        BigDecimal balance = new BigDecimal("8.00");
+        Instant creationDate = Instant.ofEpochSecond(CURRENT_DATE_IN_S);
+
+        accountRepository.save(new Account.Builder()
+                .withId(accountId)
+                .withCustomerId(customerId)
+                .withIban(new Iban(iban))
+                .withCreatedOn(creationDate)
+                .withBalance(balance)
+                .build());
+
+        accountRepository.deleteById(accountId);
+
+        Optional<Account> account = accountRepository.findByIban(iban);
+
+        assertThat(account.isEmpty()).isTrue();
+
+
+    }
+
+    @Test
+    void shouldBeAbleToSaveMultipleAccountInOneRow() {
+        accountRepository.save(new Account.Builder()
+                .withId("5")
+                .withCustomerId("6")
+                .withIban(new Iban("FR5030004000700000157389538"))
+                .withCreatedOn(Instant.ofEpochSecond(CURRENT_DATE_IN_S))
+                .withBalance(new BigDecimal("8.00"))
+                .build(), new Account.Builder()
+                .withId("23542")
+                .withCustomerId("13121343")
+                .withIban(new Iban("FR7630066100410001057380116"))
+                .withCreatedOn(Instant.ofEpochSecond(CURRENT_DATE_IN_S))
+                .withBalance(new BigDecimal("5.00"))
+                .build());
+
+        Optional<Account> account1 = accountRepository.findByIban("FR5030004000700000157389538");
+
+        Optional<Account> account2 = accountRepository.findByIban("FR7630066100410001057380116");
+
+        assertThat(account1.isPresent()).isTrue();
+        assertThat(account1.get()).isEqualTo(new Account.Builder()
+                .withId("5")
+                .withCustomerId("6")
+                .withIban(new Iban("FR5030004000700000157389538"))
+                .withCreatedOn(Instant.ofEpochSecond(CURRENT_DATE_IN_S))
+                .withBalance(new BigDecimal("8.00"))
+                .build());
+
+        assertThat(account2.isPresent()).isTrue();
+        assertThat(account2.get()).isEqualTo(new Account.Builder()
+                .withId("23542")
+                .withCustomerId("13121343")
+                .withIban(new Iban("FR7630066100410001057380116"))
+                .withCreatedOn(Instant.ofEpochSecond(CURRENT_DATE_IN_S))
+                .withBalance(new BigDecimal("5.00"))
+                .build());
+
+    }
+
 
 }
