@@ -25,6 +25,7 @@ public class JpaAccountEntity {
     @Column(name = "created_on", columnDefinition = "TIMESTAMP")
     private Instant createdOn;
 
+
     public JpaAccountEntity(String id, String customerId, String iban, BigDecimal balance, Instant createdOn) {
         this.id = id;
         this.customerId = customerId;
