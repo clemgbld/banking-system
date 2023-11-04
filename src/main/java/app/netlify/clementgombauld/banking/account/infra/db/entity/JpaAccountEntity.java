@@ -65,8 +65,5 @@ public class JpaAccountEntity {
     public List<JpaBeneficiaryEntity> getBeneficiaries() {
         return beneficiaries;
     }
-
-    public void setBeneficiaries(List<JpaBeneficiaryEntity> beneficiaries) {
-        this.beneficiaries = beneficiaries;
-    }
+    
 }
