@@ -49,11 +49,4 @@ public class JpaBeneficiaryEntity {
         return name;
     }
 
-    public JpaAccountEntity getAccount() {
-        return account;
-    }
-
-    public void setAccount(JpaAccountEntity account) {
-        this.account = account;
-    }
 }

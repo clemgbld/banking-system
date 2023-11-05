@@ -52,30 +52,6 @@ public class JpaTransactionEntity {
         return id;
     }
 
-    public Instant getCreationDate() {
-        return creationDate;
-    }
-
-    public BigDecimal getTransactionAmount() {
-        return transactionAmount;
-    }
-
-    public String getAccountIdentifier() {
-        return accountIdentifier;
-    }
-
-    public String getBic() {
-        return bic;
-    }
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

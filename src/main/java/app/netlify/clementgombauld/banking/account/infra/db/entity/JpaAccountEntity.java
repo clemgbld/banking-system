@@ -65,11 +65,5 @@ public class JpaAccountEntity {
         return createdOn;
     }
 
-    public List<JpaBeneficiaryEntity> getBeneficiaries() {
-        return beneficiaries;
-    }
 
-    public List<JpaTransactionEntity> getTransactions() {
-        return transactions;
-    }
 }
