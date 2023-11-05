@@ -1,12 +1,10 @@
 package app.netlify.clementgombauld.banking.account.infra.db.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "transaction")
@@ -16,7 +14,7 @@ public class JpaTransactionEntity {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "creation_date")
+    @Column(name = "creation_date", columnDefinition = "TIMESTAMP")
     private Instant creationDate;
 
     @Column(name = "transaction_amount")
@@ -33,6 +31,9 @@ public class JpaTransactionEntity {
 
     @Column(name = "reason")
     private String reason;
+
+    @ManyToOne
+    private JpaAccountEntity account;
 
     public JpaTransactionEntity() {
     }
@@ -73,5 +74,30 @@ public class JpaTransactionEntity {
 
     public String getReason() {
         return reason;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JpaTransactionEntity that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(creationDate, that.creationDate) && Objects.equals(transactionAmount, that.transactionAmount) && Objects.equals(accountIdentifier, that.accountIdentifier) && Objects.equals(bic, that.bic) && Objects.equals(accountName, that.accountName) && Objects.equals(reason, that.reason);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, creationDate, transactionAmount, accountIdentifier, bic, accountName, reason);
+    }
+
+    @Override
+    public String toString() {
+        return "JpaTransactionEntity{" +
+                "id='" + id + '\'' +
+                ", creationDate=" + creationDate +
+                ", transactionAmount=" + transactionAmount +
+                ", accountIdentifier='" + accountIdentifier + '\'' +
+                ", bic='" + bic + '\'' +
+                ", accountName='" + accountName + '\'' +
+                ", reason='" + reason + '\'' +
+                '}';
     }
 }

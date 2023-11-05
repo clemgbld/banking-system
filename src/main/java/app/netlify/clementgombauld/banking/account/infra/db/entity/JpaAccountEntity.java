@@ -29,6 +29,9 @@ public class JpaAccountEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<JpaBeneficiaryEntity> beneficiaries;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<JpaTransactionEntity> transactions;
+
 
     public JpaAccountEntity(String id, String customerId, String iban, BigDecimal balance, Instant createdOn) {
         this.id = id;
@@ -65,5 +68,8 @@ public class JpaAccountEntity {
     public List<JpaBeneficiaryEntity> getBeneficiaries() {
         return beneficiaries;
     }
-    
+
+    public List<JpaTransactionEntity> getTransactions() {
+        return transactions;
+    }
 }

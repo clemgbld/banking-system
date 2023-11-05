@@ -2,6 +2,8 @@ package app.netlify.clementgombauld.banking.account.integration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.infra.db.JpaTransactionRepository;
+import app.netlify.clementgombauld.banking.account.infra.db.entity.JpaTransactionEntity;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -13,6 +15,9 @@ import org.testcontainers.utility.MountableFile;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Testcontainers
@@ -53,6 +58,7 @@ public class MySqlTransactionRepositoryIT {
 
     }
 
+    @Test
     void shouldInsertATransaction() {
         String accountId = "1";
         String customerId = "5";
@@ -72,11 +78,17 @@ public class MySqlTransactionRepositoryIT {
         Instant creationDate = Instant.ofEpochSecond(CURRENT_DATE_IN_S);
         BigDecimal transactionAmount = new BigDecimal("5.00");
         String accountIdentifier = "FR7630066100410001057380116";
-        String bic = "";
+        String bic = "AGRIFRPP989";
         String accountName = "Arsene Lupin";
         String reason = "shopping";
 
         transactionRepository.insert(accountId, new Transaction(id, creationDate, transactionAmount, accountIdentifier, bic, accountName, reason));
+
+        Optional<JpaTransactionEntity> actualJpaTransactionEntity = jpaTransactionRepository.findById(id);
+
+        assertThat(actualJpaTransactionEntity.isPresent()).isTrue();
+        assertThat(actualJpaTransactionEntity.get()).isEqualTo(new JpaTransactionEntity(id, creationDate, transactionAmount, accountIdentifier, bic, accountName, reason));
+        accountRepository.deleteById(accountId);
 
 
     }
