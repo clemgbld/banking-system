@@ -1,5 +1,6 @@
 package app.netlify.clementgombauld.banking.identityaccess.configuration;
 
+import app.netlify.clementgombauld.banking.identityaccess.domain.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,9 +31,10 @@ public class SecurityConfiguration {
         return http
                 .authorizeHttpRequests(r -> r.requestMatchers("/api/v1/auth/**")
                         .permitAll()
+                        .requestMatchers("api/v1/account/receive")
+                        .permitAll()
                         .anyRequest()
-                        .authenticated()
-
+                        .hasRole(Role.ADMIN.name())
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
