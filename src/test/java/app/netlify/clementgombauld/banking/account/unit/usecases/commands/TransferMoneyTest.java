@@ -1,9 +1,9 @@
-package app.netlify.clementgombauld.banking.account.unit;
+package app.netlify.clementgombauld.banking.account.unit.usecases.commands;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
-import app.netlify.clementgombauld.banking.account.usecases.TransferMoney;
+import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMoney;
 import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMoneyCommand;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;

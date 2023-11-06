@@ -5,7 +5,7 @@ import app.netlify.clementgombauld.banking.account.rest.account.AccountControlle
 import app.netlify.clementgombauld.banking.account.rest.account.in.CloseAccountRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyFromExternalBankRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
-import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
+import app.netlify.clementgombauld.banking.account.usecases.commands.OpenAccount;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;

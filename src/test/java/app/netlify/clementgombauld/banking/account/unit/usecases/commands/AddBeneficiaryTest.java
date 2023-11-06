@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account.unit;
+package app.netlify.clementgombauld.banking.account.unit.usecases.commands;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.*;
@@ -7,7 +7,7 @@ import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryBenefic
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.usecases.commands.AddBeneficiaryCommand;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
-import app.netlify.clementgombauld.banking.account.usecases.AddBeneficiary;
+import app.netlify.clementgombauld.banking.account.usecases.commands.AddBeneficiary;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

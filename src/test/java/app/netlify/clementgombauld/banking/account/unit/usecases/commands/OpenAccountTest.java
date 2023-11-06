@@ -1,10 +1,10 @@
-package app.netlify.clementgombauld.banking.account.unit;
+package app.netlify.clementgombauld.banking.account.unit.usecases.commands;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.AccountAlreadyOpenedException;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
-import app.netlify.clementgombauld.banking.account.usecases.OpenAccount;
+import app.netlify.clementgombauld.banking.account.usecases.commands.OpenAccount;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;

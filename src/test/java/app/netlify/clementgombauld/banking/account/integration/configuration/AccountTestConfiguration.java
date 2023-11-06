@@ -2,7 +2,7 @@ package app.netlify.clementgombauld.banking.account.integration.configuration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
-import app.netlify.clementgombauld.banking.account.usecases.*;
+import app.netlify.clementgombauld.banking.account.usecases.commands.*;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;

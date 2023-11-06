@@ -1,4 +1,4 @@
-package app.netlify.clementgombauld.banking.account.usecases;
+package app.netlify.clementgombauld.banking.account.usecases.commands;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.SameBankException;
