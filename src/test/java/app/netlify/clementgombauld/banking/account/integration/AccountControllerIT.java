@@ -195,5 +195,28 @@ public class AccountControllerIT {
 
     }
 
+    @Test
+    void shouldGetAccountOverviewWithoutLimit() throws Exception {
+        ResultActions result = mockMvc.perform(get("/api/v1/account/overview")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        String accountOverviewString = result.andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(accountOverviewString).isEqualTo(jsonMapper.writeValueAsString(
+                new AccountOverviewDto("John", "Smith", "0500013M026", new BigDecimal("5.00"), List.of(
+                        new TransactionDto(
+                                "Michel Baumont",
+                                95345000L,
+                                new BigDecimal("6.00"),
+                                "shopping"
+                        )
+                ))
+        ));
+
+    }
+
 
 }

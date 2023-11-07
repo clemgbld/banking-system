@@ -68,7 +68,7 @@ public class AccountController {
     }
 
     @GetMapping("/overview")
-    public ResponseEntity<AccountOverviewDto> getAccountOverview(@RequestParam Integer limit) {
+    public ResponseEntity<AccountOverviewDto> getAccountOverview(@RequestParam(required = false) Integer limit) {
         AccountOverviewDto accountOverview = getAccountOverview.handle(limit);
         return ResponseEntity.ok(accountOverview);
     }
