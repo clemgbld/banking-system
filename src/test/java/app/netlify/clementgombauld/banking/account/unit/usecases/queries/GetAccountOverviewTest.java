@@ -68,6 +68,46 @@ public class GetAccountOverviewTest {
         ));
     }
 
+    @Test
+    void shouldHaveADefaultLimitWhenThereIsNone() {
+        String customerId = "56";
+        String firstName = "John";
+        String lastName = "Smith";
+        String iban = "FR1420041010050500013M02606";
+        String accountNumber = "0500013M026";
+        String accountName = "Michel Baumont";
+        BigDecimal balance = new BigDecimal("5.00");
+        String reason = "shopping";
+        Integer limit = null;
+        Instant creationDate = Instant.ofEpochSecond(95345L);
+        List<TransactionDto> transactionsDTO = List.of(
+                new TransactionDto(
+                        accountName,
+                        creationDate,
+                        new BigDecimal("5.00"),
+                        reason
+                )
+        );
+
+        GetAccountOverview getAccountOverview = buildGetAccountOverview(new Customer(customerId, firstName, lastName), new AccountWithTransactionsDto(
+                iban,
+                balance,
+                transactionsDTO
+        ), new GetAccountOverviewQuery(customerId, 3));
+
+
+        AccountOverviewDto actualAccountOverviewDto = getAccountOverview.handle(limit);
+
+
+        assertThat(actualAccountOverviewDto).isEqualTo(new AccountOverviewDto(
+                firstName,
+                lastName,
+                accountNumber,
+                balance,
+                transactionsDTO
+        ));
+    }
+
     private GetAccountOverview buildGetAccountOverview(Customer customer, AccountWithTransactionsDto accountWithTransactionsDto, GetAccountOverviewQuery getAccountOverviewQuery) {
         AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(customer);
         QueryExecutor queryExecutor = new InMemoryQueryExecutor(

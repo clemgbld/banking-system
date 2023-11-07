@@ -10,8 +10,11 @@ import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverv
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import org.iban4j.Iban;
 
+import java.util.Objects;
+
 public class GetAccountOverview {
 
+    private static final int DEFAULT_LIMIT = 3;
     private final AuthenticationGateway authenticationGateway;
 
     private final QueryExecutor queryExecutor;
@@ -21,12 +24,12 @@ public class GetAccountOverview {
         this.queryExecutor = queryExecutor;
     }
 
-    public AccountOverviewDto handle(int limit) {
+    public AccountOverviewDto handle(Integer limit) {
         Customer customer = authenticationGateway.currentCustomer().orElseThrow(NoCurrentCustomerException::new);
 
         AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery(
                         customer.getId(),
-                        limit
+                        Objects.isNull(limit) ? DEFAULT_LIMIT : limit
                 ))
                 .orElseThrow(() -> new UnknownAccountWithCustomerId(customer.getId()));
 
