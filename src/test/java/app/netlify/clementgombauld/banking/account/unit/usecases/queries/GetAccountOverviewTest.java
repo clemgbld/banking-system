@@ -78,7 +78,6 @@ public class GetAccountOverviewTest {
         String accountName = "Michel Baumont";
         BigDecimal balance = new BigDecimal("5.00");
         String reason = "shopping";
-        Integer limit = null;
         Instant creationDate = Instant.ofEpochSecond(95345L);
         List<TransactionDto> transactionsDTO = List.of(
                 new TransactionDto(
@@ -96,7 +95,7 @@ public class GetAccountOverviewTest {
         ), new GetAccountOverviewQuery(customerId, 3));
 
 
-        AccountOverviewDto actualAccountOverviewDto = getAccountOverview.handle(limit);
+        AccountOverviewDto actualAccountOverviewDto = getAccountOverview.handle(null);
 
 
         assertThat(actualAccountOverviewDto).isEqualTo(new AccountOverviewDto(
