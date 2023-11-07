@@ -22,7 +22,7 @@ public class GetAccountOverview {
     public AccountOverviewDto handle(int limit) {
         Customer customer = authenticationGateway.currentCustomer().orElseThrow();
 
-        AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new AccountQuery(
+        AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery(
                         customer.getId(),
                         limit
                 ))

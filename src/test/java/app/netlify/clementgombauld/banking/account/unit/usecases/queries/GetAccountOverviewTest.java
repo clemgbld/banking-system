@@ -8,7 +8,7 @@ import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithT
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryAuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.InMemoryQueryExecutor;
-import app.netlify.clementgombauld.banking.account.usecases.queries.AccountQuery;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ public class GetAccountOverviewTest {
 
 
     @Test
-    void shouldGetAccountOverviewTest() {
+    void shouldGetAccountOverview() {
         String customerId = "56";
         String firstName = "John";
         String lastName = "Smith";
@@ -45,20 +45,12 @@ public class GetAccountOverviewTest {
                 )
         );
 
-        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(new Customer(customerId, firstName, lastName));
 
-        QueryExecutor queryExecutor = new InMemoryQueryExecutor(
-                Map.of(
-                        new AccountQuery(customerId, limit),
-                        new AccountWithTransactionsDto(
-                                iban,
-                                balance,
-                                transactionsDTO
-                        )
-                )
-        );
-
-        GetAccountOverview getAccountOverview = new GetAccountOverview(authenticationGateway, queryExecutor);
+        GetAccountOverview getAccountOverview = buildGetAccountOverview(new Customer(customerId, firstName, lastName), new AccountWithTransactionsDto(
+                iban,
+                balance,
+                transactionsDTO
+        ), new GetAccountOverviewQuery(customerId, limit));
 
 
         AccountOverviewDto actualAccountOverviewDto = getAccountOverview.handle(limit);
@@ -72,5 +64,17 @@ public class GetAccountOverviewTest {
                 transactionsDTO
         ));
     }
+
+    private GetAccountOverview buildGetAccountOverview(Customer customer, AccountWithTransactionsDto accountWithTransactionsDto, GetAccountOverviewQuery getAccountOverviewQuery) {
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(customer);
+        QueryExecutor queryExecutor = new InMemoryQueryExecutor(
+                Map.of(
+                        getAccountOverviewQuery,
+                        accountWithTransactionsDto
+                )
+        );
+        return new GetAccountOverview(authenticationGateway, queryExecutor);
+    }
+
 
 }
