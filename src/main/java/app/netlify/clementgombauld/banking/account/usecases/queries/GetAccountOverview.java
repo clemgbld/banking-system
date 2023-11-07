@@ -4,6 +4,8 @@ import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.domain.Customer;
 
 import app.netlify.clementgombauld.banking.account.domain.QueryExecutor;
+import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownAccountWithCustomerId;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import org.iban4j.Iban;
@@ -20,13 +22,13 @@ public class GetAccountOverview {
     }
 
     public AccountOverviewDto handle(int limit) {
-        Customer customer = authenticationGateway.currentCustomer().orElseThrow();
+        Customer customer = authenticationGateway.currentCustomer().orElseThrow(NoCurrentCustomerException::new);
 
         AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery(
                         customer.getId(),
                         limit
                 ))
-                .orElseThrow();
+                .orElseThrow(() -> new UnknownAccountWithCustomerId(customer.getId()));
 
         Iban iban = Iban.valueOf(accountWithTransactionsDto.iban());
 

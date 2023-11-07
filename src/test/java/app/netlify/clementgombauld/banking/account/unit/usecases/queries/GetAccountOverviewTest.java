@@ -3,6 +3,8 @@ package app.netlify.clementgombauld.banking.account.unit.usecases.queries;
 import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.domain.Customer;
 import app.netlify.clementgombauld.banking.account.domain.QueryExecutor;
+import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownAccountWithCustomerId;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class GetAccountOverviewTest {
 
@@ -74,6 +77,31 @@ public class GetAccountOverviewTest {
                 )
         );
         return new GetAccountOverview(authenticationGateway, queryExecutor);
+    }
+
+    @Test
+    void shouldThrowWhenThereIsNoCurrentCustomer() {
+        GetAccountOverview getAccountOverview = buildGetAccountOverview(null, new AccountWithTransactionsDto(
+                "",
+                new BigDecimal("5.00"),
+                List.of()
+        ), new GetAccountOverviewQuery("5", 3));
+        assertThatThrownBy(() -> getAccountOverview.handle(3))
+                .isInstanceOf(NoCurrentCustomerException.class)
+                .hasMessage("No current customer authenticated.");
+    }
+
+    @Test
+    void shouldThrowWhenThereIsNoAccountFond() {
+        String customerId = "7";
+        GetAccountOverview getAccountOverview = buildGetAccountOverview(new Customer(customerId, "John", "Smith"), new AccountWithTransactionsDto(
+                "",
+                new BigDecimal("5.00"),
+                List.of()
+        ), new GetAccountOverviewQuery("5", 3));
+        assertThatThrownBy(() -> getAccountOverview.handle(3))
+                .isInstanceOf(UnknownAccountWithCustomerId.class)
+                .hasMessage("There is no account with the customerId: " + customerId);
     }
 
 
