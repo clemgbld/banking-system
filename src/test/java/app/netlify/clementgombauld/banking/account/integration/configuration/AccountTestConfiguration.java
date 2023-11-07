@@ -1,8 +1,12 @@
 package app.netlify.clementgombauld.banking.account.integration.configuration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
+import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
+import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.commands.*;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;
@@ -151,6 +155,26 @@ public class AccountTestConfiguration {
                 new InMemoryCountryGateway(Map.of("FR", "EUR")),
                 new InMemoryCurrencyGateway(Map.of("USD", Map.of("EUR", new BigDecimal(1))))
         );
+    }
+
+    @Bean
+    GetAccountOverview accountOverview() {
+        String customerId = "235432";
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(new Customer(customerId, "John", "Smith"));
+        QueryExecutor queryExecutor = new InMemoryQueryExecutor(Map.of(
+                new GetAccountOverviewQuery(customerId, 3),
+                new AccountWithTransactionsDto(
+                        "FR1420041010050500013M02606",
+                        new BigDecimal("5.00"),
+                        List.of(new TransactionDto(
+                                "Michel Baumont",
+                                95345000L,
+                                new BigDecimal("6.00"),
+                                "shopping"
+                        ))
+                )
+        ));
+        return new GetAccountOverview(authenticationGateway, queryExecutor);
     }
 
 

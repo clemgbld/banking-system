@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.rest.account;
 import app.netlify.clementgombauld.banking.account.rest.account.in.CloseAccountRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyFromExternalBankRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
+import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
 import app.netlify.clementgombauld.banking.account.usecases.commands.CloseAccount;
 import app.netlify.clementgombauld.banking.account.usecases.commands.OpenAccount;
 import app.netlify.clementgombauld.banking.account.usecases.commands.ReceiveMoneyFromExternalBank;
@@ -10,14 +11,12 @@ import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMon
 import app.netlify.clementgombauld.banking.account.usecases.commands.CloseAccountCommand;
 import app.netlify.clementgombauld.banking.account.usecases.commands.ReceiveMoneyFromExternalBankCommand;
 import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMoneyCommand;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -30,12 +29,15 @@ public class AccountController {
 
     private final ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank;
 
+    private final GetAccountOverview getAccountOverview;
+
     @Autowired
-    public AccountController(OpenAccount openAccount, CloseAccount closeAccount, TransferMoney transferMoney, ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank) {
+    public AccountController(OpenAccount openAccount, CloseAccount closeAccount, TransferMoney transferMoney, ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank, GetAccountOverview getAccountOverview) {
         this.openAccount = openAccount;
         this.closeAccount = closeAccount;
         this.transferMoney = transferMoney;
         this.receiveMoneyFromExternalBank = receiveMoneyFromExternalBank;
+        this.getAccountOverview = getAccountOverview;
     }
 
     @PostMapping("/open")
@@ -64,5 +66,12 @@ public class AccountController {
         receiveMoneyFromExternalBank.handle(command);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/overview")
+    public ResponseEntity<AccountOverviewDto> getAccountOverview(@RequestParam Integer limit) {
+        AccountOverviewDto accountOverview = getAccountOverview.handle(limit);
+        return ResponseEntity.ok(accountOverview);
+    }
+
 
 }

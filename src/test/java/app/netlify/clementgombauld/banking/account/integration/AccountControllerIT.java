@@ -5,6 +5,8 @@ import app.netlify.clementgombauld.banking.account.rest.account.AccountControlle
 import app.netlify.clementgombauld.banking.account.rest.account.in.CloseAccountRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyFromExternalBankRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
+import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
+import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.usecases.commands.OpenAccount;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -22,7 +24,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,6 +59,7 @@ public class AccountControllerIT {
         Mockito.verify(openAccount).handle();
 
         result.andExpect(status().isCreated());
+
 
     }
 
@@ -164,6 +170,29 @@ public class AccountControllerIT {
                 .getContentAsString();
 
         assertThat(error).isEqualTo(jsonMapper.writeValueAsString(new ErrorResponse("bic: A is invalid.", HttpStatus.BAD_REQUEST.value())));
+    }
+
+    @Test
+    void shouldGetAccountOverviewWithLimit() throws Exception {
+        ResultActions result = mockMvc.perform(get("/api/v1/account/overview?limit=3")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        String accountOverviewString = result.andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(accountOverviewString).isEqualTo(jsonMapper.writeValueAsString(
+                new AccountOverviewDto("John", "Smith", "0500013M026", new BigDecimal("5.00"), List.of(
+                        new TransactionDto(
+                                "Michel Baumont",
+                                95345000L,
+                                new BigDecimal("6.00"),
+                                "shopping"
+                        )
+                ))
+        ));
+
     }
 
 

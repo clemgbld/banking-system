@@ -36,7 +36,7 @@ public class GetAccountOverviewTest {
         String accountName = "Michel Baumont";
         BigDecimal balance = new BigDecimal("5.00");
         String reason = "shopping";
-        Instant creationDate = Instant.ofEpochSecond(95345L);
+        long creationDate = 95345000L;
         int limit = 5;
 
         List<TransactionDto> transactionsDTO = List.of(
@@ -78,7 +78,8 @@ public class GetAccountOverviewTest {
         String accountName = "Michel Baumont";
         BigDecimal balance = new BigDecimal("5.00");
         String reason = "shopping";
-        Instant creationDate = Instant.ofEpochSecond(95345L);
+        long creationDate = creationDate = 95345000L;
+        ;
         List<TransactionDto> transactionsDTO = List.of(
                 new TransactionDto(
                         accountName,
