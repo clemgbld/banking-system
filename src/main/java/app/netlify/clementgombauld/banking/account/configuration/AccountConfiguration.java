@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.account.configuration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.usecases.commands.*;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -52,6 +53,11 @@ public class AccountConfiguration {
     @Bean
     public TransferMoney transferMoney(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository, TransactionRepository transactionRepository, DateProvider dateProvider, IdGenerator idGenerator, ExternalBankTransactionsGateway externalBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
         return new TransferMoney(accountRepository, beneficiaryRepository, transactionRepository, dateProvider, idGenerator, externalBankTransactionsGateway, authenticationGateway);
+    }
+
+    @Bean
+    public GetAccountOverview getAccountOverview(AuthenticationGateway authenticationGateway, QueryExecutor queryExecutor) {
+        return new GetAccountOverview(authenticationGateway, queryExecutor);
     }
 
 
