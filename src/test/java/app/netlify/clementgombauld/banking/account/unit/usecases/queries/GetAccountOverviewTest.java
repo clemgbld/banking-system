@@ -28,6 +28,7 @@ public class GetAccountOverviewTest {
 
     @Test
     void shouldGetAccountOverview() {
+        String transactionId = "2534212";
         String customerId = "56";
         String firstName = "John";
         String lastName = "Smith";
@@ -41,6 +42,7 @@ public class GetAccountOverviewTest {
 
         List<TransactionDto> transactionsDTO = List.of(
                 new TransactionDto(
+                        transactionId,
                         accountName,
                         creationDate,
                         new BigDecimal("5.00"),
@@ -70,6 +72,7 @@ public class GetAccountOverviewTest {
 
     @Test
     void shouldHaveADefaultLimitWhenThereIsNone() {
+        String transactionId = "2534212";
         String customerId = "56";
         String firstName = "John";
         String lastName = "Smith";
@@ -78,10 +81,10 @@ public class GetAccountOverviewTest {
         String accountName = "Michel Baumont";
         BigDecimal balance = new BigDecimal("5.00");
         String reason = "shopping";
-        long creationDate = creationDate = 95345000L;
-        ;
+        long creationDate = 95345000L;
         List<TransactionDto> transactionsDTO = List.of(
                 new TransactionDto(
+                        transactionId,
                         accountName,
                         creationDate,
                         new BigDecimal("5.00"),

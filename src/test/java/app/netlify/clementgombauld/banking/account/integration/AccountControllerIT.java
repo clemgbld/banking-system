@@ -185,6 +185,7 @@ public class AccountControllerIT {
         assertThat(accountOverviewString).isEqualTo(jsonMapper.writeValueAsString(
                 new AccountOverviewDto("John", "Smith", "0500013M026", new BigDecimal("5.00"), List.of(
                         new TransactionDto(
+                                "234535",
                                 "Michel Baumont",
                                 95345000L,
                                 new BigDecimal("6.00"),
@@ -208,6 +209,7 @@ public class AccountControllerIT {
         assertThat(accountOverviewString).isEqualTo(jsonMapper.writeValueAsString(
                 new AccountOverviewDto("John", "Smith", "0500013M026", new BigDecimal("5.00"), List.of(
                         new TransactionDto(
+                                "234535",
                                 "Michel Baumont",
                                 95345000L,
                                 new BigDecimal("6.00"),

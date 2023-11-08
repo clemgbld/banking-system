@@ -167,6 +167,7 @@ public class AccountTestConfiguration {
                         "FR1420041010050500013M02606",
                         new BigDecimal("5.00"),
                         List.of(new TransactionDto(
+                                "234535",
                                 "Michel Baumont",
                                 95345000L,
                                 new BigDecimal("6.00"),
