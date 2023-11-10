@@ -42,7 +42,6 @@ public class MySqlQueryExecutorIT {
     @Autowired
     private JpaTransactionRepository jpaTransactionRepository;
 
-    private static final long CURRENT_DATE_IN_MS = 95345000L;
 
     @Container
     private static MySQLContainer<?> container = new MySQLContainer<>("mysql:8.0.26")
@@ -73,7 +72,7 @@ public class MySqlQueryExecutorIT {
         String customerId = "5";
         String iban = "FR1420041010050500013M02606";
         BigDecimal balance = new BigDecimal("7.00");
-        Instant createdOn = Instant.ofEpochMilli(CURRENT_DATE_IN_MS);
+        Instant createdOn = Instant.ofEpochMilli(95345000L);
 
         accountRepository.save(new Account.Builder()
                 .withId(accountId)
