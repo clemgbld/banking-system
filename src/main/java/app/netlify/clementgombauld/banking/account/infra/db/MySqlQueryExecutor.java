@@ -7,6 +7,7 @@ import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOv
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.iban4j.Iban;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -50,9 +51,14 @@ public class MySqlQueryExecutor implements QueryExecutor {
                 .orderBy(jpaTransactionEntity.creationDate.desc())
                 .limit(query.limit())
                 .fetch();
-        
+
         return accountWithTransactionsDtoList
                 .stream()
                 .findFirst();
+    }
+
+    @Override
+    public Optional<Iban> findIbanByCustomerId(String customerId) {
+        return Optional.empty();
     }
 }
