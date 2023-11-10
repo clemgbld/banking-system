@@ -106,11 +106,11 @@ public class MySqlQueryExecutorIT {
         String accountIdentifier2 = "DE89370400440532013000";
         String bic2 = "AGRIFRPP989";
         String accountName2 = "Michell Baumont";
-        String reason2 = null;
+
 
         beneficiaryRepository.insert(accountId, new Beneficiary("12", new Iban(accountIdentifier2), new Bic(bic2), accountName2));
 
-        transactionRepository.insert(accountId, new Transaction(id2, creationDate2, transactionAmount2, accountIdentifier2, bic2, accountName2, reason2));
+        transactionRepository.insert(accountId, new Transaction(id2, creationDate2, transactionAmount2, accountIdentifier2, bic2, accountName2, null));
 
 
     }
