@@ -2,9 +2,11 @@ package app.netlify.clementgombauld.banking.account.unit.inmemory;
 
 import app.netlify.clementgombauld.banking.account.domain.QueryExecutor;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
+import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import org.iban4j.Iban;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,5 +25,10 @@ public class InMemoryQueryExecutor implements QueryExecutor {
     @Override
     public Optional<Iban> findIbanByCustomerId(String customerId) {
         return Optional.ofNullable((Iban) store.get(customerId));
+    }
+
+    @Override
+    public List<BeneficiaryDto> findBeneficiariesByCustomerId(String customerId) {
+        return (List<BeneficiaryDto>) store.get(customerId);
     }
 }

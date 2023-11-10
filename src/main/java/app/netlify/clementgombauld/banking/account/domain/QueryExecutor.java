@@ -1,9 +1,11 @@
 package app.netlify.clementgombauld.banking.account.domain;
 
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
+import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import org.iban4j.Iban;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface QueryExecutor {
@@ -11,4 +13,6 @@ public interface QueryExecutor {
     Optional<AccountWithTransactionsDto> findAccountWithTransactionsByCustomerId(GetAccountOverviewQuery query);
 
     Optional<Iban> findIbanByCustomerId(String customerId);
+
+    List<BeneficiaryDto> findBeneficiariesByCustomerId(String customerId);
 }

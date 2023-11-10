@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.infra.db;
 import app.netlify.clementgombauld.banking.account.domain.QueryExecutor;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
+import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -69,5 +70,10 @@ public class MySqlQueryExecutor implements QueryExecutor {
                 .stream()
                 .findFirst()
                 .map(Iban::valueOf);
+    }
+
+    @Override
+    public List<BeneficiaryDto> findBeneficiariesByCustomerId(String customerId) {
+        return null;
     }
 }

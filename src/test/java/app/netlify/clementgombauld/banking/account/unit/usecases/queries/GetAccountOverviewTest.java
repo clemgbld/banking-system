@@ -15,7 +15,6 @@ import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOv
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -111,16 +110,6 @@ public class GetAccountOverviewTest {
         ));
     }
 
-    private GetAccountOverview buildGetAccountOverview(Customer customer, AccountWithTransactionsDto accountWithTransactionsDto, GetAccountOverviewQuery getAccountOverviewQuery) {
-        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(customer);
-        QueryExecutor queryExecutor = new InMemoryQueryExecutor(
-                Map.of(
-                        getAccountOverviewQuery,
-                        accountWithTransactionsDto
-                )
-        );
-        return new GetAccountOverview(authenticationGateway, queryExecutor);
-    }
 
     @Test
     void shouldThrowWhenThereIsNoCurrentCustomer() {
@@ -145,6 +134,17 @@ public class GetAccountOverviewTest {
         assertThatThrownBy(() -> getAccountOverview.handle(3))
                 .isInstanceOf(UnknownAccountWithCustomerId.class)
                 .hasMessage("There is no account with the customerId: " + customerId);
+    }
+
+    private GetAccountOverview buildGetAccountOverview(Customer customer, AccountWithTransactionsDto accountWithTransactionsDto, GetAccountOverviewQuery getAccountOverviewQuery) {
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(customer);
+        QueryExecutor queryExecutor = new InMemoryQueryExecutor(
+                Map.of(
+                        getAccountOverviewQuery,
+                        accountWithTransactionsDto
+                )
+        );
+        return new GetAccountOverview(authenticationGateway, queryExecutor);
     }
 
 
