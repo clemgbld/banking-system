@@ -2,6 +2,7 @@ package app.netlify.clementgombauld.banking.account.configuration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.usecases.commands.*;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountDetails;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
@@ -58,6 +59,11 @@ public class AccountConfiguration {
     @Bean
     public GetAccountOverview getAccountOverview(AuthenticationGateway authenticationGateway, QueryExecutor queryExecutor) {
         return new GetAccountOverview(authenticationGateway, queryExecutor);
+    }
+
+    @Bean
+    public GetAccountDetails getAccountDetails(AuthenticationGateway authenticationGateway, QueryExecutor queryExecutor) {
+        return new GetAccountDetails(authenticationGateway, queryExecutor);
     }
 
 

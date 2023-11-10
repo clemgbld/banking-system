@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.account.rest.account.AccountControlle
 import app.netlify.clementgombauld.banking.account.rest.account.in.CloseAccountRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyFromExternalBankRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
+import app.netlify.clementgombauld.banking.account.rest.account.out.AccountDetailsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.usecases.commands.OpenAccount;
@@ -38,10 +39,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AccountControllerIT {
 
     private static final JsonMapper jsonMapper = new JsonMapper();
+    public static final String BIC = "BNPAFRPP123";
 
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {
-        registry.add("bic", () -> "BNPAFRPP123");
+        registry.add("bic", () -> BIC);
 
     }
 
@@ -217,6 +219,28 @@ public class AccountControllerIT {
                         )
                 ))
         ));
+    }
+
+    @Test
+    void shouldGetAccountDetails() throws Exception {
+        ResultActions result = mockMvc.perform(get("/api/v1/account/details")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        String accountDetailsString = result.andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(accountDetailsString).isEqualTo(jsonMapper.writeValueAsString(
+                new AccountDetailsDto(
+                        "John",
+                        "Smith",
+                        "FR1420041010050500013M02606",
+                        "0500013M026",
+                        BIC
+                )
+        ));
+
 
     }
 

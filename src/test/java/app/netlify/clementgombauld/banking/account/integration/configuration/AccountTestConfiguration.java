@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithT
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.commands.*;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountDetails;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
@@ -176,6 +177,18 @@ public class AccountTestConfiguration {
                 )
         ));
         return new GetAccountOverview(authenticationGateway, queryExecutor);
+    }
+
+    @Bean
+    GetAccountDetails getAccountDetails() {
+        String customerId = "235432";
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(new Customer(customerId, "John", "Smith"));
+        QueryExecutor queryExecutor = new InMemoryQueryExecutor(Map.of(
+                customerId, org.iban4j.Iban.valueOf(
+                        "FR1420041010050500013M02606"
+                )
+        ));
+        return new GetAccountDetails(authenticationGateway, queryExecutor);
     }
 
 
