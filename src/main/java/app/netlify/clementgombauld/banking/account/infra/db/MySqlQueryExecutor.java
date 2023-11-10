@@ -33,7 +33,6 @@ public class MySqlQueryExecutor implements QueryExecutor {
 
     @Override
     public Optional<AccountWithTransactionsDto> findAccountWithTransactionsByCustomerId(GetAccountOverviewQuery query) {
-
         List<AccountWithTransactionsDto> accountWithTransactionsDtoList = queryFactory
                 .select(Projections.constructor(AccountWithTransactionsDto.class,
                         jpaAccountEntity.iban,
