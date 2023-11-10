@@ -27,7 +27,7 @@ public class GetAccountOverview {
     public AccountOverviewDto handle(Integer limit) {
         Customer customer = authenticationGateway.currentCustomer().orElseThrow(NoCurrentCustomerException::new);
 
-        AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery(
+        AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.findAccountWithTransactionsByCustomerId(new GetAccountOverviewQuery(
                         customer.getId(),
                         Objects.isNull(limit) ? DEFAULT_LIMIT : limit
                 ))

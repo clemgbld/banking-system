@@ -30,7 +30,7 @@ public class MySqlQueryExecutor implements QueryExecutor {
     }
 
     @Override
-    public Optional<AccountWithTransactionsDto> getAccountWithTransactions(GetAccountOverviewQuery query) {
+    public Optional<AccountWithTransactionsDto> findAccountWithTransactionsByCustomerId(GetAccountOverviewQuery query) {
 
         List<AccountWithTransactionsDto> accountWithTransactionsDtoList = queryFactory
                 .select(Projections.constructor(AccountWithTransactionsDto.class,
@@ -59,6 +59,15 @@ public class MySqlQueryExecutor implements QueryExecutor {
 
     @Override
     public Optional<Iban> findIbanByCustomerId(String customerId) {
-        return Optional.empty();
+
+        List<String> ibanList = queryFactory.select(Projections.constructor(String.class, jpaAccountEntity.iban))
+                .from(jpaAccountEntity)
+                .where(jpaAccountEntity.customerId.eq(customerId))
+                .fetch();
+
+        return ibanList
+                .stream()
+                .findFirst()
+                .map(Iban::valueOf);
     }
 }

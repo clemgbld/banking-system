@@ -113,7 +113,7 @@ public class MySqlQueryExecutorIT {
 
     @Test
     void shouldGetAccountWithTransactions() {
-        Optional<AccountWithTransactionsDto> accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery("5", 1));
+        Optional<AccountWithTransactionsDto> accountWithTransactionsDto = queryExecutor.findAccountWithTransactionsByCustomerId(new GetAccountOverviewQuery("5", 1));
         assertThat(accountWithTransactionsDto).isPresent();
         assertThat(accountWithTransactionsDto.get()).isEqualTo(
                 new AccountWithTransactionsDto(
@@ -126,9 +126,22 @@ public class MySqlQueryExecutorIT {
 
     @Test
     void shouldNotGetAccountWithTransactions() {
-        Optional<AccountWithTransactionsDto> accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery("6", 1));
+        Optional<AccountWithTransactionsDto> accountWithTransactionsDto = queryExecutor.findAccountWithTransactionsByCustomerId(new GetAccountOverviewQuery("6", 1));
 
         assertThat(accountWithTransactionsDto).isEmpty();
 
+    }
+
+    @Test
+    void shouldGetAccountIban() {
+        Optional<org.iban4j.Iban> iban = queryExecutor.findIbanByCustomerId("5");
+        assertThat(iban).isPresent();
+        assertThat(iban.get()).isEqualTo(org.iban4j.Iban.valueOf("FR1420041010050500013M02606"));
+    }
+
+    @Test
+    void shouldNotGetAccountIban() {
+        Optional<org.iban4j.Iban> iban = queryExecutor.findIbanByCustomerId("6");
+        assertThat(iban).isEmpty();
     }
 }

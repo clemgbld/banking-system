@@ -16,7 +16,7 @@ public class InMemoryQueryExecutor implements QueryExecutor {
     }
 
     @Override
-    public Optional<AccountWithTransactionsDto> getAccountWithTransactions(GetAccountOverviewQuery query) {
+    public Optional<AccountWithTransactionsDto> findAccountWithTransactionsByCustomerId(GetAccountOverviewQuery query) {
         return Optional.ofNullable((AccountWithTransactionsDto) store.get(query));
     }
 

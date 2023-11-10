@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface QueryExecutor {
 
-    Optional<AccountWithTransactionsDto> getAccountWithTransactions(GetAccountOverviewQuery query);
+    Optional<AccountWithTransactionsDto> findAccountWithTransactionsByCustomerId(GetAccountOverviewQuery query);
 
     Optional<Iban> findIbanByCustomerId(String customerId);
 }
