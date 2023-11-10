@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.infra.db.JpaTransactionRepository;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
+import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,9 @@ public class MySqlQueryExecutorIT {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private BeneficiaryRepository beneficiaryRepository;
 
 
     @Autowired
@@ -90,15 +94,21 @@ public class MySqlQueryExecutorIT {
         String accountName = "Arsene Lupin";
         String reason = "shopping";
 
+        beneficiaryRepository.insert(
+                accountId, new Beneficiary("9890", new Iban(accountIdentifier), new Bic(bic), accountName)
+        );
+
         transactionRepository.insert(accountId, new Transaction(id, creationDate, transactionAmount, accountIdentifier, bic, accountName, reason));
 
         String id2 = "2345235";
         Instant creationDate2 = Instant.ofEpochMilli(95346000L);
         BigDecimal transactionAmount2 = new BigDecimal("7.00");
-        String accountIdentifier2 = "FR7630066100410015043200585";
+        String accountIdentifier2 = "DE89370400440532013000";
         String bic2 = "AGRIFRPP989";
         String accountName2 = "Michell Baumont";
         String reason2 = null;
+
+        beneficiaryRepository.insert(accountId, new Beneficiary("12", new Iban(accountIdentifier2), new Bic(bic2), accountName2));
 
         transactionRepository.insert(accountId, new Transaction(id2, creationDate2, transactionAmount2, accountIdentifier2, bic2, accountName2, reason2));
 
@@ -143,5 +153,11 @@ public class MySqlQueryExecutorIT {
     void shouldNotGetAccountIban() {
         Optional<org.iban4j.Iban> iban = queryExecutor.findIbanByCustomerId("6");
         assertThat(iban).isEmpty();
+    }
+
+    @Test
+    void shouldGetBeneficiaries() {
+        assertThat(queryExecutor.findBeneficiariesByCustomerId("5")).isEqualTo(List.of(new BeneficiaryDto("9890", "FR7630066100410001057380116", "AGRIFRPP989", "Arsene Lupin"),
+                new BeneficiaryDto("12", "DE89370400440532013000", "AGRIFRPP989", "Michell Baumont")));
     }
 }

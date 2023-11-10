@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static app.netlify.clementgombauld.banking.account.infra.db.entity.QJpaAccountEntity.jpaAccountEntity;
 import static app.netlify.clementgombauld.banking.account.infra.db.entity.QJpaTransactionEntity.jpaTransactionEntity;
+import static app.netlify.clementgombauld.banking.account.infra.db.entity.QJpaBeneficiaryEntity.jpaBeneficiaryEntity;
 
 
 @Repository
@@ -74,6 +75,18 @@ public class MySqlQueryExecutor implements QueryExecutor {
 
     @Override
     public List<BeneficiaryDto> findBeneficiariesByCustomerId(String customerId) {
-        return null;
+        return queryFactory.select(
+                        Projections.constructor(
+                                BeneficiaryDto.class,
+                                jpaBeneficiaryEntity.id,
+                                jpaBeneficiaryEntity.iban,
+                                jpaBeneficiaryEntity.bic,
+                                jpaBeneficiaryEntity.name
+                        )
+                ).from(jpaBeneficiaryEntity)
+                .where(
+                        jpaBeneficiaryEntity.account.customerId.eq(customerId)
+                ).orderBy(jpaBeneficiaryEntity.name.asc())
+                .fetch();
     }
 }
