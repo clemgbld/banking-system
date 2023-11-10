@@ -65,5 +65,7 @@ public class JpaAccountEntity {
         return createdOn;
     }
 
-
+    public void setId(String id) {
+        this.id = id;
+    }
 }

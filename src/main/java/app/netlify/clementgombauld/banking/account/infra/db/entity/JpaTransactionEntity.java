@@ -76,4 +76,36 @@ public class JpaTransactionEntity {
                 ", reason='" + reason + '\'' +
                 '}';
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setCreationDate(Instant creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setTransactionAmount(BigDecimal transactionAmount) {
+        this.transactionAmount = transactionAmount;
+    }
+
+    public void setAccountIdentifier(String accountIdentifier) {
+        this.accountIdentifier = accountIdentifier;
+    }
+
+    public void setBic(String bic) {
+        this.bic = bic;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public void setAccount(JpaAccountEntity account) {
+        this.account = account;
+    }
 }

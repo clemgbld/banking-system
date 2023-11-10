@@ -2,8 +2,12 @@ package app.netlify.clementgombauld.banking.account.integration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.infra.db.JpaTransactionRepository;
+import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
+import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -15,6 +19,10 @@ import org.testcontainers.utility.MountableFile;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Testcontainers
@@ -76,7 +84,7 @@ public class MySqlQueryExecutorIT {
                 .build());
 
         String id = "12354";
-        Instant creationDate = Instant.ofEpochSecond(95345001L);
+        Instant creationDate = Instant.ofEpochMilli(95345000L);
         BigDecimal transactionAmount = new BigDecimal("5.00");
         String accountIdentifier = "FR7630066100410001057380116";
         String bic = "AGRIFRPP989";
@@ -86,7 +94,7 @@ public class MySqlQueryExecutorIT {
         transactionRepository.insert(accountId, new Transaction(id, creationDate, transactionAmount, accountIdentifier, bic, accountName, reason));
 
         String id2 = "2345235";
-        Instant creationDate2 = Instant.ofEpochSecond(95345000L);
+        Instant creationDate2 = Instant.ofEpochMilli(95346000L);
         BigDecimal transactionAmount2 = new BigDecimal("7.00");
         String accountIdentifier2 = "FR7630066100410015043200585";
         String bic2 = "AGRIFRPP989";
@@ -95,11 +103,33 @@ public class MySqlQueryExecutorIT {
 
         transactionRepository.insert(accountId, new Transaction(id2, creationDate2, transactionAmount2, accountIdentifier2, bic2, accountName2, reason2));
 
+
     }
 
     @AfterEach
     void cleanUp() {
         accountRepository.deleteById("1");
         jpaTransactionRepository.deleteById("12354");
+    }
+
+    @Test
+    void shouldGetAccountWithTransactions() {
+        Optional<AccountWithTransactionsDto> accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery("5", 1));
+        assertThat(accountWithTransactionsDto).isPresent();
+        assertThat(accountWithTransactionsDto.get()).isEqualTo(
+                new AccountWithTransactionsDto(
+                        "FR1420041010050500013M02606",
+                        new BigDecimal("7.00"),
+                        List.of(new TransactionDto("2345235", "Michell Baumont", 95346000L, new BigDecimal("7.00"), null))
+                )
+        );
+    }
+
+    @Test
+    void shouldNotGetAccountWithTransactions() {
+        Optional<AccountWithTransactionsDto> accountWithTransactionsDto = queryExecutor.getAccountWithTransactions(new GetAccountOverviewQuery("6", 1));
+
+        assertThat(accountWithTransactionsDto).isEmpty();
+
     }
 }
