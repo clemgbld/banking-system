@@ -5,11 +5,13 @@ import app.netlify.clementgombauld.banking.account.rest.beneficiary.BeneficiaryC
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.in.AddBeneficiaryRequest;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.in.DeleteBeneficiaryRequest;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.AddBeneficiaryResponse;
+import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,9 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Import(AccountTestConfiguration.class)
@@ -102,6 +105,18 @@ public class BeneficiaryControllerIT {
                 "Cannot find any account with the accountIdentifier: FR5030004000700000157389538 in your beneficiaries list.",
                 HttpStatus.BAD_REQUEST.value()
         )));
+    }
+
+    @Test
+    void shouldGetBeneficiaries() throws Exception {
+
+
+        ResultActions result = mockMvc.perform(get("/api/v1/beneficiary")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        String content = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        assertThat(content).isEqualTo(jsonMapper.writeValueAsString(List.of(new BeneficiaryDto("5", "FR1420041010050500013M02606", "BNPAFRPP123", "Arsene Lupin"))));
     }
 
 

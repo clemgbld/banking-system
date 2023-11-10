@@ -3,11 +3,13 @@ package app.netlify.clementgombauld.banking.account.integration.configuration;
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
+import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.commands.*;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountDetails;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetBeneficiaries;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;
@@ -177,6 +179,15 @@ public class AccountTestConfiguration {
                 )
         ));
         return new GetAccountOverview(authenticationGateway, queryExecutor);
+    }
+
+    @Bean
+    GetBeneficiaries getBeneficiaries() {
+        String customerId = "235432";
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(new Customer(customerId, "John", "Smith"));
+        QueryExecutor queryExecutor = new InMemoryQueryExecutor(Map.of(customerId, List
+                .of(new BeneficiaryDto("5", "FR1420041010050500013M02606", "BNPAFRPP123", "Arsene Lupin"))));
+        return new GetBeneficiaries(authenticationGateway, queryExecutor);
     }
 
     @Bean
