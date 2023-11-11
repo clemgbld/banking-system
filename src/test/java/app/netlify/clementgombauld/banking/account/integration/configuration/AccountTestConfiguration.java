@@ -6,10 +6,7 @@ import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionD
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.unit.inmemory.*;
 import app.netlify.clementgombauld.banking.account.usecases.commands.*;
-import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountDetails;
-import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
-import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
-import app.netlify.clementgombauld.banking.account.usecases.queries.GetBeneficiaries;
+import app.netlify.clementgombauld.banking.account.usecases.queries.*;
 import app.netlify.clementgombauld.banking.common.inmemory.DeterministicDateProvider;
 import app.netlify.clementgombauld.banking.common.inmemory.InMemoryIdGenerator;
 import app.netlify.clementgombauld.banking.identityaccess.infra.JwtService;

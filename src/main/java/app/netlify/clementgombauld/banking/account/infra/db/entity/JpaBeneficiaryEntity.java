@@ -22,7 +22,6 @@ public class JpaBeneficiaryEntity {
     @ManyToOne
     private JpaAccountEntity account;
 
-
     public JpaBeneficiaryEntity() {
     }
 

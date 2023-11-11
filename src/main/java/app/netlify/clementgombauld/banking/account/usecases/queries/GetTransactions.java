@@ -1,0 +1,37 @@
+package app.netlify.clementgombauld.banking.account.usecases.queries;
+
+import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
+import app.netlify.clementgombauld.banking.account.domain.Customer;
+import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
+import org.springframework.data.domain.Page;
+
+
+import java.util.Optional;
+
+public class GetTransactions {
+
+    private final AuthenticationGateway authenticationGateway;
+
+    private final QueryExecutor queryExecutor;
+
+    private static final int DEFAULT_PAGE_NUMBER = 1;
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
+    public GetTransactions(AuthenticationGateway authenticationGateway, QueryExecutor queryExecutor) {
+        this.authenticationGateway = authenticationGateway;
+        this.queryExecutor = queryExecutor;
+    }
+
+    public Page<TransactionDto> handle(Integer pageNumber, Integer pageSize) {
+
+        Customer customer = authenticationGateway.currentCustomer()
+                .orElseThrow(NoCurrentCustomerException::new);
+
+
+        return queryExecutor.findTransactionsByCustomerId(new GetTransactionsQuery(customer.getId(), Optional.of(pageNumber).orElse(DEFAULT_PAGE_NUMBER), Optional.of(pageSize).orElse(
+                DEFAULT_PAGE_SIZE)
+        ));
+    }
+
+}

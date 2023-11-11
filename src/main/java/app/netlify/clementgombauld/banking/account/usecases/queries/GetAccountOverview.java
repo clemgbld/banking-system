@@ -3,14 +3,14 @@ package app.netlify.clementgombauld.banking.account.usecases.queries;
 import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.domain.Customer;
 
-import app.netlify.clementgombauld.banking.account.domain.QueryExecutor;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownAccountWithCustomerId;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import org.iban4j.Iban;
 
-import java.util.Objects;
+
+import java.util.Optional;
 
 public class GetAccountOverview {
 
@@ -29,7 +29,7 @@ public class GetAccountOverview {
 
         AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.findAccountWithTransactionsByCustomerId(new GetAccountOverviewQuery(
                         customer.getId(),
-                        Objects.isNull(limit) ? DEFAULT_LIMIT : limit
+                        Optional.of(limit).orElse(DEFAULT_LIMIT)
                 ))
                 .orElseThrow(() -> new UnknownAccountWithCustomerId(customer.getId()));
 

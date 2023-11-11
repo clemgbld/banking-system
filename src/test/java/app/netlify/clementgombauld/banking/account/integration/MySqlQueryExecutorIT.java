@@ -6,12 +6,12 @@ import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithT
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
+import app.netlify.clementgombauld.banking.account.usecases.queries.QueryExecutor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;

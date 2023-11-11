@@ -2,7 +2,6 @@ package app.netlify.clementgombauld.banking.account.usecases.queries;
 
 import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.domain.Customer;
-import app.netlify.clementgombauld.banking.account.domain.QueryExecutor;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 

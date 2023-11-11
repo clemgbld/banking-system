@@ -1,15 +1,17 @@
 package app.netlify.clementgombauld.banking.account.infra.db;
 
-import app.netlify.clementgombauld.banking.account.domain.QueryExecutor;
+import app.netlify.clementgombauld.banking.account.usecases.queries.QueryExecutor;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetTransactionsQuery;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.iban4j.Iban;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 
@@ -87,5 +89,10 @@ public class MySqlQueryExecutor implements QueryExecutor {
                         jpaBeneficiaryEntity.account.customerId.eq(customerId)
                 ).orderBy(jpaBeneficiaryEntity.name.asc())
                 .fetch();
+    }
+
+    @Override
+    public Page<TransactionDto> findTransactionsByCustomerId(GetTransactionsQuery query) {
+        return null;
     }
 }

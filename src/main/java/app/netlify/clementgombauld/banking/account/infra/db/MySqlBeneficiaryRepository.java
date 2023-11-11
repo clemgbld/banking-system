@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public class MySqlBeneficiaryRepository implements BeneficiaryRepository {
 
+
     private final JpaBeneficiaryRepository jpaBeneficiaryRepository;
 
     @Autowired

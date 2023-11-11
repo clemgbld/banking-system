@@ -5,6 +5,7 @@ import app.netlify.clementgombauld.banking.account.usecases.commands.*;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountDetails;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetBeneficiaries;
+import app.netlify.clementgombauld.banking.account.usecases.queries.QueryExecutor;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
