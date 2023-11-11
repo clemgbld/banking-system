@@ -13,6 +13,10 @@ import jakarta.persistence.EntityManager;
 import org.iban4j.Iban;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 
@@ -94,6 +98,33 @@ public class MySqlQueryExecutor implements QueryExecutor {
 
     @Override
     public PageDto<TransactionDto> findTransactionsByCustomerId(GetTransactionsQuery query) {
-        return null;
+
+        Pageable pageable = PageRequest.of(query.pageNumber(), query.pageSize(), Sort.by("accountName").ascending());
+
+        List<TransactionDto> transactions = queryFactory.select(Projections.constructor(
+                        TransactionDto.class,
+                        jpaTransactionEntity.id,
+                        jpaTransactionEntity.accountName,
+                        jpaTransactionEntity.creationDate,
+                        jpaTransactionEntity.transactionAmount,
+                        jpaTransactionEntity.reason
+                ))
+                .from(jpaTransactionEntity)
+                .where(jpaTransactionEntity.account.customerId.eq(query.customerId()))
+                .orderBy(jpaTransactionEntity.accountName.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+
+        long totalCount = queryFactory
+                .from(jpaTransactionEntity)
+                .where(jpaTransactionEntity.account.customerId.eq(query.customerId()))
+                .fetch()
+                .size();
+
+        Page<TransactionDto> page = PageableExecutionUtils.getPage(transactions, pageable, () -> totalCount);
+
+        return new PageDto<>(transactions, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 }

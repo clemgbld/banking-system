@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.integration;
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.infra.db.JpaTransactionRepository;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
+import app.netlify.clementgombauld.banking.account.rest.account.out.PageDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
@@ -162,6 +163,23 @@ public class MySqlQueryExecutorIT {
     void shouldGetBeneficiaries() {
         assertThat(queryExecutor.findBeneficiariesByCustomerId("5")).isEqualTo(List.of(new BeneficiaryDto("9890", "FR7630066100410001057380116", "AGRIFRPP989", "Arsene Lupin"),
                 new BeneficiaryDto("12", "DE89370400440532013000", "AGRIFRPP989", "Michell Baumont")));
+    }
+
+    @Test
+    void shouldGetPaginatedTransactions() {
+        int pageNumber = 1;
+        int pageSize = 1;
+
+        PageDto<TransactionDto> transactionPage = queryExecutor.findTransactionsByCustomerId(
+                new GetTransactionsQuery(
+                        "5",
+                        pageNumber,
+                        pageSize
+                )
+        );
+        assertThat(transactionPage).isEqualTo(new PageDto<>(List.of(new TransactionDto(
+                "2345235", "Michell Baumont", 95346000L, new BigDecimal("7.00"), null
+        )), pageNumber, pageSize, 2L, 2));
     }
 
 
