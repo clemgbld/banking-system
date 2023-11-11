@@ -6,6 +6,7 @@ import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownAcco
 import app.netlify.clementgombauld.banking.account.usecases.commands.ReceiveMoneyFromExternalBankCommand;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -34,7 +35,7 @@ public class ReceiveMoneyFromExternalBank {
         this.currencyConverter = new CurrencyConverter(countryGateway, currencyGateway);
     }
 
-
+    @Transactional
     public void handle(ReceiveMoneyFromExternalBankCommand command) {
         Bic validSenderAccountBic = new Bic(command.senderAccountBic());
         Bic bankBic = new Bic(command.bic());

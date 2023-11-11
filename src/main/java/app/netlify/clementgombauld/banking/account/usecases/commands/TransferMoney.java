@@ -6,6 +6,7 @@ import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownAcco
 import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownBeneficiaryException;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import jakarta.transaction.Transactional;
 
 
 import java.time.Instant;
@@ -26,6 +27,7 @@ public class TransferMoney {
 
     private final CustomerAccountFinder customerAccountFinder;
 
+
     public TransferMoney(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository, TransactionRepository transactionRepository, DateProvider dateProvider, IdGenerator idGenerator, ExternalBankTransactionsGateway externalBankTransactionsGateway, AuthenticationGateway authenticationGateway) {
         this.accountRepository = accountRepository;
         this.beneficiaryRepository = beneficiaryRepository;
@@ -36,6 +38,7 @@ public class TransferMoney {
         this.customerAccountFinder = new CustomerAccountFinder(authenticationGateway, accountRepository);
     }
 
+    @Transactional
     public void handle(TransferMoneyCommand command) {
         Bic bankBic = new Bic(command.bic());
         Instant creationDate = dateProvider.now();

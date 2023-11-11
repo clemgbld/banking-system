@@ -29,12 +29,17 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(r -> r.requestMatchers("/api/v1/auth/**")
-                        .permitAll()
-                        .requestMatchers("api/v1/account/receive")
-                        .permitAll()
-                        .anyRequest()
-                        .hasRole(Role.ADMIN.name())
+                .authorizeHttpRequests(r -> {
+
+                            r.requestMatchers("/api/v1/account/receive")
+                                    .hasAuthority(Role.ADMIN.name());
+
+                            r.requestMatchers("/api/v1/auth/**")
+                                    .permitAll()
+                                    .anyRequest()
+                                    .authenticated();
+
+                        }
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

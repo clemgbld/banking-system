@@ -4,6 +4,7 @@ import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.DuplicatedBeneficiaryException;
 
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import jakarta.transaction.Transactional;
 
 
 import java.util.Optional;

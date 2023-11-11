@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.usecases.commands;
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
+import jakarta.transaction.Transactional;
 
 import java.time.Instant;
 
