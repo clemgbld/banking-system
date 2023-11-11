@@ -29,7 +29,7 @@ public class GetTransactions {
                 .orElseThrow(NoCurrentCustomerException::new);
 
 
-        return queryExecutor.findTransactionsByCustomerId(new GetTransactionsQuery(customer.getId(), Optional.of(pageNumber).orElse(DEFAULT_PAGE_NUMBER), Optional.of(pageSize).orElse(
+        return queryExecutor.findTransactionsByCustomerId(new GetTransactionsQuery(customer.getId(), Optional.ofNullable(pageNumber).orElse(DEFAULT_PAGE_NUMBER), Optional.ofNullable(pageSize).orElse(
                 DEFAULT_PAGE_SIZE)
         ));
     }

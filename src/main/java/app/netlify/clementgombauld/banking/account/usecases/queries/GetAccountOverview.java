@@ -29,7 +29,7 @@ public class GetAccountOverview {
 
         AccountWithTransactionsDto accountWithTransactionsDto = queryExecutor.findAccountWithTransactionsByCustomerId(new GetAccountOverviewQuery(
                         customer.getId(),
-                        Optional.of(limit).orElse(DEFAULT_LIMIT)
+                        Optional.ofNullable(limit).orElse(DEFAULT_LIMIT)
                 ))
                 .orElseThrow(() -> new UnknownAccountWithCustomerId(customer.getId()));
 
