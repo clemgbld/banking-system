@@ -62,7 +62,9 @@ class ReceiveMoneyFromExternalBankTest {
                 .build()
         );
 
-        beneficiaryRepository.insert(accountId, new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName));
+        beneficiaryRepository.insert(accountId, new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName, new Iban(
+                receiverAccountIban
+        )));
 
         Map<String, Transaction> transactionStore = new HashMap<>();
 

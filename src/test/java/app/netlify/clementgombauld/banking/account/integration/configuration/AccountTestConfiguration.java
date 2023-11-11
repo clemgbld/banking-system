@@ -45,7 +45,7 @@ public class AccountTestConfiguration {
     AddBeneficiary addBeneficiary() {
         Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME));
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME, new Iban(ACCOUNT_IBAN)));
         AccountRepository accountRepository = new InMemoryAccountRepository(Map.of(CUSTOMER_ID, new Account.Builder()
                 .withCustomerId(CUSTOMER_ID)
                 .withId(ACCOUNT_ID)
@@ -66,7 +66,7 @@ public class AccountTestConfiguration {
     DeleteBeneficiary deleteBeneficiary() {
         Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME));
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME, new Iban(ACCOUNT_IBAN)));
         AccountRepository accountRepository = new InMemoryAccountRepository(Map.of(CUSTOMER_ID, new Account.Builder()
                 .withCustomerId(CUSTOMER_ID)
                 .withId(ACCOUNT_ID)
@@ -86,7 +86,7 @@ public class AccountTestConfiguration {
     CloseAccount closeAccount() {
         Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME));
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic(BENEFICIARY_BIC), BENEFICIARY_NAME, new Iban(ACCOUNT_IBAN)));
         Map<String, Account> accountStore = new HashMap<>();
         accountStore.put(CUSTOMER_ID, new Account.Builder()
                 .withCustomerId(CUSTOMER_ID)
@@ -112,7 +112,7 @@ public class AccountTestConfiguration {
     TransferMoney transferMoney() {
         Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic("AGRIFRPP989"), BENEFICIARY_NAME));
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic("AGRIFRPP989"), BENEFICIARY_NAME, new Iban(ACCOUNT_IBAN)));
         Map<String, Account> accountStore = new HashMap<>();
         accountStore.put(CUSTOMER_ID, new Account.Builder()
                 .withCustomerId(CUSTOMER_ID)
@@ -139,7 +139,7 @@ public class AccountTestConfiguration {
     ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank() {
         Iban beneficiaryIban = new Iban(BENEFICIARY_IBAN);
         BeneficiaryRepository beneficiaryRepository = new InMemoryBeneficiaryRepository();
-        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic("AGRIFRPP989"), BENEFICIARY_NAME));
+        beneficiaryRepository.insert(ACCOUNT_ID, new Beneficiary(BENEFICIARY_ID, beneficiaryIban, new Bic("AGRIFRPP989"), BENEFICIARY_NAME, new Iban(ACCOUNT_IBAN)));
         Map<String, Account> accountStore = new HashMap<>();
         accountStore.put(ACCOUNT_IBAN, new Account.Builder()
                 .withCustomerId(CUSTOMER_ID)

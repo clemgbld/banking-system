@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
@@ -95,7 +96,7 @@ public class MySqlQueryExecutorIT {
         String reason = "shopping";
 
         beneficiaryRepository.insert(
-                accountId, new Beneficiary("9890", new Iban(accountIdentifier), new Bic(bic), accountName)
+                accountId, new Beneficiary("9890", new Iban(accountIdentifier), new Bic(bic), accountName, new Iban(iban))
         );
 
         transactionRepository.insert(accountId, new Transaction(id, creationDate, transactionAmount, accountIdentifier, bic, accountName, reason));
@@ -108,7 +109,7 @@ public class MySqlQueryExecutorIT {
         String accountName2 = "Michell Baumont";
 
 
-        beneficiaryRepository.insert(accountId, new Beneficiary("12", new Iban(accountIdentifier2), new Bic(bic2), accountName2));
+        beneficiaryRepository.insert(accountId, new Beneficiary("12", new Iban(accountIdentifier2), new Bic(bic2), accountName2, new Iban(iban)));
 
         transactionRepository.insert(accountId, new Transaction(id2, creationDate2, transactionAmount2, accountIdentifier2, bic2, accountName2, null));
 

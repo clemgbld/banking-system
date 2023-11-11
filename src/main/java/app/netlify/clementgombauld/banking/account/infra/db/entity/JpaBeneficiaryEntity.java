@@ -49,6 +49,10 @@ public class JpaBeneficiaryEntity {
         return name;
     }
 
+    public String getAccountIban() {
+        return account.getIban();
+    }
+
     public void setId(String id) {
         this.id = id;
     }

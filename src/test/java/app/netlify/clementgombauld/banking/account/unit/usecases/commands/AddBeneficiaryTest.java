@@ -62,7 +62,7 @@ class AddBeneficiaryTest {
         String expectedId = addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName));
 
         assertThat(beneficiaryRepository.findByAccountIdAndIban(accountId, beneficiaryIban).orElseThrow())
-                .isEqualTo(new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName));
+                .isEqualTo(new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName, new Iban(accountIban)));
 
         assertThat(expectedId).isEqualTo(beneficiaryId);
     }
@@ -84,7 +84,7 @@ class AddBeneficiaryTest {
 
         Map<String, Account> accountStore = new HashMap<>();
 
-        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName);
+        Beneficiary existingBeneficiary = new Beneficiary(beneficiaryId, new Iban(beneficiaryIban), new Bic(beneficiaryBic), beneficiaryName, new Iban(accountIban));
 
         beneficiaryRepository.insert(accountId, existingBeneficiary);
 
@@ -133,6 +133,37 @@ class AddBeneficiaryTest {
         assertThatThrownBy(() -> addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName)))
                 .isInstanceOf(InvalidIbanException.class)
                 .hasMessage("accountIdentifier: " + beneficiaryIban + " is invalid.");
+    }
+
+    @Test
+    void shouldNotAddBeneficiaryWhenBeneficiaryIbanIsTheSameThanAccountIban() {
+        String customerId = "13455";
+        String accountIban = "FR1420041010050500013M02606";
+        String accountId = "1";
+        String accountFirstName = "Paul";
+        String accountLastName = "Duboit";
+        String beneficiaryId = "1234";
+        String beneficiaryIban = "FR1420041010050500013M02606";
+        String beneficiaryBic = "BNPAFRPP123";
+        String beneficiaryName = "Bob Dylan";
+
+        Map<String, Account> accountStore = new HashMap<>();
+
+        Customer currentCustomer = new Customer(customerId, accountFirstName, accountLastName);
+        Account existingAccount = new Account.Builder()
+                .withId(accountId)
+                .withIban(new Iban(accountIban))
+                .withBalance(new BigDecimal(105))
+                .build();
+        accountStore.put(customerId, existingAccount);
+
+        AddBeneficiary addBeneficiary = buildAddBeneficiary(accountStore, List.of(beneficiaryId), currentCustomer);
+
+        assertThatThrownBy(() -> addBeneficiary.handle(new AddBeneficiaryCommand(beneficiaryIban, beneficiaryBic, beneficiaryName)))
+                .isInstanceOf(SameIbanThanAccountException.class)
+                .hasMessage("You can't add yourself as a beneficiary.");
+
+
     }
 
     @Test

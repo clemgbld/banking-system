@@ -4,7 +4,6 @@ import app.netlify.clementgombauld.banking.account.domain.Beneficiary;
 import app.netlify.clementgombauld.banking.account.domain.BeneficiaryRepository;
 import app.netlify.clementgombauld.banking.account.domain.Bic;
 import app.netlify.clementgombauld.banking.account.domain.Iban;
-import app.netlify.clementgombauld.banking.account.infra.db.entity.JpaAccountEntity;
 import app.netlify.clementgombauld.banking.account.infra.db.entity.JpaBeneficiaryEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,6 +36,6 @@ public class MySqlBeneficiaryRepository implements BeneficiaryRepository {
     }
 
     private Beneficiary toDomain(JpaBeneficiaryEntity jpaBeneficiaryEntity) {
-        return new Beneficiary(jpaBeneficiaryEntity.getId(), new Iban(jpaBeneficiaryEntity.getIban()), new Bic(jpaBeneficiaryEntity.getBic()), jpaBeneficiaryEntity.getName());
+        return new Beneficiary(jpaBeneficiaryEntity.getId(), new Iban(jpaBeneficiaryEntity.getIban()), new Bic(jpaBeneficiaryEntity.getBic()), jpaBeneficiaryEntity.getName(), new Iban(jpaBeneficiaryEntity.getAccountIban()));
     }
 }

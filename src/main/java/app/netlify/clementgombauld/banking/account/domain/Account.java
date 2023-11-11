@@ -4,7 +4,6 @@ package app.netlify.clementgombauld.banking.account.domain;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
-import java.util.Optional;
 
 
 public class Account {
@@ -115,8 +114,12 @@ public class Account {
         return customerId;
     }
 
-    public String getIban() {
+    public String getIbanValue() {
         return iban.value();
+    }
+
+    public Iban getIban() {
+        return iban;
     }
 
     public BigDecimal getBalance() {

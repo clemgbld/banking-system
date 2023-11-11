@@ -1,7 +1,6 @@
 package app.netlify.clementgombauld.banking.account.usecases.commands;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
-import app.netlify.clementgombauld.banking.account.usecases.commands.CloseAccountCommand;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 
@@ -47,7 +46,7 @@ public class CloseAccount {
         String transactionId = idGenerator.generate();
         Customer currentCustomer = customerAccountFinder.currentCustomer();
 
-        externalBankTransactionsGateway.transfer(new Transaction(externalTransactionId, currentDate, account.getBalance(), account.getIban(), validBankBic.value(), currentCustomer.fullName(), CLOSE_ACCOUNT_REASON)
+        externalBankTransactionsGateway.transfer(new Transaction(externalTransactionId, currentDate, account.getBalance(), account.getIbanValue(), validBankBic.value(), currentCustomer.fullName(), CLOSE_ACCOUNT_REASON)
                 , validExternalIban.value(),
                 validExternalBic.value());
 

@@ -4,7 +4,6 @@ package app.netlify.clementgombauld.banking.account.usecases.commands;
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownAccountWithIbanException;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.UnknownBeneficiaryException;
-import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMoneyCommand;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 
@@ -50,7 +49,7 @@ public class TransferMoney {
         transactionRepository.insert(senderAccount.getId(), senderAccount.recordWithdrawalTransaction(senderTransactionId, creationDate, command.transactionAmount(), command.receiverAccountIdentifier(), new Bic(beneficiary.getBic()), beneficiary.getName(), command.reason()));
         if (beneficiary.isInDifferentBank(bankBic)) {
             accountRepository.save(senderAccount);
-            Transaction transaction = new Transaction(receiverTransactionId, creationDate, command.transactionAmount(), senderAccount.getIban(), bankBic.value(), currentCustomer.fullName(), command.reason());
+            Transaction transaction = new Transaction(receiverTransactionId, creationDate, command.transactionAmount(), senderAccount.getIbanValue(), bankBic.value(), currentCustomer.fullName(), command.reason());
             externalBankTransactionsGateway.transfer(transaction, beneficiary.getIban(), beneficiary.getBic());
             return;
         }
@@ -59,7 +58,7 @@ public class TransferMoney {
 
         receiverAccount.deposit(command.transactionAmount());
         accountRepository.save(senderAccount, receiverAccount);
-        transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(receiverTransactionId, creationDate, command.transactionAmount(), senderAccount.getIban(), bankBic, currentCustomer.fullName(), command.reason()));
+        transactionRepository.insert(receiverAccount.getId(), receiverAccount.recordDepositTransaction(receiverTransactionId, creationDate, command.transactionAmount(), senderAccount.getIbanValue(), bankBic, currentCustomer.fullName(), command.reason()));
     }
 
     private Supplier<UnknownAccountWithIbanException> throwUnknownAccountException(String iban) {

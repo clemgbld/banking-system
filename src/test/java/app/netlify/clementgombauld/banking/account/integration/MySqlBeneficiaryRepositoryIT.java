@@ -91,7 +91,8 @@ public class MySqlBeneficiaryRepositoryIT {
                 id,
                 iban,
                 bic,
-                name
+                name,
+                new Iban("FR1420041010050500013M02606")
         ));
 
         Optional<Beneficiary> beneficiary = beneficiaryRepository.findByAccountIdAndIban(accountId, iban.value());
@@ -102,7 +103,8 @@ public class MySqlBeneficiaryRepositoryIT {
                         id,
                         iban,
                         bic,
-                        name
+                        name,
+                        new Iban("FR1420041010050500013M02606")
                 )
         );
     }
@@ -119,7 +121,8 @@ public class MySqlBeneficiaryRepositoryIT {
                 id,
                 iban,
                 bic,
-                name
+                name,
+                new Iban("FR1420041010050500013M02606")
         ));
 
         beneficiaryRepository.delete(accountId, iban.value());

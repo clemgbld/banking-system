@@ -25,16 +25,16 @@ public class InMemoryAccountRepository implements AccountRepository {
     public Optional<Account> findByCustomerId(String customerId) {
         return findById(customerId);
     }
-    
+
 
     @Override
     public void save(Account... accounts) {
-        Arrays.stream(accounts).forEach(account -> dataSource.put(account.getIban(), account));
+        Arrays.stream(accounts).forEach(account -> dataSource.put(account.getIbanValue(), account));
     }
 
     @Override
     public void save(Account account) {
-        dataSource.put(account.getIban(), account);
+        dataSource.put(account.getIbanValue(), account);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class InMemoryAccountRepository implements AccountRepository {
         Account nullableAccount = dataSource.getOrDefault(id, null);
         return Objects.isNull(nullableAccount) ? Optional.empty() : Optional.of(new Account.Builder()
                 .withId(nullableAccount.getId())
-                .withIban(new Iban(nullableAccount.getIban()))
+                .withIban(new Iban(nullableAccount.getIbanValue()))
                 .withBalance(nullableAccount.getBalance())
                 .withCreatedOn(nullableAccount.getCreationDate())
                 .withCustomerId(nullableAccount.getCustomerId())

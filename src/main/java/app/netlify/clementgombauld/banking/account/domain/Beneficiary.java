@@ -1,6 +1,8 @@
 package app.netlify.clementgombauld.banking.account.domain;
 
 
+import app.netlify.clementgombauld.banking.account.domain.exceptions.SameIbanThanAccountException;
+
 import java.util.Objects;
 
 public class Beneficiary {
@@ -13,11 +15,11 @@ public class Beneficiary {
 
     private final String name;
 
-    public Beneficiary(String id, Iban iban, Bic bic, String name) {
+    public Beneficiary(String id, Iban iban, Bic bic, String name, Iban accountIban) {
+        checkThatIbanIsNotAccountIban(iban, accountIban);
         this.id = id;
         this.iban = iban;
         this.bic = bic;
-
         this.name = name;
     }
 
@@ -40,6 +42,12 @@ public class Beneficiary {
 
     public boolean isInDifferentBank(Bic bic) {
         return !this.bic.equals(bic);
+    }
+
+    private void checkThatIbanIsNotAccountIban(Iban benficiaryIban, Iban accountIban) {
+        if (benficiaryIban.equals(accountIban)) {
+            throw new SameIbanThanAccountException();
+        }
     }
 
     @Override

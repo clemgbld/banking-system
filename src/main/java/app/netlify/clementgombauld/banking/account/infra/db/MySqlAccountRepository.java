@@ -52,7 +52,7 @@ public class MySqlAccountRepository implements AccountRepository {
         return new JpaAccountEntity(
                 account.getId(),
                 account.getCustomerId(),
-                account.getIban(),
+                account.getIbanValue(),
                 account.getBalance(),
                 account.getCreationDate()
         );

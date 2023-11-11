@@ -41,8 +41,8 @@ class DeleteBeneficiaryTest {
         String secondBeneficiaryBic = "BNPAFRPP123";
         String secondBeneficiaryName = "Luc Smith";
 
-        Beneficiary firstBeneficiary = new Beneficiary(firstBeneficiaryId, new Iban(firstBeneficiaryIban), new Bic(firstBeneficiaryBic), firstBeneficiaryName);
-        Beneficiary secondBeneficiary = new Beneficiary(secondBeneficiaryId, new Iban(secondBeneficiaryIban), new Bic(secondBeneficiaryBic), secondBeneficiaryName);
+        Beneficiary firstBeneficiary = new Beneficiary(firstBeneficiaryId, new Iban(firstBeneficiaryIban), new Bic(firstBeneficiaryBic), firstBeneficiaryName, new Iban(accountIban));
+        Beneficiary secondBeneficiary = new Beneficiary(secondBeneficiaryId, new Iban(secondBeneficiaryIban), new Bic(secondBeneficiaryBic), secondBeneficiaryName, new Iban(accountIban));
         beneficiaryRepository.insert(accountId, firstBeneficiary);
         beneficiaryRepository.insert(accountId, secondBeneficiary);
 

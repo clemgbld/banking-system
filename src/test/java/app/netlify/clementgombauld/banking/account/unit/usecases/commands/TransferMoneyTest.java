@@ -78,7 +78,9 @@ class TransferMoneyTest {
 
         Map<String, Transaction> transactionStore = new HashMap<>();
 
-        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(receiverAccountBIC), receiverAccountFirstName + " " + receiverAccountLastName));
+        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(receiverAccountBIC), receiverAccountFirstName + " " + receiverAccountLastName, new Iban(
+                senderAccountIban
+        )));
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), transactionStore, currentCustomer);
 
@@ -146,7 +148,7 @@ class TransferMoneyTest {
 
         Map<String, Transaction> transactionStore = new HashMap<>();
 
-        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(receiverAccountBIC), receiverAccountFirstName + " " + receiverAccountLastName));
+        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(receiverAccountBIC), receiverAccountFirstName + " " + receiverAccountLastName, new Iban(senderAccountIban)));
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), extraBankTransactions, extraBankAccountInfos, transactionStore, currentCustomer);
 
@@ -267,7 +269,7 @@ class TransferMoneyTest {
                 .withBalance(new BigDecimal(100))
                 .build());
 
-        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(bic), receiverAccountFirstName + " " + receiverAccountLastName));
+        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(bic), receiverAccountFirstName + " " + receiverAccountLastName, new Iban(senderAccountIban)));
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), Map.of(), currentCustomer);
 
@@ -303,7 +305,7 @@ class TransferMoneyTest {
 
         accountStore.put(customerId, existingSenderAccount);
 
-        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(bic), receiverAccountFirstName + " " + receiverAccountLastName));
+        beneficiaryRepository.insert(senderAccountId, new Beneficiary("AE434", new Iban(receiverAccountIban), new Bic(bic), receiverAccountFirstName + " " + receiverAccountLastName, new Iban(senderAccountIban)));
 
 
         TransferMoney transferMoney = buildTransferMoney(accountStore, List.of(senderTransactionId, receiverTransactionId), List.of(), List.of(), new HashMap<>(), currentCustomer);
