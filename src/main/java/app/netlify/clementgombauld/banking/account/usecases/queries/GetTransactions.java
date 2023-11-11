@@ -5,7 +5,6 @@ import app.netlify.clementgombauld.banking.account.domain.Customer;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
 import app.netlify.clementgombauld.banking.account.rest.account.out.PageDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
-import org.springframework.data.domain.Page;
 
 
 import java.util.Optional;
