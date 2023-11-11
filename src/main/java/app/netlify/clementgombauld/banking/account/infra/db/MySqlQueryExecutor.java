@@ -1,5 +1,6 @@
 package app.netlify.clementgombauld.banking.account.infra.db;
 
+import app.netlify.clementgombauld.banking.account.rest.account.out.PageDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.QueryExecutor;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithTransactionsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
@@ -92,7 +93,7 @@ public class MySqlQueryExecutor implements QueryExecutor {
     }
 
     @Override
-    public Page<TransactionDto> findTransactionsByCustomerId(GetTransactionsQuery query) {
+    public PageDto<TransactionDto> findTransactionsByCustomerId(GetTransactionsQuery query) {
         return null;
     }
 }

@@ -6,12 +6,14 @@ import app.netlify.clementgombauld.banking.account.rest.account.out.AccountWithT
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.rest.beneficiary.out.BeneficiaryDto;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverviewQuery;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetTransactionsQuery;
 import app.netlify.clementgombauld.banking.account.usecases.queries.QueryExecutor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
@@ -161,4 +163,6 @@ public class MySqlQueryExecutorIT {
         assertThat(queryExecutor.findBeneficiariesByCustomerId("5")).isEqualTo(List.of(new BeneficiaryDto("9890", "FR7630066100410001057380116", "AGRIFRPP989", "Arsene Lupin"),
                 new BeneficiaryDto("12", "DE89370400440532013000", "AGRIFRPP989", "Michell Baumont")));
     }
+
+
 }

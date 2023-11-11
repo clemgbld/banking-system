@@ -3,6 +3,7 @@ package app.netlify.clementgombauld.banking.account.usecases.queries;
 import app.netlify.clementgombauld.banking.account.domain.AuthenticationGateway;
 import app.netlify.clementgombauld.banking.account.domain.Customer;
 import app.netlify.clementgombauld.banking.account.domain.exceptions.NoCurrentCustomerException;
+import app.netlify.clementgombauld.banking.account.rest.account.out.PageDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import org.springframework.data.domain.Page;
 
@@ -23,7 +24,7 @@ public class GetTransactions {
         this.queryExecutor = queryExecutor;
     }
 
-    public Page<TransactionDto> handle(Integer pageNumber, Integer pageSize) {
+    public PageDto<TransactionDto> handle(Integer pageNumber, Integer pageSize) {
 
         Customer customer = authenticationGateway.currentCustomer()
                 .orElseThrow(NoCurrentCustomerException::new);
