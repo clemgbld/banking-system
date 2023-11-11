@@ -199,6 +199,26 @@ public class AccountTestConfiguration {
         return new GetAccountDetails(authenticationGateway, queryExecutor);
     }
 
+    @Bean
+    GetTransactions getTransactions() {
+        String customerId = "235432";
+        int pageNumber = 0;
+        int pageSize = 10;
+        AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(new Customer(customerId, "John", "Smith"));
+        QueryExecutor queryExecutor = new InMemoryQueryExecutor(Map.of(
+                new GetTransactionsQuery(customerId, pageNumber, pageSize),
+                List.of(new TransactionDto(
+                                "234535",
+                                "Michel Baumont",
+                                95345000L,
+                                new BigDecimal("6.00"),
+                                "shopping"
+                        )
+
+                )));
+        return new GetTransactions(authenticationGateway, queryExecutor);
+    }
+
 
     @Bean
     public JwtService jwtService() {

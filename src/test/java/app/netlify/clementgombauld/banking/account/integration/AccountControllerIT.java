@@ -7,6 +7,7 @@ import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyF
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountDetailsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
+import app.netlify.clementgombauld.banking.account.rest.account.out.PageDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.usecases.commands.OpenAccount;
 import app.netlify.clementgombauld.banking.common.rest.error.ErrorResponse;
@@ -240,7 +241,45 @@ public class AccountControllerIT {
                         BIC
                 )
         ));
+    }
 
+    @Test
+    void shouldGetPaginatedTransactions() throws Exception {
+        ResultActions result = mockMvc.perform(get("/api/v1/account/transactions?pageNumber=0&pageSize=10")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        String pageString = result.andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(pageString).isEqualTo(jsonMapper.writeValueAsString(new PageDto<>(List.of(new TransactionDto(
+                "234535",
+                "Michel Baumont",
+                95345000L,
+                new BigDecimal("6.00"),
+                "shopping"
+        )), 0, 10, 1L, 1)));
+
+    }
+
+    @Test
+    void shouldGetPaginatedTransactionsWithDefaultQueryParams() throws Exception {
+        ResultActions result = mockMvc.perform(get("/api/v1/account/transactions")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        String pageString = result.andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(pageString).isEqualTo(jsonMapper.writeValueAsString(new PageDto<>(List.of(new TransactionDto(
+                "234535",
+                "Michel Baumont",
+                95345000L,
+                new BigDecimal("6.00"),
+                "shopping"
+        )), 0, 10, 1L, 1)));
 
     }
 

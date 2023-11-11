@@ -5,6 +5,8 @@ import app.netlify.clementgombauld.banking.account.rest.account.in.ReceiveMoneyF
 import app.netlify.clementgombauld.banking.account.rest.account.in.TransferMoneyRequest;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountDetailsDto;
 import app.netlify.clementgombauld.banking.account.rest.account.out.AccountOverviewDto;
+import app.netlify.clementgombauld.banking.account.rest.account.out.PageDto;
+import app.netlify.clementgombauld.banking.account.rest.account.out.TransactionDto;
 import app.netlify.clementgombauld.banking.account.usecases.commands.CloseAccount;
 import app.netlify.clementgombauld.banking.account.usecases.commands.OpenAccount;
 import app.netlify.clementgombauld.banking.account.usecases.commands.ReceiveMoneyFromExternalBank;
@@ -14,6 +16,7 @@ import app.netlify.clementgombauld.banking.account.usecases.commands.ReceiveMone
 import app.netlify.clementgombauld.banking.account.usecases.commands.TransferMoneyCommand;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountDetails;
 import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
+import app.netlify.clementgombauld.banking.account.usecases.queries.GetTransactions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -35,14 +38,17 @@ public class AccountController {
 
     private final GetAccountDetails getAccountDetails;
 
+    private final GetTransactions getTransactions;
+
     @Autowired
-    public AccountController(OpenAccount openAccount, CloseAccount closeAccount, TransferMoney transferMoney, ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank, GetAccountOverview getAccountOverview, GetAccountDetails getAccountDetails) {
+    public AccountController(OpenAccount openAccount, CloseAccount closeAccount, TransferMoney transferMoney, ReceiveMoneyFromExternalBank receiveMoneyFromExternalBank, GetAccountOverview getAccountOverview, GetAccountDetails getAccountDetails, GetTransactions getTransactions) {
         this.openAccount = openAccount;
         this.closeAccount = closeAccount;
         this.transferMoney = transferMoney;
         this.receiveMoneyFromExternalBank = receiveMoneyFromExternalBank;
         this.getAccountOverview = getAccountOverview;
         this.getAccountDetails = getAccountDetails;
+        this.getTransactions = getTransactions;
     }
 
     @PostMapping("/open")
@@ -82,6 +88,12 @@ public class AccountController {
     public ResponseEntity<AccountDetailsDto> getAccountDetails(@Value("${bic}") String bic) {
         AccountDetailsDto accountDetails = getAccountDetails.handle(bic);
         return ResponseEntity.ok(accountDetails);
+    }
+
+    @GetMapping("/transactions")
+    public ResponseEntity<PageDto<TransactionDto>> getTransactions(@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize) {
+        PageDto<TransactionDto> transactionPage = getTransactions.handle(pageNumber, pageSize);
+        return ResponseEntity.ok(transactionPage);
     }
 
 }

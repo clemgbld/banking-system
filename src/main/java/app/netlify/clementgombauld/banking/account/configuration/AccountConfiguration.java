@@ -2,10 +2,7 @@ package app.netlify.clementgombauld.banking.account.configuration;
 
 import app.netlify.clementgombauld.banking.account.domain.*;
 import app.netlify.clementgombauld.banking.account.usecases.commands.*;
-import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountDetails;
-import app.netlify.clementgombauld.banking.account.usecases.queries.GetAccountOverview;
-import app.netlify.clementgombauld.banking.account.usecases.queries.GetBeneficiaries;
-import app.netlify.clementgombauld.banking.account.usecases.queries.QueryExecutor;
+import app.netlify.clementgombauld.banking.account.usecases.queries.*;
 import app.netlify.clementgombauld.banking.common.domain.DateProvider;
 import app.netlify.clementgombauld.banking.common.domain.IdGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -71,6 +68,11 @@ public class AccountConfiguration {
     @Bean
     public GetBeneficiaries getBeneficiaries(AuthenticationGateway authenticationGateway, QueryExecutor queryExecutor) {
         return new GetBeneficiaries(authenticationGateway, queryExecutor);
+    }
+
+    @Bean
+    public GetTransactions getTransactions(AuthenticationGateway authenticationGateway, QueryExecutor queryExecutor) {
+        return new GetTransactions(authenticationGateway, queryExecutor);
     }
 
 

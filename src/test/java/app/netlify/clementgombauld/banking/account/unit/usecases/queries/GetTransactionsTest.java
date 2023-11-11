@@ -33,7 +33,7 @@ public class GetTransactionsTest {
         long creationDate = 2534523343L;
         BigDecimal transactionAmount = new BigDecimal("7.98");
         String reason = "shopping";
-        int pageNumber = 1;
+        int pageNumber = 0;
         int pageSize = 10;
 
         AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(new Customer(customerId, firstName, lastName));
@@ -58,7 +58,7 @@ public class GetTransactionsTest {
         long creationDate = 2534523343L;
         BigDecimal transactionAmount = new BigDecimal("7.98");
         String reason = "shopping";
-        int pageNumber = 1;
+        int pageNumber = 0;
         int pageSize = 10;
 
         AuthenticationGateway authenticationGateway = new InMemoryAuthenticationGateway(new Customer(customerId, firstName, lastName));

@@ -15,7 +15,7 @@ public class GetTransactions {
 
     private final QueryExecutor queryExecutor;
 
-    private static final int DEFAULT_PAGE_NUMBER = 1;
+    private static final int DEFAULT_PAGE_NUMBER = 0;
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     public GetTransactions(AuthenticationGateway authenticationGateway, QueryExecutor queryExecutor) {
