@@ -5,7 +5,7 @@
 A restful banking system built in hexagonal architecture with CQRS light (with one DB).
 the primary use cases are internal money transfer, external money transfer, opening and closing an account, adding and
 deleting a beneficiary, retrieving various info on an account (its balance, iban, bic, beneficiaries and transactions).
-There is also and identity and access modules who is in charge of authorizations,login and signup features.
+There is also an identity and access modules who is in charge of authorizations,login and signup features.
 
 ## Basic set up
 
