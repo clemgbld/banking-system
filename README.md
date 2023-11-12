@@ -37,3 +37,18 @@ The domain is of course a Banking domain who is composed of 4 subdomains.
 - Currency who is also an external generic subdomain.
 
 ![Screenshot](Banking-DDD-sub-domains.png)
+
+### Context map
+
+![Screenshot](Context-map.png)
+
+- ACL (Anti-corruption layer )
+- OHS (Open host service)
+- PL (Published Language)
+- U (Upstream)
+- D (Downstream)
+
+## Tactical Domain driven design
+
+I also use DDD tactical patterns (aggregate,entity,value object, domain service and repository) specially in the account
+bounded context.
