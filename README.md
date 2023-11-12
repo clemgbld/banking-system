@@ -36,4 +36,4 @@ The domain is of course a Banking domain who is composed of 4 subdomains.
 - Country who is an external generic subdomain.
 - Currency who is also an external generic subdomain.
 
-
+![Screenshot](Banking-DDD-sub-domains.png)
