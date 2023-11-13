@@ -52,3 +52,24 @@ The domain is of course a Banking domain who is composed of 4 subdomains.
 
 I also use DDD tactical patterns (aggregate,entity,value object, domain service and repository) specially in the account
 bounded context.
+
+## Architecture
+
+### Overall
+
+This project is a monolith composed of two 3 modules Account, Identity and Access and Common.
+it has been built with decoupling in mind Account and Identity and Access can't share Database tables.
+In fact if the project needs to scale it's easy to split each module in a microservice.
+Common module contains shared code for the two modules (Account and Identity and Access).
+
+### Account
+
+This module use Hexagonal architecture and CQRS light(with one DB) and domain model (aggregate, entity value object,
+domain service etc...).
+
+### Identity and Access
+
+This module use Hexagonal architecture the business logic is quite simple, so it mostly uses transaction script over
+domain model.
+
+![Screenshot](Architecture.png)
