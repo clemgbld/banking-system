@@ -9,7 +9,7 @@ There is also an identity and access modules who is in charge of authorizations,
 
 ## Basic set up
 
-- You need your own openexchangerates api key to replace in the application properties file.
+- You need your own openexchangerates api key to replace in the application properties file, you also need to make your own env.properties file.
 - You need to set up the database there is some sql scripts in the resources packages to help you with that.
 
 ## How to launch the app ?
